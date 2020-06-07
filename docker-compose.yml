@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  test_db:
+    image: "mysql:5.7"
+    ports:
+      - "3308:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=healthymood_api_database_test
+  db:
+    image: "mysql:5.7"
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=healthymood_api_database
+    volumes:
+      - healthymood-db:/var/lib/mysql
+  web:
+    depends_on:
+      - db
+    build: "."
+    environment:
+      - DB_USER=root
+      - DB_PASS=root
+      - DB_NAME=healthymood_api_database
+      - DB_HOST=db
+      - DB_PORT=3306
+    ports:
+      - "3000:3000"
+    command: 'bash -c "chmod u+x ./wait-for-it.sh && ./wait-for-it.sh db:3306 && npm start"'
+
+volumes:
+  healthymood-db:

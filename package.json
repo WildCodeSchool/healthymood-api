@@ -2,19 +2,58 @@
   "name": "healthymood-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:server": "node server.js",
+    "start:server:watch": "nodemon -e yaml,js,json server.js",
+    "migrate": "db-migrate up",
+    "start": "npm-run-all migrate start:server",
+    "start-watch": "npm-run-all migrate start:server:watch",
+    "tests:setup-db": "docker-compose up -d test_db",
+    "tests:migrate-db": "db-migrate up -e test",
+    "test": "jest",
+    "lint": "semistandard --fix"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/WildCodeSchool/healthymood-api.git"
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
   },
-  "keywords": [],
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setupTests.js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  },
+  "semistandard": {
+    "env": [
+      "node",
+      "jest"
+    ],
+    "ignore": [
+      "migrations/**"
+    ]
+  },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/WildCodeSchool/healthymood-api/issues"
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "npm-run-all": "^4.1.5",
+    "yamljs": "^0.3.0"
   },
-  "homepage": "https://github.com/WildCodeSchool/healthymood-api#readme"
+  "devDependencies": {
+    "husky": "^4.2.5",
+    "semistandard": "^14.2.0",
+    "jest": "^26.0.1",
+    "nodemon": "^2.0.4",
+    "supertest": "^4.0.2",
+    "swagger-jsdoc": "^4.0.0",
+    "swagger-ui-express": "^4.1.4"
+  }
 }

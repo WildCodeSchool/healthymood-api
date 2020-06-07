@@ -1,0 +1,37 @@
+name: Integration tests MySQL
+on:
+  pull_request:
+    branches: [master, dev]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - uses: mirromutth/mysql-action@v1.1
+        with:
+          character set server: "utf8" # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
+          collation server: "utf8_general_ci" # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
+          mysql version: "5.7" # Optional, default value is "latest". The version of the MySQL
+          mysql database: "healthymood_api_database_test" # Optional, default value is "test". The specified database which will be create
+          mysql user: "tester" # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
+          mysql password: "WildWildPass" # Required if "mysql user" exists. The password for the "mysql user"
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm i -g db-migrate db-migrate-mysql
+      - run: DB_HOST=localhost DB_PORT=3306 DB_USER=tester DB_PASS=WildWildPass DB_NAME=healthymood_api_database_test db-migrate up
+      - run: npm test
+        env:
+          CI: true
+          PORT: 3001
+          DB_DIALECT: mysql
+          DB_HOST_TEST: localhost
+          DB_USER_TEST: tester
+          DB_PASS_TEST: WildWildPass
+          DB_NAME_TEST: healthymood_api_database_test
+          DB_PORT_TEST: 3306
