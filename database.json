@@ -5,7 +5,8 @@
     "password": {"ENV": "DB_PASS"},
     "host": {"ENV": "DB_HOST"},
     "database": {"ENV": "DB_NAME"},
-    "port": {"ENV": "DB_PORT"}
+    "port": {"ENV": "DB_PORT"},
+    "multipleStatements": true
   },
 
   "test": {
@@ -14,6 +15,7 @@
     "password": {"ENV": "DB_PASS_TEST"},
     "host": {"ENV": "DB_HOST_TEST"},
     "database": {"ENV": "DB_NAME_TEST"},
-    "port": {"ENV": "DB_PORT_TEST"}
+    "port": {"ENV": "DB_PORT_TEST"},
+    "multipleStatements": true
   }
 }
