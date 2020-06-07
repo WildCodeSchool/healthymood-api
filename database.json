@@ -1,0 +1,19 @@
+{
+  "dev": {
+    "driver": "mysql",
+    "user": {"ENV": "DB_USER"},
+    "password": {"ENV": "DB_PASS"},
+    "host": {"ENV": "DB_HOST"},
+    "database": {"ENV": "DB_NAME"},
+    "port": {"ENV": "DB_PORT"}
+  },
+
+  "test": {
+    "driver": "mysql",
+    "user": {"ENV": "DB_USER_TEST"},
+    "password": {"ENV": "DB_PASS_TEST"},
+    "host": {"ENV": "DB_HOST_TEST"},
+    "database": {"ENV": "DB_NAME_TEST"},
+    "port": {"ENV": "DB_PORT_TEST"}
+  }
+}
