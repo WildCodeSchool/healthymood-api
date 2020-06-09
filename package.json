@@ -51,11 +51,11 @@
   "devDependencies": {
     "husky": "^4.2.5",
     "jest": "^26.0.1",
+    "jest-circus": "^26.0.1",
     "nodemon": "^2.0.4",
     "semistandard": "^14.2.0",
     "supertest": "^4.0.2",
     "swagger-jsdoc": "^4.0.0",
-    "swagger-ui-express": "^4.1.4",
-    "jest-circus": "^26.0.1"
+    "swagger-ui-express": "^4.1.4"
   }
 }
