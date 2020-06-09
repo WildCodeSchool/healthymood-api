@@ -21,6 +21,7 @@
   },
   "jest": {
     "testEnvironment": "node",
+    "testRunner": "jest-circus/runner",
     "setupFilesAfterEnv": [
       "<rootDir>/tests/setupTests.js"
     ],
@@ -54,6 +55,7 @@
     "semistandard": "^14.2.0",
     "supertest": "^4.0.2",
     "swagger-jsdoc": "^4.0.0",
-    "swagger-ui-express": "^4.1.4"
+    "swagger-ui-express": "^4.1.4",
+    "jest-circus": "^26.0.1"
   }
 }
