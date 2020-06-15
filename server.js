@@ -16,9 +16,6 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use('/ingredients', require('./routes/ingredient.routes.js'));
-app.use('/', (req, res) => {
-  res.redirect('/ingredients');
-});
 
 // set port, listen for requests
 const server = app.listen(PORT, () => {
