@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../server.js');
-const Recipes_category = require('../models/recipes_category.model.js');
+const RecipesCategory = require('../models/recipes_category.model.js');
 
 describe('recipes_category endpoints', () => {
   describe('GET /recipes_category', () => {
@@ -8,8 +8,8 @@ describe('recipes_category endpoints', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          Recipes_category.create({ name: 'sauces' }),
-          Recipes_category.create({ name: 'boissons' })
+          RecipesCategory.create({ name: 'sauces' }),
+          RecipesCategory.create({ name: 'boissons' })
         ]);
         res = await request(app).get('/recipes_category');
       });
@@ -30,7 +30,7 @@ describe('recipes_category endpoints', () => {
       let res;
       beforeAll(async () => {
         res = await request(app).post('/recipes_category').send({
-          name: 'boissons',
+          name: 'boissons'
         });
       });
 
@@ -46,7 +46,7 @@ describe('recipes_category endpoints', () => {
     describe('when a recipes_category with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        Recipes_category.create({
+        RecipesCategory.create({
           name: 'boissons'
         });
         res = await request(app).post('/recipes_category').send({
