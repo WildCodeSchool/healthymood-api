@@ -29,7 +29,7 @@ describe('recipe-categories endpoints', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/recipe-category').send({
+        res = await request(app).post('/recipe-categories').send({
           name: 'dessert'
         });
       });
