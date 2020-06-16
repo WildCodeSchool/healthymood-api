@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../server.js');
 const Ingredient = require('../models/ingredient.model.js');
 
-describe('ingredients endpoints', () => {
+xdescribe('ingredients endpoints', () => {
   describe('GET /ingredients', () => {
     describe('when there are two ingredients in DB', () => {
       let res;

@@ -1,4 +1,4 @@
-const RecipeCategory = require('../models/recipes_category.model.js');
+const RecipeCategory = require('../models/recipe-categories.model.js');
 
 class RecipesCategoryController {
   static async create (req, res) {
@@ -13,13 +13,13 @@ class RecipesCategoryController {
     }
 
     try {
-      const recipesCategory = new RecipeCategory(req.body);
-      if (await RecipeCategory.nameAlreadyExists(recipesCategory.name)) {
+      const recipeCategory = new RecipeCategory(req.body);
+      if (await RecipeCategory.nameAlreadyExists(recipeCategory.name)) {
         res.status(400).send({
           errorMessage: 'A RecipeCategory with this name already exists !'
         });
       } else {
-        const data = await RecipeCategory.create(recipesCategory);
+        const data = await RecipeCategory.create(recipeCategory);
         res.status(201).send({ data });
       }
     } catch (err) {

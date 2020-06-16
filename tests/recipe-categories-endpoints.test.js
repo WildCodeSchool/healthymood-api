@@ -1,17 +1,17 @@
 const request = require('supertest');
 const app = require('../server.js');
-const RecipesCategory = require('../models/recipes_category.model.js');
+const RecipesCategory = require('../models/recipe-categories.model.js');
 
-describe('recipes_category endpoints', () => {
-  describe('GET /recipes_category', () => {
-    describe('when there are two recipes_category in DB', () => {
+describe('recipe-categories endpoints', () => {
+  describe('GET /recipe-categories', () => {
+    describe('when there are two recipe categories in DB', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          RecipesCategory.create({ name: 'sauces' }),
-          RecipesCategory.create({ name: 'boissons' })
+          RecipesCategory.create({ name: 'dejeuner' }),
+          RecipesCategory.create({ name: 'diner' })
         ]);
-        res = await request(app).get('/recipes_category');
+        res = await request(app).get('/recipe-categories');
       });
 
       it('status is 200', async () => {
@@ -25,12 +25,12 @@ describe('recipes_category endpoints', () => {
     });
   });
 
-  describe('POST /recipes_category', () => {
+  describe('POST /recipe-categories', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/recipes_category').send({
-          name: 'boissons'
+        res = await request(app).post('/recipe-category').send({
+          name: 'dessert'
         });
       });
 
@@ -38,19 +38,19 @@ describe('recipes_category endpoints', () => {
         expect(res.statusCode).toEqual(201);
       });
 
-      it('returns the id of the created recipes_category', async () => {
+      it('returns the id of the created recipe-categories', async () => {
         expect(res.body.data).toHaveProperty('id');
       });
     });
 
-    describe('when a recipes_category with the same name already exists in DB', () => {
+    describe('when a recipe-categories with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
         RecipesCategory.create({
-          name: 'boissons'
+          name: 'entrée'
         });
-        res = await request(app).post('/recipes_category').send({
-          name: 'boissons'
+        res = await request(app).post('/recipe-categories').send({
+          name: 'entrée'
         });
       });
 

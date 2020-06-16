@@ -1,4 +1,4 @@
-const recipesCategoryController = require('../controllers/recipes_category.controller.js');
+const recipesCategoryController = require('../controllers/recipe-categories.controller.js');
 const router = require('express').Router();
 
 router.post('/', recipesCategoryController.create);

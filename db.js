@@ -55,9 +55,12 @@ class Database {
     return this.query(`
     SET FOREIGN_KEY_CHECKS=0;
     TRUNCATE ingredients;
+    TRUNCATE recipe_categories;
     SET FOREIGN_KEY_CHECKS=1;
     `);
   }
 }
+
+
 
 module.exports = new Database().init();
