@@ -16,10 +16,13 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use('/ingredients', require('./routes/ingredient.routes.js'));
+app.use('/notifications', require('./routes/notification.routes.js'));
 
 // set port, listen for requests
 const server = app.listen(PORT, () => {
-  console.log('Server is running on port ' + PORT);
+  if (process.env.NODE_ENV !== 'test') {
+    console.log('Server is running on port ' + PORT);
+  }
 });
 
 module.exports = server;

@@ -1,6 +1,6 @@
-const Ingredient = require('../models/ingredient.model.js');
+const Notification = require('../models/notification.model.js');
 
-class IngredientsController {
+class NotificationsController {
   static async create (req, res) {
     if (!req.body) {
       return res
@@ -8,58 +8,55 @@ class IngredientsController {
         .send({ errorMessage: 'Content can not be empty!' });
     }
 
-    if (!req.body.name) {
-      return res.status(400).send({ errorMessage: 'Name can not be empty!' });
+    if (!req.body.title) {
+      return res.status(400).send({ errorMessage: 'Title can not be empty!' });
+    } else if (!req.body.content) {
+      return res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
 
     try {
-      const ingredient = new Ingredient(req.body);
-      if (await Ingredient.nameAlreadyExists(ingredient.name)) {
-        res.status(400).send({
-          errorMessage: 'An ingredient with this name already exists !'
-        });
-      } else {
-        const data = await Ingredient.create(ingredient);
-        res.status(201).send({ data });
-      }
+      const notification = new Notification(req.body);
+      const data = await Notification.create(notification);
+      res.status(201).send({ data });
     } catch (err) {
       res.status(500).send({
         errorMessage:
-          err.message || 'Some error occurred while creating the Ingredient.'
+          err.message || 'Some error occurred while creating the Notification.'
       });
     }
   }
 
   static async findAll (req, res) {
     try {
-      const data = (await Ingredient.getAll())
-        .map((i) => new Ingredient(i))
-        .map((i) => ({
-          id: i.id,
-          name: i.name,
-          is_allergen: i.is_allergen
+      const data = (await Notification.getAll())
+        .map((n) => new Notification(n))
+        .map((n) => ({
+          title: n.title,
+          content: n.content,
+          link: n.link,
+          dispatch_planning: n.dispatch_planning
         }));
       res.send({ data });
     } catch (err) {
       res.status(500).send({
         errorMessage:
-          err.message || 'Some error occurred while retrieving ingredients.'
+          err.message || 'Some error occurred while retrieving notifications.'
       });
     }
   }
 
   static async findOne (req, res) {
     try {
-      const data = await Ingredient.findById(req.params.id);
+      const data = await Notification.findById(req.params.id);
       res.send({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
-          errorMessage: `Ingredient with id ${req.params.id} not found.`
+          errorMessage: `Notification with id ${req.params.id} not found.`
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Error retrieving Ingredient with id ' + req.params.id
+          errorMessage: 'Error retrieving Notification with id ' + req.params.id
         });
       }
     }
@@ -71,19 +68,19 @@ class IngredientsController {
     }
 
     try {
-      const data = await Ingredient.updateById(
+      const data = await Notification.updateById(
         req.params.id,
-        new Ingredient(req.body)
+        new Notification(req.body)
       );
       res.send({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
-          errorMessage: `Ingredient with id ${req.params.id} not found.`
+          errorMessage: `Notification with id ${req.params.id} not found.`
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Error updating Ingredient with id ' + req.params.id
+          errorMessage: 'Error updating Notification with id ' + req.params.id
         });
       }
     }
@@ -91,20 +88,20 @@ class IngredientsController {
 
   static async delete (req, res) {
     try {
-      await Ingredient.remove(req.params.id);
-      res.send({ message: 'Ingredient was deleted successfully!' });
+      await Notification.remove(req.params.id);
+      res.send({ message: 'Notification was deleted successfully!' });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
-          errorMessage: `Not found Ingredient with id ${req.params.id}.`
+          errorMessage: `Not found Notification with id ${req.params.id}.`
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Could not delete Ingredient with id ' + req.params.id
+          errorMessage: 'Could not delete Notification with id ' + req.params.id
         });
       }
     }
   }
 }
 
-module.exports = IngredientsController;
+module.exports = NotificationsController;

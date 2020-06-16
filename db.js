@@ -55,6 +55,7 @@ class Database {
     return this.query(`
       SET FOREIGN_KEY_CHECKS=0;
       TRUNCATE ingredients;
+      TRUNCATE notifications;
       SET FOREIGN_KEY_CHECKS=1;
     `);
   }
