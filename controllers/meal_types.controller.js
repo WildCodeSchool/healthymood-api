@@ -1,6 +1,6 @@
-const Mealtypes = require('../models/mealtypes.model.js');
+const Mealtypes = require('../models/meal_types.model.js');
 
-class mealtypesController {
+class meal_typesController {
   static async create (req, res) {
     if (!req.body) {
       return res
@@ -106,4 +106,4 @@ class mealtypesController {
   }
 }
 
-module.exports = mealtypesController;
+module.exports = meal_typesController;

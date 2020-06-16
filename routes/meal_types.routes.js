@@ -1,4 +1,4 @@
-const mealtypesController = require('../controllers/mealtypes.controller.js');
+const mealtypesController = require('../controllers/meal_types.controller.js');
 const router = require('express').Router();
 
 router.post('/', mealtypesController.create);

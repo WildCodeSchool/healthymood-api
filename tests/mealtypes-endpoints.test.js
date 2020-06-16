@@ -1,9 +1,9 @@
 const request = require('supertest');
 const app = require('../server.js');
-const mealtypes = require('../models/mealtypes.model.js');
+const mealtypes = require('../models/meal_types.model.js');
 
 describe('mealtypes endpoints', () => {
-  describe('GET /mealtypes', () => {
+  describe('GET /meal_types', () => {
     describe('when there are two mealtypes in DB', () => {
       let res;
       beforeEach(async () => {
@@ -11,7 +11,7 @@ describe('mealtypes endpoints', () => {
           mealtypes.create({ name: 'entrée' }),
           mealtypes.create({ name: 'dessert' })
         ]);
-        res = await request(app).get('/mealtypes');
+        res = await request(app).get('/meal_types');
       });
 
       it('status is 200', async () => {
@@ -25,11 +25,11 @@ describe('mealtypes endpoints', () => {
     });
   });
 
-  describe('POST /mealtypes', () => {
+  xdescribe('POST /meal_types', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/mealtypes').send({
+        res = await request(app).post('/meal_types').send({
           name: 'dessert'
         });
       });
@@ -49,7 +49,7 @@ describe('mealtypes endpoints', () => {
         mealtypes.create({
           name: 'brunch'
         });
-        res = await request(app).post('/mealtypes').send({
+        res = await request(app).post('/meal_types').send({
           name: 'brunch'
         });
       });
