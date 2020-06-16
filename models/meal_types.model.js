@@ -1,12 +1,14 @@
 const db = require('../db.js');
 
 class meal_types {
-  constructor (meal_types) {
+  constructor(meal_types) {
     this.id = meal_types.id;
     this.name = meal_types.name;
+    console.log(meal_types)
   }
 
-  static async create (newmeal_types) {
+  static async create(newmeal_types) {
+
     return db
       .query('INSERT INTO meal_types SET ?', newmeal_types)
       .then((res) => {
@@ -15,9 +17,9 @@ class meal_types {
       });
   }
 
-  static async findById (id) {
+  static async findById(id) {
     return db
-      .query('SELECT * FROM meal_types WHERE id = ?', [id])
+      .query(`SELECT * FROM meal_types WHERE id = ${id}`)
       .then((rows) => {
         if (rows.length) {
           return Promise.resolve(rows[0]);
@@ -29,7 +31,7 @@ class meal_types {
       });
   }
 
-  static async nameAlreadyExists (name) {
+  static async nameAlreadyExists(name) {
     return db
       .query('SELECT * FROM meal_types WHERE name = ?', [name])
       .then((rows) => {
@@ -41,11 +43,11 @@ class meal_types {
       });
   }
 
-  static async getAll (result) {
+  static async getAll(result) {
     return db.query('SELECT * FROM meal_types');
   }
 
-  static async updateById (id, meal_types) {
+  static async updateById(id, meal_types) {
     return db
       .query('UPDATE meal_types SET name = ? WHERE id = ?', [
         meal_types.name,
@@ -54,7 +56,7 @@ class meal_types {
       .then(() => this.findById(id));
   }
 
-  static async remove (id) {
+  static async remove(id) {
     return db.query('DELETE FROM meal_types WHERE id = ?', id).then((res) => {
       if (res.affectedRows !== 0) {
         return Promise.resolve();
@@ -66,7 +68,7 @@ class meal_types {
     });
   }
 
-  static async removeAll (result) {
+  static async removeAll(result) {
     return db.query('DELETE FROM meal_types');
   }
 }

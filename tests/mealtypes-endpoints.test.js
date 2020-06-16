@@ -25,7 +25,7 @@ describe('mealtypes endpoints', () => {
     });
   });
 
-  xdescribe('POST /meal_types', () => {
+  describe('POST /meal_types', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
