@@ -8,9 +8,24 @@ describe('notifications endpoints', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          Notification.create({ title: 'good bye', content: 'a+', link: 'to the past', dispatch_planning: '12/06/2020' }),
-          Notification.create({ title: 'get out from here', content: 'dégage', link: 'between world', dispatch_planning: '13/02/1977' }),
-          Notification.create({ title: 'hello world', content: 'salut', link: '\'s awakening', dispatch_planning: '17/11/2047' })
+          Notification.create({
+            title: 'good bye',
+            content: 'a+',
+            link: 'to the past',
+            dispatch_planning: '2020-12-31 23:59:59'
+          }),
+          Notification.create({
+            title: 'get out from here',
+            content: 'dégage',
+            link: 'between world',
+            dispatch_planning: '2020-12-31 23:59:59'
+          }),
+          Notification.create({
+            title: 'hello world',
+            content: 'salut',
+            link: "'s awakening",
+            dispatch_planning: '2020-12-31 23:59:59'
+          })
         ]);
         res = await request(app).get('/notifications');
       });
@@ -34,7 +49,7 @@ describe('notifications endpoints', () => {
           title: 'notif',
           content: 'a notif',
           link: 'https://google.com',
-          dispatch_planning: '17/11/2047'
+          dispatch_planning: '2020-12-31 23:59:59'
         });
       });
 
