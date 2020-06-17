@@ -31,13 +31,20 @@ describe('users endpoints', () => {
     });
   });
 
-  xdescribe('POST /users', () => {
+  describe('POST /users', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
         res = await request(app).post('/users').send({
-          username: 'ana3',
-          email: 'ana3@gmail.co'
+          username: 'bbbb',
+          email: 'bbbb@gmail.co',
+          password: 'superpassword',
+          firstname: 'bb',
+          lastname: 'bababa',
+          is_admin: false,
+          blocked: false,
+          fb_uid: 'myfbuid',
+          avatar: 'cheese :-)'
         });
       });
 

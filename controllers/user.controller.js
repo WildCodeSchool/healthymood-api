@@ -14,13 +14,9 @@ class UsersController {
 
     try {
       const user = new User(req.body);
-      if (await User.usernameAlreadyExists(user.username)) {
+      if (await User.usernameAlreadyExists(user.username) || await User.emailAlreadyExists(user.email)) {
         res.status(400).send({
-          errorMessage: 'A user with this username already exists !'
-        });
-      } else if (User.emailAlreadyExists(user.email)) {
-        res.status(400).send({
-          errorMessage: 'A user with this email already exists !'
+          errorMessage: 'A user with this username or this email already exists !'
         });
       } else {
         const data = await User.create(user);
