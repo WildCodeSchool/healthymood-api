@@ -33,6 +33,7 @@ class RecipesController {
       const data = (await Recipe.getAll())
         .map((r) => new Recipe(r))
         .map((r) => ({
+          id: r.id,
           name: r.name,
           content: r.content,
           created_at: r.created_at,
