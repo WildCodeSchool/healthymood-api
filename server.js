@@ -18,9 +18,34 @@ if (process.env.NODE_ENV !== 'production') {
 app.use('/ingredients', require('./routes/ingredient.routes.js'));
 app.use('/meal_types', require('./routes/meal_types.routes.js'));
 
+process.on('unhandledRejection', error => {
+  console.error('unhandledRejection', JSON.stringify(error), error.stack);
+  process.exit(1);
+});
+process.on('uncaughtException', error => {
+  console.log('uncaughtException', JSON.stringify(error), error.stack);
+  process.exit(1);
+});
+process.on('beforeExit', () => {
+  app.close((err) => {
+    if (err) console.error(JSON.stringify(error), error.stack);
+  });
+});
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).send('invalid token...');
+  }
+});
+app.use((error, req, res, next) => {
+  console.error(error.stack);
+  res.status(500).send('Something Broke!');
+});
+app.set('x-powered-by', false);
+
 // set port, listen for requests
 const server = app.listen(PORT, () => {
-  console.log('Server is running on port ' + PORT);
+  if (process.env.NODE_ENV !== 'test') {
+    console.log('Server is running on port ' + PORT);
+  }
 });
-
 module.exports = server;

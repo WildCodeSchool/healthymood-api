@@ -1,36 +1,27 @@
 const MealTypes = require('../models/meal_types.model.js');
 
 class MealTypesController {
-  static async create(req, res) {
+  static async create (req, res) {
     if (!req.body) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
-
     if (!req.body.name) {
       return res.status(400).send({ errorMessage: 'Name can not be empty!' });
     }
-
-    try {
-      const mealtypes = new MealTypes(req.body);
-      if (await mealtypes.nameAlreadyExists(mealtypes.name)) {
-        res.status(400).send({
-          errorMessage: 'An mealtypes with this name already exists !'
-        });
-      } else {
-        const data = await mealtypes.create(mealtypes);
-        res.status(201).send({ data });
-      }
-    } catch (err) {
-      res.status(500).send({
-        errorMessage:
-          err.message || 'Some error occurred while creating the mealtypes.'
+    const mealtypes = new MealTypes(req.body);
+    if (await MealTypes.nameAlreadyExists(mealtypes.name)) {
+      res.status(400).send({
+        errorMessage: 'An mealtypes with this name already exists !'
       });
+    } else {
+      const data = await MealTypes.create(mealtypes);
+      res.status(201).send({ data });
     }
   }
 
-  static async findAll(req, res) {
+  static async findAll (req, res) {
     try {
       const data = (await MealTypes.getAll())
         .map((i) => new MealTypes(i))
@@ -47,7 +38,7 @@ class MealTypesController {
     }
   }
 
-  static async findOne(req, res) {
+  static async findOne (req, res) {
     try {
       const data = await MealTypes.findById(req.params.id);
       res.send({ data });
@@ -64,7 +55,7 @@ class MealTypesController {
     }
   }
 
-  static async update(req, res) {
+  static async update (req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -88,7 +79,7 @@ class MealTypesController {
     }
   }
 
-  static async delete(req, res) {
+  static async delete (req, res) {
     try {
       await MealTypes.remove(req.params.id);
       res.send({ message: 'mealtypes was deleted successfully!' });
