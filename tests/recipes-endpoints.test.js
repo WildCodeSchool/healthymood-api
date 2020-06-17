@@ -12,7 +12,7 @@ describe('Recipes endpoints', () => {
             name: 'salade de pâte',
             image: '/ma-super-image',
             content: 'awesome content',
-            created_at: "2020-12-30 23:59:59",
+            created_at: '2020-12-30 23:59:59',
             preparation_duration_seconds: 1200,
             budget: 5,
             slug: 'ma-recette',
@@ -24,7 +24,7 @@ describe('Recipes endpoints', () => {
             name: 'salade de riz',
             image: '/ma-super-image-riz',
             content: 'awesome recipe',
-            created_at: "2020-08-30 23:59:59",
+            created_at: '2020-08-30 23:59:59',
             preparation_duration_seconds: 1300,
             budget: 4,
             slug: 'ma-recette-riz',
@@ -36,7 +36,7 @@ describe('Recipes endpoints', () => {
             name: 'salade de pommes de terre',
             image: '/ma-super-image-de-patates',
             content: 'awesome patates',
-            created_at: "2020-12-30 23:59:59",
+            created_at: '2020-12-30 23:59:59',
             preparation_duration_seconds: 1500,
             budget: 3,
             slug: 'ma-recette-patates',
@@ -59,7 +59,7 @@ describe('Recipes endpoints', () => {
     });
   });
 
-  xdescribe('POST /recipes', () => {
+  describe('POST /recipes', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
@@ -67,7 +67,7 @@ describe('Recipes endpoints', () => {
           name: 'salade de pommes de terre',
           image: '/ma-super-image-de-patates',
           content: 'awesome patates',
-          created_at: "2020-12-30 23:59:59",
+          created_at: '2020-12-30 23:59:59',
           preparation_duration_seconds: 1500,
           budget: 3,
           slug: 'ma-recette-patates',

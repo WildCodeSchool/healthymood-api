@@ -6,7 +6,7 @@ const swaggerDocument = YAML.load('./docs/swagger.yaml');
 
 const app = express();
 const PORT =
-  process.env.PORT || (process.env.NODE_ENV === 'test' ? 3001 : 3000);
+  process.env.PORT || (process.env.NODE_ENV === 'test' ? 3001 : 5000);
 
 // middlewares
 app.use(express.json());
@@ -18,6 +18,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.use('/ingredients', require('./routes/ingredient.routes.js'));
 app.use('/notifications', require('./routes/notification.routes.js'));
 app.use('/recipes', require('./routes/recipe.routes.js'));
+app.use('/generic_pages', require('./routes/generic_pages.routes.js'));
 
 // set port, listen for requests
 const server = app.listen(PORT, () => {

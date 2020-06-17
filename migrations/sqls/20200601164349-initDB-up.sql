@@ -1,3 +1,5 @@
+SET FOREIGN_KEY_CHECKS=0;
+
 CREATE TABLE `addresses` (
   `id` int NOT NULL AUTO_INCREMENT,
   `street` varchar(150) DEFAULT NULL,
@@ -43,6 +45,7 @@ CREATE TABLE `article_categories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `users` (
+  SET FOREIGN_KEY_CHECKS=0;
   `id` int NOT NULL AUTO_INCREMENT,
   `email` varchar(100) NOT NULL,
   `password` varchar(200) DEFAULT NULL,
