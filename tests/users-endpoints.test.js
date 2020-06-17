@@ -10,7 +10,7 @@ describe('users endpoints', () => {
         await Promise.all([
           User.create({
             username: 'ana',
-            email: 'ana@gmail.cwo',
+            email: 'ana@gmail.cwo'
           }),
           User.create({
             username: 'ana2',
