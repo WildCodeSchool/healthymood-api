@@ -1,0 +1,1 @@
+ALTER TABLE `recipes` MODIFY IF EXISTS `user_id` int NOT NULL;
