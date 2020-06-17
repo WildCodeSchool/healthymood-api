@@ -13,18 +13,15 @@ describe('mealtypes endpoints', () => {
         ]);
         res = await request(app).get('/meal_types');
       });
-
       it('status is 200', async () => {
         expect(res.status).toBe(200);
       });
-
       it('the returned data is an array containing two elements', async () => {
         expect(Array.isArray(res.body.data));
         expect(res.body.data.length).toBe(2);
       });
     });
   });
-
   describe('POST /meal_types', () => {
     describe('when a valid payload is sent', () => {
       let res;
@@ -33,7 +30,6 @@ describe('mealtypes endpoints', () => {
           name: 'dessert'
         });
       });
-
       it('returns 201 status', async () => {
         expect(res.statusCode).toEqual(201);
       });
@@ -42,7 +38,6 @@ describe('mealtypes endpoints', () => {
         expect(res.body.data).toHaveProperty('id');
       });
     });
-
     describe('when an mealtypes with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {

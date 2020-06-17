@@ -54,6 +54,7 @@ class Database {
   deleteAllData() {
     return this.query(`
     SET FOREIGN_KEY_CHECKS=0;
+    TRUNCATE ingredients;
     TRUNCATE meal_types;
     SET FOREIGN_KEY_CHECKS=1;
     `);

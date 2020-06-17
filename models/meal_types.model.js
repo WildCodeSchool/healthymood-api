@@ -1,19 +1,17 @@
 const db = require('../db.js');
 
-class meal_types {
-  constructor(meal_types) {
-    this.id = meal_types.id;
-    this.name = meal_types.name;
-    console.log(meal_types)
+class MealTypes {
+  constructor(mealTypes) {
+    this.id = mealTypes.id;
+    this.name = mealTypes.name;
   }
 
-  static async create(newmeal_types) {
-
+  static async create(newMealTypes) {
     return db
-      .query('INSERT INTO meal_types SET ?', newmeal_types)
+      .query('INSERT INTO meal_types SET ?', newMealTypes)
       .then((res) => {
-        newmeal_types.id = res.insertId;
-        return newmeal_types;
+        newMealTypes.id = res.insertId;
+        return newMealTypes;
       });
   }
 
@@ -47,10 +45,10 @@ class meal_types {
     return db.query('SELECT * FROM meal_types');
   }
 
-  static async updateById(id, meal_types) {
+  static async updateById(id, mealTypes) {
     return db
       .query('UPDATE meal_types SET name = ? WHERE id = ?', [
-        meal_types.name,
+        mealTypes.name,
         id
       ])
       .then(() => this.findById(id));
@@ -73,4 +71,4 @@ class meal_types {
   }
 }
 
-module.exports = meal_types;
+module.exports = MealTypes;

@@ -1,7 +1,7 @@
-const Mealtypes = require('../models/meal_types.model.js');
+const MealTypes = require('../models/meal_types.model.js');
 
-class meal_typesController {
-  static async create (req, res) {
+class MealTypesController {
+  static async create(req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -13,7 +13,7 @@ class meal_typesController {
     }
 
     try {
-      const mealtypes = new Mealtypes(req.body);
+      const mealtypes = new MealTypes(req.body);
       if (await mealtypes.nameAlreadyExists(mealtypes.name)) {
         res.status(400).send({
           errorMessage: 'An mealtypes with this name already exists !'
@@ -30,10 +30,10 @@ class meal_typesController {
     }
   }
 
-  static async findAll (req, res) {
+  static async findAll(req, res) {
     try {
-      const data = (await Mealtypes.getAll())
-        .map((i) => new Mealtypes(i))
+      const data = (await MealTypes.getAll())
+        .map((i) => new MealTypes(i))
         .map((i) => ({
           id: i.id,
           name: i.name
@@ -47,9 +47,9 @@ class meal_typesController {
     }
   }
 
-  static async findOne (req, res) {
+  static async findOne(req, res) {
     try {
-      const data = await Mealtypes.findById(req.params.id);
+      const data = await MealTypes.findById(req.params.id);
       res.send({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
@@ -64,15 +64,15 @@ class meal_typesController {
     }
   }
 
-  static async update (req, res) {
+  static async update(req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
 
     try {
-      const data = await Mealtypes.updateById(
+      const data = await MealTypes.updateById(
         req.params.id,
-        new Mealtypes(req.body)
+        new MealTypes(req.body)
       );
       res.send({ data });
     } catch (err) {
@@ -88,9 +88,9 @@ class meal_typesController {
     }
   }
 
-  static async delete (req, res) {
+  static async delete(req, res) {
     try {
-      await Mealtypes.remove(req.params.id);
+      await MealTypes.remove(req.params.id);
       res.send({ message: 'mealtypes was deleted successfully!' });
     } catch (err) {
       if (err.kind === 'not_found') {
@@ -106,4 +106,4 @@ class meal_typesController {
   }
 }
 
-module.exports = meal_typesController;
+module.exports = MealTypesController;
