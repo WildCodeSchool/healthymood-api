@@ -11,7 +11,7 @@
     "start-watch": "npm-run-all migrate start:server:watch",
     "tests:setup-db": "docker-compose up -d test_db",
     "tests:migrate-db": "db-migrate up -e test",
-    "test": "jest",
+    "test": "jest --testRunner='jest-circus/runner' --maxWorkers=1",
     "lint": "semistandard --fix"
   },
   "husky": {
