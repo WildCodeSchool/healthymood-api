@@ -1,17 +1,17 @@
 const request = require('supertest');
 const app = require('../server.js');
-const Customer = require('../models/customer.model.js');
+const Ingredient = require('../models/ingredient.model.js');
 
-describe('customers endpoints', () => {
-  describe('GET /customers', () => {
-    describe('when there are two customers in DB', () => {
+describe('ingredients endpoints', () => {
+  describe('GET /ingredients', () => {
+    describe('when there are two ingredients in DB', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          Customer.create({ first_name: 'John', last_name: 'Doe', email: 'john.doe@gmail.com' }),
-          Customer.create({ first_name: 'Jane', last_name: 'Doe', email: 'jane.doe@gmail.com' })
+          Ingredient.create({ name: 'patates', is_allergen: false }),
+          Ingredient.create({ name: 'carottes', is_allergen: true })
         ]);
-        res = await request(app).get('/customers');
+        res = await request(app).get('/ingredients');
       });
 
       it('status is 200', async () => {
@@ -25,14 +25,13 @@ describe('customers endpoints', () => {
     });
   });
 
-  describe('POST /customers', () => {
+  describe('POST /ingredients', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/customers').send({
-          first_name: 'John',
-          last_name: 'Doe',
-          email: 'john.doe@gmail.com'
+        res = await request(app).post('/ingredients').send({
+          name: 'navet',
+          is_allergen: false
         });
       });
 
@@ -40,23 +39,21 @@ describe('customers endpoints', () => {
         expect(res.statusCode).toEqual(201);
       });
 
-      it('returns the id of the created customer', async () => {
+      it('returns the id of the created ingredient', async () => {
         expect(res.body.data).toHaveProperty('id');
       });
     });
 
-    describe('when a customer with the same email already exists in DB', () => {
+    describe('when an ingredient with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        Customer.create({
-          first_name: 'John',
-          last_name: 'Doe',
-          email: 'john.doe@gmail.com'
+        Ingredient.create({
+          name: 'poireau',
+          is_allergen: true
         });
-        res = await request(app).post('/customers').send({
-          first_name: 'Jane',
-          last_name: 'Doe',
-          email: 'john.doe@gmail.com'
+        res = await request(app).post('/ingredients').send({
+          name: 'poireau',
+          is_allergen: true
         });
       });
 
