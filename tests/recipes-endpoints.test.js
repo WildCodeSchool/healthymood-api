@@ -59,7 +59,7 @@ describe('Recipes endpoints', () => {
     });
   });
 
-  xdescribe('POST /recipes', () => {
+  describe('POST /recipes', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
