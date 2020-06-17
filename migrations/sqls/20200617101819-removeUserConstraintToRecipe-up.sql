@@ -1,2 +1,3 @@
-ALTER TABLE `recipes` MODIFY user_id INT;
+SET FOREIGN_KEY_CHECKS=0;
+
 
