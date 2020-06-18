@@ -1,0 +1,1 @@
+ALTER TABLE addresses MODIFY `zipcode` VARCHAR(50);

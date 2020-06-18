@@ -44,6 +44,8 @@ app.use('/recipe-categories', require('./routes/recipe-categories.routes.js'));
 app.use('/notifications', require('./routes/notification.routes.js'));
 app.use('/users', require('./routes/user.routes.js'));
 app.use('/recipes', require('./routes/recipe.routes.js'));
+app.use('/generic_pages', require('./routes/generic_pages.routes.js'));
+app.use('/addresses', require('./routes/addresse.routes.js'));
 
 // set port, listen for requests
 const server = app.listen(PORT, () => {
@@ -51,5 +53,4 @@ const server = app.listen(PORT, () => {
     console.log('Server is running on port ' + PORT);
   }
 });
-
 module.exports = server;
