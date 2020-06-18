@@ -2,6 +2,8 @@ const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const cors = require('cors');
 const YAML = require('yamljs');
+require('dotenv').config();
+
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
 
 const app = express();
