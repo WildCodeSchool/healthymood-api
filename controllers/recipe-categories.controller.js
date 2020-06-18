@@ -2,7 +2,6 @@ const RecipeCategory = require('../models/recipe-categories.model.js');
 
 class RecipesCategoryController {
   static async create (req, res) {
-    console.log('test accès au controller');
     if (!req.body) {
       return res
         .status(400)
