@@ -13,9 +13,9 @@ class AddressesController {
     }
 
     try {
-        const addresse = new Addresse(req.body);
-        const data = await Addresse.create(addresse);
-        res.status(201).send({ data });
+      const addresse = new Addresse(req.body);
+      const data = await Addresse.create(addresse);
+      res.status(201).send({ data });
     } catch (err) {
       res.status(500).send({
         errorMessage:
@@ -30,10 +30,10 @@ class AddressesController {
         .map((a) => new Addresse(a))
         .map((a) => ({
           id: a.id,
-          street:a.street,
-          zipcode:a.zipcode,
-          city:a.city,
-          country:a.country,          
+          street: a.street,
+          zipcode: a.zipcode,
+          city: a.city,
+          country: a.country
         }));
       res.send({ data });
     } catch (err) {

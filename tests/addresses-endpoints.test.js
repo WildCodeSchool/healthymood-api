@@ -33,7 +33,7 @@ describe('addresses endpoints', () => {
           street: 'avenue berthelot',
           zipcode: 69003,
           city: 'lyon',
-          country: 'france' 
+          country: 'france'
         });
       });
 
