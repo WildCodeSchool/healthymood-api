@@ -14,7 +14,7 @@ class MealTypesController {
       const mealtypes = new MealTypes(req.body);
       if (await MealTypes.nameAlreadyExists(mealtypes.name)) {
         res.status(400).send({
-          errorMessage: 'An mealtypes with this name already exists !'
+          errorMessage: 'A mealtype with this name already exists !'
         });
       } else {
         const data = await MealTypes.create(mealtypes);
