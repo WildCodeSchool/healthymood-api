@@ -9,8 +9,7 @@ class Database {
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'root',
       database: process.env.DB_NAME || 'healthymood_api_database',
-      connectionLimit: 10,
-      multipleStatements: true
+      connectionLimit: 10
     };
 
     if (process.env.NODE_ENV === 'test') {
@@ -20,8 +19,7 @@ class Database {
         user: process.env.DB_USER_TEST || 'root',
         password: process.env.DB_PASS_TEST || 'root',
         database: process.env.DB_NAME_TEST || 'healthymood_api_database_test',
-        connectionLimit: 10,
-        multipleStatements: true
+        connectionLimit: 10
       };
     }
 
