@@ -17,6 +17,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.use('/ingredients', require('./routes/ingredient.routes.js'));
 app.use('/notifications', require('./routes/notification.routes.js'));
+app.use('/users', require('./routes/user.routes.js'));
 app.use('/recipes', require('./routes/recipe.routes.js'));
 
 // set port, listen for requests
