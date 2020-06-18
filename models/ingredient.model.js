@@ -18,7 +18,7 @@ class Ingredient {
 
   static async findById (id) {
     return db
-      .query(`SELECT * FROM ingredients WHERE id = ${id}`)
+      .query('SELECT * FROM ingredients WHERE id = ?', [id])
       .then((rows) => {
         if (rows.length) {
           return Promise.resolve(rows[0]);

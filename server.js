@@ -19,6 +19,7 @@ app.use('/ingredients', require('./routes/ingredient.routes.js'));
 app.use('/notifications', require('./routes/notification.routes.js'));
 app.use('/recipes', require('./routes/recipe.routes.js'));
 app.use('/generic_pages', require('./routes/generic_pages.routes.js'));
+app.use('/addresses', require('./routes/addresse.routes.js'));
 
 // set port, listen for requests
 const server = app.listen(PORT, () => {
