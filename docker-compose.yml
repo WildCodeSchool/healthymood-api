@@ -8,6 +8,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=healthymood_api_database_test
+    tmpfs: /var/lib/mysql
+
   db:
     image: "mysql:5.7"
     ports:
