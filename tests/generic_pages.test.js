@@ -50,8 +50,7 @@ describe('genericPage endpoints', () => {
         });
       });
 
-      it('returns 201 status', async () => {
-        console.log('rip');
+      it('returns 201 status', async () => {      
         expect(res.statusCode).toEqual(201);
       });
 
