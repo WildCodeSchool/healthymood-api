@@ -10,14 +10,21 @@ class MealTypesController {
     if (!req.body.name) {
       return res.status(400).send({ errorMessage: 'Name can not be empty!' });
     }
-    const mealtypes = new MealTypes(req.body);
-    if (await MealTypes.nameAlreadyExists(mealtypes.name)) {
-      res.status(400).send({
-        errorMessage: 'An mealtypes with this name already exists !'
+    try {
+      const mealtypes = new MealTypes(req.body);
+      if (await MealTypes.nameAlreadyExists(mealtypes.name)) {
+        res.status(400).send({
+          errorMessage: 'An mealtypes with this name already exists !'
+        });
+      } else {
+        const data = await MealTypes.create(mealtypes);
+        res.status(201).send({ data });
+      }
+    } catch (err) {
+      res.status(500).send({
+        errorMessage:
+          err.message || 'Some error occurred while creating the MealTypes.'
       });
-    } else {
-      const data = await MealTypes.create(mealtypes);
-      res.status(201).send({ data });
     }
   }
 

@@ -26,11 +26,7 @@ process.on('uncaughtException', error => {
   console.log('uncaughtException', JSON.stringify(error), error.stack);
   process.exit(1);
 });
-process.on('beforeExit', () => {
-  app.close((err) => {
-    if (err) console.error(JSON.stringify(error), error.stack);
-  });
-});
+
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
     res.status(401).send('invalid token...');
