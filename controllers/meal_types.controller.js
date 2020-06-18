@@ -23,7 +23,7 @@ class MealTypesController {
     } catch (err) {
       res.status(500).send({
         errorMessage:
-          err.message || 'Some error occurred while creating the MealTypes.'
+          err.message || 'Some error occurred while creating A mealtype.'
       });
     }
   }
@@ -40,7 +40,7 @@ class MealTypesController {
     } catch (err) {
       res.status(500).send({
         errorMessage:
-          err.message || 'Some error occurred while retrieving mealtypess.'
+          err.message || 'Some error occurred while retrieving A mealtype.'
       });
     }
   }
@@ -52,11 +52,11 @@ class MealTypesController {
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
-          errorMessage: `mealtypes with id ${req.params.id} not found.`
+          errorMessage: `A mealtype with id ${req.params.id} not found.`
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Error retrieving mealtypes with id ' + req.params.id
+          errorMessage: 'Error retrieving  mealtype with id ' + req.params.id
         });
       }
     }
@@ -80,7 +80,7 @@ class MealTypesController {
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Error updating mealtypes with id ' + req.params.id
+          errorMessage: 'Error updating mealtype with id ' + req.params.id
         });
       }
     }
@@ -93,11 +93,11 @@ class MealTypesController {
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
-          errorMessage: `Not found mealtypes with id ${req.params.id}.`
+          errorMessage: `Not found mealtype with id ${req.params.id}.`
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Could not delete mealtypes with id ' + req.params.id
+          errorMessage: 'Could not delete mealtype with id ' + req.params.id
         });
       }
     }
