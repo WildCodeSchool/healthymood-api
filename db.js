@@ -1,8 +1,8 @@
-require('dotenv').config();
+
 const mysql = require('mysql');
 
 class Database {
-  init () {
+  init() {
     let config = {
       host: process.env.DB_HOST || 'localhost',
       port: process.env.DB_PORT || '3307',
@@ -29,7 +29,7 @@ class Database {
     return this;
   }
 
-  query (...args) {
+  query(...args) {
     return new Promise((resolve, reject) => {
       this.connection.query(...args, (err, res) => {
         if (err) reject(err);
@@ -38,7 +38,7 @@ class Database {
     });
   }
 
-  closeConnection () {
+  closeConnection() {
     return new Promise((resolve, reject) => {
       if (this.connection) {
         this.connection.end((err, res) => {
@@ -51,7 +51,7 @@ class Database {
     });
   }
 
-  deleteAllData () {
+  deleteAllData() {
     return this.query(`
     SET FOREIGN_KEY_CHECKS=0;
     TRUNCATE ingredients;
