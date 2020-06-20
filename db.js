@@ -9,7 +9,8 @@ class Database {
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'root',
       database: process.env.DB_NAME || 'healthymood_api_database',
-      connectionLimit: 10
+      connectionLimit: 10,
+      multipleStatements: true
     };
 
     if (process.env.NODE_ENV === 'test') {
@@ -19,7 +20,8 @@ class Database {
         user: process.env.DB_USER_TEST || 'root',
         password: process.env.DB_PASS_TEST || 'root',
         database: process.env.DB_NAME_TEST || 'healthymood_api_database_test',
-        connectionLimit: 10
+        connectionLimit: 10,
+        multipleStatements: true
       };
     }
 
@@ -49,11 +51,22 @@ class Database {
     });
   }
 
-  deleteAllData () {
-    return this.query(`
-      TRUNCATE customers;
-    `);
+  async deleteAllData () {
+    if (process.env.NODE_ENV !== 'test') throw new Error('Cannot truncate all table if not in test env !');
+    const truncates = await this.getTableNames().then(rows => rows.map(row => `TRUNCATE ${row.table_name};`).join(' '));
+    const sql = `SET FOREIGN_KEY_CHECKS=0; ${truncates} SET FOREIGN_KEY_CHECKS=1;`;
+    return this.query(sql);
+  }
+
+  async getTableNames () {
+    if (!this._tableNames) {
+      this._tableNames = await this.query(`
+          SELECT table_name
+          FROM INFORMATION_SCHEMA.TABLES where table_schema = '${process.env.DB_NAME_TEST || 'healthymood_api_database_test'}' and table_name != 'migrations'
+      `);
+    }
+    return this._tableNames;
   }
 }
 
-module.exports = (new Database()).init();
+module.exports = new Database().init();

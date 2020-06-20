@@ -1,17 +1,17 @@
 const request = require('supertest');
 const app = require('../server.js');
-const Customer = require('../models/customer.model.js');
+const RecipesCategory = require('../models/recipe-categories.model.js');
 
-describe('customers endpoints', () => {
-  describe('GET /customers', () => {
-    describe('when there are two customers in DB', () => {
+describe('recipe-categories endpoints', () => {
+  describe('GET /recipe-categories', () => {
+    describe('when there are two recipe categories in DB', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          Customer.create({ first_name: 'John', last_name: 'Doe', email: 'john.doe@gmail.com' }),
-          Customer.create({ first_name: 'Jane', last_name: 'Doe', email: 'jane.doe@gmail.com' })
+          RecipesCategory.create({ name: 'dejeuner' }),
+          RecipesCategory.create({ name: 'diner' })
         ]);
-        res = await request(app).get('/customers');
+        res = await request(app).get('/recipe-categories');
       });
 
       it('status is 200', async () => {
@@ -25,14 +25,12 @@ describe('customers endpoints', () => {
     });
   });
 
-  describe('POST /customers', () => {
+  describe('POST /recipe-categories', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/customers').send({
-          first_name: 'John',
-          last_name: 'Doe',
-          email: 'john.doe@gmail.com'
+        res = await request(app).post('/recipe-categories').send({
+          name: 'dessert'
         });
       });
 
@@ -40,23 +38,19 @@ describe('customers endpoints', () => {
         expect(res.statusCode).toEqual(201);
       });
 
-      it('returns the id of the created customer', async () => {
+      it('returns the id of the created recipe-categories', async () => {
         expect(res.body.data).toHaveProperty('id');
       });
     });
 
-    describe('when a customer with the same email already exists in DB', () => {
+    describe('when a recipe-categories with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        Customer.create({
-          first_name: 'John',
-          last_name: 'Doe',
-          email: 'john.doe@gmail.com'
+        RecipesCategory.create({
+          name: 'entrée'
         });
-        res = await request(app).post('/customers').send({
-          first_name: 'Jane',
-          last_name: 'Doe',
-          email: 'john.doe@gmail.com'
+        res = await request(app).post('/recipe-categories').send({
+          name: 'entrée'
         });
       });
 
