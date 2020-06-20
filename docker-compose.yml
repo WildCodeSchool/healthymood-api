@@ -30,7 +30,7 @@ services:
       - DB_HOST=db
       - DB_PORT=3306
     ports:
-      - "3000:3000"
+      - "5000:5000"
     command: 'bash -c "chmod u+x ./wait-for-it.sh && ./wait-for-it.sh db:3306 && npm start"'
 
 volumes:
