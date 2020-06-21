@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../server.js');
-const mealtypes = require('../models/meal_types.model.js');
+const Mealtypes = require('../models/meal_types.model.js');
 
 describe('mealtypes endpoints', () => {
     describe('GET/meal_types', () => {
@@ -8,8 +8,8 @@ describe('mealtypes endpoints', () => {
             let res;
             beforeEach(async () => {
                 await Promise.all([
-                    mealtypes.create({ name: 'entrée' }),
-                    mealtypes.create({ name: 'dessert' })
+                    Mealtypes.create({ name: 'entrée' }),
+                    Mealtypes.create({ name: 'dessert' })
                 ]);
                 res = await request(app).get('/meal_types');
             });
@@ -22,7 +22,7 @@ describe('mealtypes endpoints', () => {
             });
         });
     });
-    xdescribe('POST/meal_types', () => {
+    describe('POST/meal_types', () => {
         describe('when a valid payload is sent', () => {
             let res;
             beforeAll(async () => {
@@ -38,10 +38,10 @@ describe('mealtypes endpoints', () => {
                 expect(res.body.data).toHaveProperty('id');
             });
         });
-        xdescribe('when a mealtype with the same name already exists in DB', () => {
+        describe('when a mealtype with the same name already exists in DB', () => {
             let res;
             beforeAll(async () => {
-                mealtypes.create({
+                Mealtypes.create({
                     name: 'brunch'
                 });
                 res = await request(app).post('/meal_types').send({

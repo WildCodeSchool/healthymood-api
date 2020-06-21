@@ -48,6 +48,7 @@ app.use('/users', require('./routes/user.routes.js'));
 app.use('/recipes', require('./routes/recipe.routes.js'));
 app.use('/generic_pages', require('./routes/generic_pages.routes.js'));
 app.use('/addresses', require('./routes/addresse.routes.js'));
+app.use('/meal_types', require('./routes/meal_types.routes.js'));
 
 // set port, listen for requests
 const server = app.listen(PORT, () => {
