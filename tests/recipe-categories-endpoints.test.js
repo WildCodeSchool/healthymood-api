@@ -1,17 +1,17 @@
 const request = require('supertest');
 const app = require('../server.js');
-const Ingredient = require('../models/ingredient.model.js');
+const RecipesCategory = require('../models/recipe-categories.model.js');
 
-describe('ingredients endpoints', () => {
-  describe('GET /ingredients', () => {
-    describe('when there are two ingredients in DB', () => {
+describe('recipe-categories endpoints', () => {
+  describe('GET /recipe-categories', () => {
+    describe('when there are two recipe categories in DB', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          Ingredient.create({ name: 'patates', is_allergen: false }),
-          Ingredient.create({ name: 'carottes', is_allergen: true })
+          RecipesCategory.create({ name: 'dejeuner' }),
+          RecipesCategory.create({ name: 'diner' })
         ]);
-        res = await request(app).get('/ingredients');
+        res = await request(app).get('/recipe-categories');
       });
 
       it('status is 200', async () => {
@@ -25,13 +25,12 @@ describe('ingredients endpoints', () => {
     });
   });
 
-  describe('POST /ingredients', () => {
+  describe('POST /recipe-categories', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/ingredients').send({
-          name: 'navet',
-          is_allergen: false
+        res = await request(app).post('/recipe-categories').send({
+          name: 'dessert'
         });
       });
 
@@ -39,21 +38,19 @@ describe('ingredients endpoints', () => {
         expect(res.statusCode).toEqual(201);
       });
 
-      it('returns the id of the created ingredient', async () => {
+      it('returns the id of the created recipe-categories', async () => {
         expect(res.body.data).toHaveProperty('id');
       });
     });
 
-    xdescribe('when an ingredient with the same name already exists in DB', () => {
+    describe('when a recipe-categories with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        Ingredient.create({
-          name: 'poireau',
-          is_allergen: true
+        RecipesCategory.create({
+          name: 'entrée'
         });
-        res = await request(app).post('/ingredients').send({
-          name: 'poireau',
-          is_allergen: true
+        res = await request(app).post('/recipe-categories').send({
+          name: 'entrée'
         });
       });
 

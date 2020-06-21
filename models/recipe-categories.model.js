@@ -1,24 +1,23 @@
 const db = require('../db.js');
 
-class Ingredient {
-  constructor (ingredient) {
-    this.id = ingredient.id;
-    this.name = ingredient.name;
-    this.is_allergen = ingredient.is_allergen;
+class RecipeCategory {
+  constructor (recipeCategory) {
+    this.id = recipeCategory.id;
+    this.name = recipeCategory.name;
   }
 
-  static async create (newIngredient) {
+  static async create (newRecipeCategory) {
     return db
-      .query('INSERT INTO ingredients SET ?', newIngredient)
+      .query('INSERT INTO recipe_categories SET ?', newRecipeCategory)
       .then((res) => {
-        newIngredient.id = res.insertId;
-        return newIngredient;
+        newRecipeCategory.id = res.insertId;
+        return newRecipeCategory;
       });
   }
 
   static async findById (id) {
     return db
-      .query('SELECT * FROM ingredients WHERE id = ?', [id])
+      .query(`SELECT * FROM recipe_categories WHERE id = ${id}`)
       .then((rows) => {
         if (rows.length) {
           return Promise.resolve(rows[0]);
@@ -32,7 +31,7 @@ class Ingredient {
 
   static async nameAlreadyExists (name) {
     return db
-      .query('SELECT * FROM ingredients WHERE name = ?', [name])
+      .query('SELECT * FROM recipe_categories WHERE name = ?', [name])
       .then((rows) => {
         if (rows.length) {
           return Promise.resolve(true);
@@ -43,21 +42,20 @@ class Ingredient {
   }
 
   static async getAll (result) {
-    return db.query('SELECT * FROM ingredients');
+    return db.query('SELECT * FROM recipe_categories');
   }
 
-  static async updateById (id, ingredient) {
+  static async updateById (id, recipeCategory) {
     return db
-      .query('UPDATE ingredients SET name = ?, is_allergen = ? WHERE id = ?', [
-        ingredient.name,
-        ingredient.is_allergen,
+      .query('UPDATE recipe_categories SET name = ?, WHERE id = ?', [
+        recipeCategory.name,
         id
       ])
       .then(() => this.findById(id));
   }
 
   static async remove (id) {
-    return db.query('DELETE FROM ingredients WHERE id = ?', id).then((res) => {
+    return db.query('DELETE FROM recipe_categories WHERE id = ?', id).then((res) => {
       if (res.affectedRows !== 0) {
         return Promise.resolve();
       } else {
@@ -69,8 +67,8 @@ class Ingredient {
   }
 
   static async removeAll (result) {
-    return db.query('DELETE FROM ingredients');
+    return db.query('DELETE FROM recipe_categories');
   }
 }
 
-module.exports = Ingredient;
+module.exports = RecipeCategory;
