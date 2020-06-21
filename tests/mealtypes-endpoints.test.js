@@ -3,7 +3,7 @@ const app = require('../server.js');
 const Mealtypes = require('../models/meal_types.model.js');
 
 describe('mealtypes endpoints', () => {
-  describe('GET/meal_types', () => {
+  describe('GET /meal_types', () => {
     describe('when there are two mealtypes in DB', () => {
       let res;
       beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('mealtypes endpoints', () => {
       });
     });
   });
-  describe('POST/meal_types', () => {
+  describe('POST /meal_types', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
