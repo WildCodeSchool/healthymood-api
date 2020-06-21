@@ -3,7 +3,7 @@ const app = require('../server.js');
 const mealtypes = require('../models/meal_types.model.js');
 
 describe('mealtypes endpoints', () => {
-    describe('GET/meal_types', () => {
+    describe('GET /meal_types', () => {
         describe('when there are two mealtypes in DB', () => {
             let res;
             beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('mealtypes endpoints', () => {
             });
         });
     });
-    xdescribe('POST/meal_types', () => {
+    describe('POST/meal_types', () => {
         describe('when a valid payload is sent', () => {
             let res;
             beforeAll(async () => {
@@ -38,7 +38,7 @@ describe('mealtypes endpoints', () => {
                 expect(res.body.data).toHaveProperty('id');
             });
         });
-        xdescribe('when a mealtype with the same name already exists in DB', () => {
+        describe('when a mealtype with the same name already exists in DB', () => {
             let res;
             beforeAll(async () => {
                 mealtypes.create({
