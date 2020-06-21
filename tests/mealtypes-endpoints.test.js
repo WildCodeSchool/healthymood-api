@@ -38,7 +38,7 @@ describe('mealtypes endpoints', () => {
                 expect(res.body.data).toHaveProperty('id');
             });
         });
-        xdescribe('when an mealtypes with the same name already exists in DB', () => {
+        xdescribe('when a mealtype with the same name already exists in DB', () => {
             let res;
             beforeAll(async () => {
                 mealtypes.create({

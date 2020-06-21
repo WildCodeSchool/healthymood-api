@@ -2,7 +2,7 @@
 const mysql = require('mysql');
 
 class Database {
-  init() {
+  init () {
     let config = {
       host: process.env.DB_HOST || 'localhost',
       port: process.env.DB_PORT || '3307',
@@ -29,7 +29,7 @@ class Database {
     return this;
   }
 
-  query(...args) {
+  query (...args) {
     return new Promise((resolve, reject) => {
       this.connection.query(...args, (err, res) => {
         if (err) reject(err);
@@ -38,7 +38,7 @@ class Database {
     });
   }
 
-  closeConnection() {
+  closeConnection () {
     return new Promise((resolve, reject) => {
       if (this.connection) {
         this.connection.end((err, res) => {
@@ -51,14 +51,14 @@ class Database {
     });
   }
 
-  async deleteAllData() {
+  async deleteAllData () {
     if (process.env.NODE_ENV !== 'test') throw new Error('Cannot truncate all table if not in test env !');
     const truncates = await this.getTableNames().then(rows => rows.map(row => `TRUNCATE ${row.table_name};`).join(' '));
     const sql = `SET FOREIGN_KEY_CHECKS=0; ${truncates} SET FOREIGN_KEY_CHECKS=1;`;
     return this.query(sql);
   }
 
-  async getTableNames() {
+  async getTableNames () {
     if (!this._tableNames) {
       this._tableNames = await this.query(`
             SELECT table_name
@@ -67,9 +67,6 @@ class Database {
     }
     return this._tableNames;
   }
-
-
-
 }
 
 module.exports = new Database().init();
