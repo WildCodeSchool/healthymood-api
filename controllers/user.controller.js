@@ -2,16 +2,15 @@ const User = require('../models/user.model.js');
 
 class UsersController {
   static async create (req, res) {
-    if (!req.body) {
-      return res
-        .status(400)
-        .send({ errorMessage: 'Content can not be empty!' });
-    }
+    const clientPayload = req.body;
 
-    if (!req.body.username) {
-      return res.status(400).send({ errorMessage: 'Username can not be empty!' });
-    }
+    const isNotEmptyStirng = (str) => {
+      return typeof str === 'string' && str.length > 0;
+    };
 
+    if (!isNotEmptyStirng(clientPayload.email) || !isNotEmptyStirng(clientPayload.password)) {
+      return res.status(422).send({ errorMessage: 'Missing attribute !' });
+    }
     try {
       const user = new User(req.body);
       if (await User.usernameAlreadyExists(user.username) || await User.emailAlreadyExists(user.email)) {
