@@ -5,6 +5,8 @@ const cors = require('cors');
 const extractToken = require('./middlewares/extractToken');
 const requireAuth = require('./middlewares/requireAuth');
 const YAML = require('yamljs');
+require('dotenv').config();
+
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
 
 const app = express();
@@ -32,7 +34,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 app.use(extractToken);
 
+// routes
 app.use('/ingredients', require('./routes/ingredient.routes.js'));
+app.use('/meal_types', require('./routes/meal_types.routes.js'));
+app.use('/recipe-categories', require('./routes/recipe-categories.routes.js'));
 app.use('/notifications', require('./routes/notification.routes.js'));
 app.use('/recipes', require('./routes/recipe.routes.js'));
 app.use('/users', require('./routes/user.routes.js'));
@@ -56,5 +61,4 @@ const server = app.listen(PORT, () => {
     console.log('Server is running on port ' + PORT);
   }
 });
-
 module.exports = server;
