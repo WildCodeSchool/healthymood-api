@@ -36,7 +36,7 @@ class Recipe {
   }
 
   static async findByKeyWord (keyword) {
-    const sqlValues = `%${keyword}%`
+    const sqlValues = `%${keyword}%`;
     return db.query('SELECT * FROM recipes WHERE name LIKE ? OR content LIKE ?', [sqlValues, sqlValues]).then((res) => {
       if (res.kength) {
         return Promise.resolve(res[0]);
