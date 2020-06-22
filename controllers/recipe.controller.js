@@ -29,35 +29,11 @@ class RecipesController {
   }
 
   static async findAll (req, res) {
-    try {
-      const data = (await Recipe.getAll())
-        .map((r) => new Recipe(r))
-        .map((r) => ({
-          id: r.id,
-          name: r.name,
-          content: r.content,
-          created_at: r.created_at,
-          updated_at: r.updated_at,
-          preparation_duration_seconds: r.preparation_duration_seconds,
-          budget: r.budget,
-          slug: r.slug,
-          calories: r.calories,
-          published: r.published,
-          user_id: r.user_id
-        }));
-      res.send({ data });
-    } catch (err) {
-      res.status(500).send({
-        errorMessage:
-          err.message || 'Some error occurred while retrieving recipes.'
-      });
-    }
-  }
-
-  static async findOne (req, res) {
+    console.log('je rentre dans find all ' + req.query.search)
     if (req.query.search) {
       try {
         const data = await Recipe.findByKeyWord(req.query.search);
+        console.log(data)
         res.send({ data });
       } catch (err) {
         if (err.kind === 'not_found') {
@@ -72,6 +48,33 @@ class RecipesController {
       }
     } else {
       try {
+        const data = (await Recipe.getAll())
+          .map((r) => new Recipe(r))
+          .map((r) => ({
+            id: r.id,
+            name: r.name,
+            content: r.content,
+            created_at: r.created_at,
+            updated_at: r.updated_at,
+            preparation_duration_seconds: r.preparation_duration_seconds,
+            budget: r.budget,
+            slug: r.slug,
+            calories: r.calories,
+            published: r.published,
+            user_id: r.user_id
+          }));
+        res.send({ data });
+      } catch (err) {
+        res.status(500).send({
+          errorMessage:
+            err.message || 'Some error occurred while retrieving recipes.'
+        });
+      }
+    }
+  }
+
+  static async findOne (req, res) {
+      try {
         const data = await Recipe.findById(req.params.id);
         res.send({ data });
       } catch (err) {
@@ -84,7 +87,6 @@ class RecipesController {
             errorMessage: 'Error retrieving Recipe with id ' + req.params.id
           });
         }
-      }
     }
   }
 

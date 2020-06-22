@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../server.js');
 const GenericPage = require('../models/generic_pages.model.js');
 
-describe('genericPage endpoints', () => {
+xdescribe('genericPage endpoints', () => {
   describe('GET /generic_pages', () => {
     describe('when there are two genericPage in DB', () => {
       let res;

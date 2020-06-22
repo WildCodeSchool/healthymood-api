@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../server.js');
 const RecipesCategory = require('../models/recipe-categories.model.js');
 
-describe('recipe-categories endpoints', () => {
+xdescribe('recipe-categories endpoints', () => {
   describe('GET /recipe-categories', () => {
     describe('when there are two recipe categories in DB', () => {
       let res;
