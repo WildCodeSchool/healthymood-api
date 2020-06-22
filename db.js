@@ -1,4 +1,4 @@
-require('dotenv').config();
+
 const mysql = require('mysql');
 
 class Database {
@@ -61,9 +61,9 @@ class Database {
   async getTableNames () {
     if (!this._tableNames) {
       this._tableNames = await this.query(`
-          SELECT table_name
-          FROM INFORMATION_SCHEMA.TABLES where table_schema = '${process.env.DB_NAME_TEST || 'healthymood_api_database_test'}' and table_name != 'migrations'
-      `);
+            SELECT table_name
+            FROM INFORMATION_SCHEMA.TABLES where table_schema = '${process.env.DB_NAME_TEST || 'healthymood_api_database_test'}' and table_name != 'migrations'
+        `);
     }
     return this._tableNames;
   }
