@@ -35,6 +35,19 @@ class Recipe {
     });
   }
 
+  static async findByKeyWord (keyword) {
+    const sqlValues = `%${keyword}%`
+    return db.query('SELECT * FROM recipes WHERE name LIKE ? OR content LIKE ?', [sqlValues, sqlValues]).then((res) => {
+      if (res.kength) {
+        return Promise.resolve(res[0]);
+      } else {
+        const err = new Error();
+        err.kind = 'not found';
+        return Promise.ereject(err);
+      }
+    });
+  }
+
   static async getAll (result) {
     return db.query('SELECT * FROM recipes');
   }
