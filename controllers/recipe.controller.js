@@ -55,18 +55,35 @@ class RecipesController {
   }
 
   static async findOne (req, res) {
-    try {
-      const data = await Recipe.findById(req.params.id);
-      res.send({ data });
-    } catch (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          errorMessage: `Recipe with id ${req.params.id} not found.`
-        });
-      } else {
-        res.status(500).send({
-          errorMessage: 'Error retrieving Recipe with id ' + req.params.id
-        });
+    if (req.query.search) {
+      try {
+        const data = await Recipe.findByKeyWord(req.query.search);
+        res.send({ data });
+      } catch (err) {
+        if (err.kind === 'not_found') {
+          res.status(404).send({
+            errorMessage: `Recipe with keyword ${req.query.search} not found.`
+          });
+        } else {
+          res.status(500).send({
+            errorMessage: 'Error retrieving Recipe with keyword ' + req.query.search
+          });
+        }
+      }
+    } else {
+      try {
+        const data = await Recipe.findById(req.params.id);
+        res.send({ data });
+      } catch (err) {
+        if (err.kind === 'not_found') {
+          res.status(404).send({
+            errorMessage: `Recipe with id ${req.params.id} not found.`
+          });
+        } else {
+          res.status(500).send({
+            errorMessage: 'Error retrieving Recipe with id ' + req.params.id
+          });
+        }
       }
     }
   }
