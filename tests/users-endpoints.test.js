@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../server.js');
 const User = require('../models/user.model.js');
 
-xdescribe('users endpoints', () => {
+describe('users endpoints', () => {
   describe('GET /users', () => {
     describe('when there are two users in DB', () => {
       let res;

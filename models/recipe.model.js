@@ -37,7 +37,7 @@ class Recipe {
 
   static async findByKeyWord (keyword) {
     const sqlValues = `%${keyword}%`;
-    console.log('ma recherche sql ' + sqlValues)
+    console.log('ma recherche sql ' + sqlValues);
     return db.query('SELECT * FROM recipes WHERE name LIKE ? OR content LIKE ?', [sqlValues, sqlValues]);
   }
 

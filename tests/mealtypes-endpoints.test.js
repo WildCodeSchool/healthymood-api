@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../server.js');
 const Mealtypes = require('../models/meal_types.model.js');
 
-xdescribe('mealtypes endpoints', () => {
+describe('mealtypes endpoints', () => {
   describe('GET /meal_types', () => {
     describe('when there are two mealtypes in DB', () => {
       let res;

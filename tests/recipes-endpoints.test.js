@@ -3,7 +3,7 @@ const app = require('../server.js');
 const Recipe = require('../models/recipe.model.js');
 
 describe('Recipes endpoints', () => {
-  xdescribe('GET /recipes', () => {
+  describe('GET /recipes', () => {
     describe('when there are three recipes in DB', () => {
       let res;
       beforeEach(async () => {
@@ -112,10 +112,10 @@ describe('Recipes endpoints', () => {
         expect(Array.isArray(res.body.data));
         expect(res.body.data.length).toBe(2); // <-- Ahahaha des barres
       });
-    })
-  })
+    });
+  });
 
-  xdescribe('POST /recipes', () => {
+  describe('POST /recipes', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {

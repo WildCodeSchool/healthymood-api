@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../server.js');
 const Addresse = require('../models/addresse.model.js');
 
-xdescribe('addresses endpoints', () => {
+describe('addresses endpoints', () => {
   describe('GET /addresses', () => {
     describe('when there are two addresses in DB', () => {
       let res;
