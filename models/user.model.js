@@ -20,7 +20,7 @@ class User {
   }
 
   static async create (newUser) {
-    const { email, password, firstname, lastname, username, avatar, is_admin, blocked, fb_uid, adress_id } = newUser;
+    const { email, password, firstname, lastname, username, avatar, is_admin, blocked, fb_uid, address_id } = newUser;
     const hash = await argon2.hash(password);
     return db
       .query(
@@ -35,7 +35,7 @@ class User {
           is_admin,
           blocked,
           fb_uid,
-          adress_id
+          address_id
         ]
       )
       .then((res) => {

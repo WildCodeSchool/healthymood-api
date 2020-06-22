@@ -4,15 +4,15 @@ class UsersController {
   static async create (req, res) {
     const clientPayload = req.body;
 
-    const isNotEmptyStirng = (str) => {
+    const isNotEmptyString = (str) => {
       return typeof str === 'string' && str.length > 0;
     };
 
-    if (!isNotEmptyStirng(clientPayload.email) || !isNotEmptyStirng(clientPayload.password)) {
+    if (!isNotEmptyString(clientPayload.username) || !isNotEmptyString(clientPayload.email) || !isNotEmptyString(clientPayload.password)) {
       return res.status(422).send({ errorMessage: 'Missing attribute !' });
     }
     try {
-      const user = new User(req.body);
+      const user = new User(clientPayload);
       if (await User.usernameAlreadyExists(user.username) || await User.emailAlreadyExists(user.email)) {
         res.status(400).send({
           errorMessage: 'A user with this username or this email already exists !'

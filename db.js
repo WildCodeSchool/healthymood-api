@@ -53,7 +53,7 @@ class Database {
     if (process.env.NODE_ENV !== 'test') throw new Error('Cannot truncate all table if not in test env !');
     const truncates = await this.getTableNames().then(rows => rows.map(row => `TRUNCATE ${row.TABLE_NAME};`).join(' '));
     const sql = `SET FOREIGN_KEY_CHECKS=0; ${truncates} SET FOREIGN_KEY_CHECKS=1;`;
-    console.log(sql);
+    // console.log(sql);
     return this.query(sql);
   }
 

@@ -10,11 +10,17 @@ describe('users endpoints', () => {
         await Promise.all([
           User.create({
             username: 'ana',
-            email: 'ana@gmail.cwo'
+            email: 'ana@gmail.cwo',
+            password: 'ddddddddddd',
+            is_admin: false,
+            blocked: false
           }),
           User.create({
             username: 'ana2',
-            email: 'ana@gmail.co'
+            email: 'ana@gmail.co',
+            password: 'ifanrivgn',
+            is_admin: true,
+            blocked: false
           })
         ]);
         res = await request(app).get('/users');
@@ -57,16 +63,22 @@ describe('users endpoints', () => {
       });
     });
 
-    describe('when a user with the same username already exists in DB', () => {
+    describe('when a user with the same username or email already exists in DB', () => {
       let res;
       beforeAll(async () => {
         User.create({
           username: 'ana',
-          email: 'ana3@gmail.co'
+          email: 'ana3@gmail.co',
+          password: 'ffffffffffff',
+          is_admin: true,
+          blocked: false
         });
         res = await request(app).post('/users').send({
           username: 'ana',
-          email: 'ana3@gmail.co'
+          email: 'ana3@gmail.co',
+          password: 'ffffffffffff',
+          is_admin: true,
+          blocked: false
         });
       });
 
@@ -74,7 +86,7 @@ describe('users endpoints', () => {
         expect(res.status).toBe(400);
       });
 
-      it('retuns an error message', async () => {
+      it('returns an error message', async () => {
         expect(res.body).toHaveProperty('errorMessage');
       });
     });
