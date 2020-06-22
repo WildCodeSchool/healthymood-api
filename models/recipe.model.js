@@ -1,7 +1,7 @@
-const db = require("../db.js");
+const db = require('../db.js');
 
 class Recipe {
-  constructor(recipe) {
+  constructor (recipe) {
     this.id = recipe.id;
     this.name = recipe.name;
     this.image = recipe.image;
@@ -16,41 +16,41 @@ class Recipe {
     this.user_id = recipe.user_id;
   }
 
-  static async create(newRecipe) {
-    return db.query("INSERT INTO recipes SET ?", newRecipe).then((res) => {
+  static async create (newRecipe) {
+    return db.query('INSERT INTO recipes SET ?', newRecipe).then((res) => {
       newRecipe.id = res.insertId;
       return newRecipe;
     });
   }
 
-  static async findById(id) {
-    return db.query("SELECT * FROM recipes WHERE id = ?", [id]).then((rows) => {
+  static async findById (id) {
+    return db.query('SELECT * FROM recipes WHERE id = ?', [id]).then((rows) => {
       if (rows.length) {
         return Promise.resolve(rows[0]);
       } else {
         const err = new Error();
-        err.kind = "not_found";
+        err.kind = 'not_found';
         return Promise.reject(err);
       }
     });
   }
 
-  static async findByKeyWord(keyword) {
+  static async findByKeyWord (keyword) {
     const sqlValues = `%${keyword}%`;
     return db.query(
-      "SELECT * FROM recipes WHERE name LIKE ? OR content LIKE ?",
+      'SELECT * FROM recipes WHERE name LIKE ? OR content LIKE ?',
       [sqlValues, sqlValues]
     );
   }
 
-  static async getAll(result) {
-    return db.query("SELECT * FROM recipes");
+  static async getAll (result) {
+    return db.query('SELECT * FROM recipes');
   }
 
-  static async updateById(id, recipe) {
+  static async updateById (id, recipe) {
     return db
       .query(
-        "UPDATE recipes SET name = ?, content = ?, image = ?, created_at = ?, updated_at = ?, preparation_duration_seconds = ?, budget = ?, slug = ?, calories = ?, published = ?, user_id = ?  WHERE id = ?",
+        'UPDATE recipes SET name = ?, content = ?, image = ?, created_at = ?, updated_at = ?, preparation_duration_seconds = ?, budget = ?, slug = ?, calories = ?, published = ?, user_id = ?  WHERE id = ?',
         [
           recipe.name,
           recipe.content,
@@ -63,26 +63,26 @@ class Recipe {
           recipe.calories,
           recipe.published,
           recipe.user_id,
-          id,
+          id
         ]
       )
       .then(() => this.findById(id));
   }
 
-  static async remove(id) {
-    return db.query("DELETE FROM recipes WHERE id = ?", id).then((res) => {
+  static async remove (id) {
+    return db.query('DELETE FROM recipes WHERE id = ?', id).then((res) => {
       if (res.affectedRows !== 0) {
         return Promise.resolve();
       } else {
         const err = new Error();
-        err.kind = "not_found";
+        err.kind = 'not_found';
         return Promise.reject(err);
       }
     });
   }
 
-  static async removeAll(result) {
-    return db.query("DELETE FROM recipes");
+  static async removeAll (result) {
+    return db.query('DELETE FROM recipes');
   }
 }
 
