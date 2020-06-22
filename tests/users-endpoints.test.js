@@ -66,7 +66,7 @@ describe('users endpoints', () => {
     describe('when a user with the same username or email already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        User.create({
+        await User.create({
           username: 'ana',
           email: 'ana3@gmail.co',
           password: 'ffffffffffff',
