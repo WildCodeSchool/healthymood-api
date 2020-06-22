@@ -7,7 +7,7 @@ require('dotenv').config();
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
 
 const app = express();
-const PORT = process.env.PORT || (process.env.NODE_ENV === 'test' ? 3001 : 3000);
+const PORT = process.env.PORT || (process.env.NODE_ENV === 'test' ? 5001 : 5000);
 
 process.on('unhandledRejection', error => {
   console.error('unhandledRejection', JSON.stringify(error), error.stack);
@@ -50,6 +50,8 @@ app.use('/recipes', require('./routes/recipe.routes.js'));
 app.use('/generic_pages', require('./routes/generic_pages.routes.js'));
 app.use('/addresses', require('./routes/addresse.routes.js'));
 app.use('/meal_types', require('./routes/meal_types.routes.js'));
+app.use('/articles', require('./routes/article.routes.js'));
+app.use('/article-categories', require('./routes/article-categories.routes.js'));
 
 // set port, listen for requests
 const server = app.listen(PORT, () => {
