@@ -1,19 +1,19 @@
-const Recipe = require('../models/recipe.model.js');
+const Recipe = require("../models/recipe.model.js");
 
 class RecipesController {
-  static async create (req, res) {
+  static async create(req, res) {
     if (!req.body) {
       return res
         .status(400)
-        .send({ errorMessage: 'Content can not be empty!' });
+        .send({ errorMessage: "Content can not be empty!" });
     }
 
     if (!req.body.name) {
-      return res.status(400).send({ errorMessage: 'Name can not be empty!' });
+      return res.status(400).send({ errorMessage: "Name can not be empty!" });
     } else if (!req.body.content) {
       return res
         .status(400)
-        .send({ errorMessage: 'Content can not be empty!' });
+        .send({ errorMessage: "Content can not be empty!" });
     }
 
     try {
@@ -23,26 +23,25 @@ class RecipesController {
     } catch (err) {
       res.status(500).send({
         errorMessage:
-          err.message || 'Some error occurred while creating the Recipe.'
+          err.message || "Some error occurred while creating the Recipe.",
       });
     }
   }
 
-  static async findAll (req, res) {
-    console.log('je rentre dans find all ' + req.query.search);
+  static async findAll(req, res) {
     if (req.query.search) {
       try {
         const data = await Recipe.findByKeyWord(req.query.search);
-        console.log(data);
         res.send({ data });
       } catch (err) {
-        if (err.kind === 'not_found') {
+        if (err.kind === "not_found") {
           res.status(404).send({
-            errorMessage: `Recipe with keyword ${req.query.search} not found.`
+            errorMessage: `Recipe with keyword ${req.query.search} not found.`,
           });
         } else {
           res.status(500).send({
-            errorMessage: 'Error retrieving Recipe with keyword ' + req.query.search
+            errorMessage:
+              "Error retrieving Recipe with keyword " + req.query.search,
           });
         }
       }
@@ -61,68 +60,68 @@ class RecipesController {
             slug: r.slug,
             calories: r.calories,
             published: r.published,
-            user_id: r.user_id
+            user_id: r.user_id,
           }));
         res.send({ data });
       } catch (err) {
         res.status(500).send({
           errorMessage:
-            err.message || 'Some error occurred while retrieving recipes.'
+            err.message || "Some error occurred while retrieving recipes.",
         });
       }
     }
   }
 
-  static async findOne (req, res) {
+  static async findOne(req, res) {
     try {
       const data = await Recipe.findById(req.params.id);
       res.send({ data });
     } catch (err) {
-      if (err.kind === 'not_found') {
+      if (err.kind === "not_found") {
         res.status(404).send({
-          errorMessage: `Recipe with id ${req.params.id} not found.`
+          errorMessage: `Recipe with id ${req.params.id} not found.`,
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Error retrieving Recipe with id ' + req.params.id
+          errorMessage: "Error retrieving Recipe with id " + req.params.id,
         });
       }
     }
   }
 
-  static async update (req, res) {
+  static async update(req, res) {
     if (!req.body) {
-      res.status(400).send({ errorMessage: 'Content can not be empty!' });
+      res.status(400).send({ errorMessage: "Content can not be empty!" });
     }
 
     try {
       const data = await Recipe.updateById(req.params.id, new Recipe(req.body));
       res.send({ data });
     } catch (err) {
-      if (err.kind === 'not_found') {
+      if (err.kind === "not_found") {
         res.status(404).send({
-          errorMessage: `Recipe with id ${req.params.id} not found.`
+          errorMessage: `Recipe with id ${req.params.id} not found.`,
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Error updating Recipe with id ' + req.params.id
+          errorMessage: "Error updating Recipe with id " + req.params.id,
         });
       }
     }
   }
 
-  static async delete (req, res) {
+  static async delete(req, res) {
     try {
       await Recipe.remove(req.params.id);
-      res.send({ message: 'Recipe was deleted successfully!' });
+      res.send({ message: "Recipe was deleted successfully!" });
     } catch (err) {
-      if (err.kind === 'not_found') {
+      if (err.kind === "not_found") {
         res.status(404).send({
-          errorMessage: `Not found Recipe with id ${req.params.id}.`
+          errorMessage: `Not found Recipe with id ${req.params.id}.`,
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Could not delete Recipe with id ' + req.params.id
+          errorMessage: "Could not delete Recipe with id " + req.params.id,
         });
       }
     }
