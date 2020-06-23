@@ -25,7 +25,7 @@ describe('article-categories endpoints', () => {
     });
   });
 
-  describe('POST /article_categories', () => {
+  xdescribe('POST /article_categories', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
@@ -43,7 +43,7 @@ describe('article-categories endpoints', () => {
       });
     });
 
-    describe('when a article-categories with the same name already exists in DB', () => {
+    xdescribe('when a article-categories with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
         ArticlesCategory.create({

@@ -3,6 +3,7 @@ const router = require('express').Router();
 
 router.post('/', articlesController.create);
 router.get('/', articlesController.findAll);
+router.get('/', articlesController.findLast);
 router.get('/:id', articlesController.findOne);
 router.put('/:id', articlesController.update);
 router.delete('/:id', articlesController.delete);

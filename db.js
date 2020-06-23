@@ -38,6 +38,14 @@ class Database {
     });
   }
 
+  escape (value) {
+    return this.connection.escape(value);
+  }
+
+  escapeId (value) {
+    return this.connection.escapeId(value);
+  }
+
   closeConnection () {
     return new Promise((resolve, reject) => {
       if (this.connection) {

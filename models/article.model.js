@@ -36,8 +36,16 @@ class Article {
       });
   }
 
-  static async getAll (result) {
-    return db.query('SELECT * FROM articles');
+  static async getSome (number, order_by, sort_order = 'asc') { // eslint-disable-line
+    let sql = 'SELECT * FROM articles';
+    if (order_by) { // eslint-disable-line
+      sql += ` ORDER BY ${order_by} ${sort_order}`; // eslint-disable-line
+    }
+    if (number) {
+      sql += ` LIMIT ${number}`;
+    }
+    console.log(sql);
+    return db.query(sql);
   }
 
   static async updateById (id, article) {
