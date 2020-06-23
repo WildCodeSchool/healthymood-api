@@ -1,59 +1,51 @@
 const request = require('supertest');
 const app = require('../server.js');
-const Ingredient = require('../models/ingredient.model.js');
+const Mealtypes = require('../models/meal_types.model.js');
 
-describe('ingredients endpoints', () => {
-  describe('GET /ingredients', () => {
-    describe('when there are two ingredients in DB', () => {
+describe('mealtypes endpoints', () => {
+  describe('GET /meal_types', () => {
+    describe('when there are two mealtypes in DB', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          Ingredient.create({ name: 'patates', is_allergen: false }),
-          Ingredient.create({ name: 'carottes', is_allergen: true })
+          Mealtypes.create({ name: 'entrée' }),
+          Mealtypes.create({ name: 'dessert' })
         ]);
-        res = await request(app).get('/ingredients');
+        res = await request(app).get('/meal_types');
       });
-
       it('status is 200', async () => {
         expect(res.status).toBe(200);
       });
-
       it('the returned data is an array containing two elements', async () => {
         expect(Array.isArray(res.body.data));
         expect(res.body.data.length).toBe(2);
       });
     });
   });
-
-  describe('POST /ingredients', () => {
+  describe('POST /meal_types', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/ingredients').send({
-          name: 'navet',
-          is_allergen: false
+        res = await request(app).post('/meal_types').send({
+          name: 'dessert'
         });
       });
-
       it('returns 201 status', async () => {
         expect(res.statusCode).toEqual(201);
       });
 
-      it('returns the id of the created ingredient', async () => {
+      it('returns the id of the created mealtypes', async () => {
         expect(res.body.data).toHaveProperty('id');
       });
     });
-
-    describe('when an ingredient with the same name already exists in DB', () => {
+    describe('when a mealtype with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        await Ingredient.create({
-          name: 'poireau',
-          is_allergen: true
+        await Mealtypes.create({
+          name: 'brunch'
         });
-        res = await request(app).post('/ingredients').send({
-          name: 'poireau',
-          is_allergen: true
+        res = await request(app).post('/meal_types').send({
+          name: 'brunch'
         });
       });
 

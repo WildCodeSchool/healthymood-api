@@ -1,6 +1,4 @@
-require('dotenv').config();
 const mysql = require('mysql');
-
 class Database {
   init () {
     let config = {
@@ -53,15 +51,16 @@ class Database {
 
   async deleteAllData () {
     if (process.env.NODE_ENV !== 'test') throw new Error('Cannot truncate all table if not in test env !');
-    const truncates = await this.getTableNames().then(rows => rows.map(row => `TRUNCATE ${row.table_name};`).join(' '));
+    const truncates = await this.getTableNames().then(rows => rows.map(row => `TRUNCATE ${row.TABLE_NAME};`).join(' '));
     const sql = `SET FOREIGN_KEY_CHECKS=0; ${truncates} SET FOREIGN_KEY_CHECKS=1;`;
+    // console.log(sql);
     return this.query(sql);
   }
 
   async getTableNames () {
     if (!this._tableNames) {
       this._tableNames = await this.query(`
-          SELECT table_name
+          SELECT TABLE_NAME
           FROM INFORMATION_SCHEMA.TABLES where table_schema = '${process.env.DB_NAME_TEST || 'healthymood_api_database_test'}' and table_name != 'migrations'
       `);
     }

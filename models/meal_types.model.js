@@ -17,7 +17,7 @@ class MealTypes {
 
   static async findById (id) {
     return db
-      .query(`SELECT * FROM meal_types WHERE id = ${id}`)
+      .query('SELECT * FROM meal_types WHERE id = ?', [id])
       .then((rows) => {
         if (rows.length) {
           return Promise.resolve(rows[0]);

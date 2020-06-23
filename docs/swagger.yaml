@@ -138,7 +138,7 @@ paths:
         "200":
           description: "OK"
 definitions:
-  ingredientEditableAttributes:
+  IngredientEditableAttributes:
     type: "object"
     properties:
       name:
@@ -148,7 +148,7 @@ definitions:
         type: "boolean"
         example: false
       
-  ingredientSimplified:
+  IngredientSimplified:
     type: "object"
     properties:
       id:
@@ -161,11 +161,11 @@ definitions:
         type: "boolean"
         example: false
       
-  ingredient:
+  Ingredient:
     allOf: 
       - type: "object"
         properties:
           id:
             type: "integer"
             format: "int64"
-      - $ref: '#/definitions/ingredientEditableAttributes'
+      - $ref: '#/definitions/IngredientEditableAttributes'
