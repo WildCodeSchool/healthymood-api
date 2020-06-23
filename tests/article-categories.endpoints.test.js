@@ -8,8 +8,8 @@ describe('article-categories endpoints', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          ArticlesCategory.create({ name: 'dejeuner' }),
-          ArticlesCategory.create({ name: 'diner' })
+          ArticlesCategory.create({ name: 'information' }),
+          ArticlesCategory.create({ name: 'a la une' })
         ]);
         res = await request(app).get('/article-categories');
       });
@@ -25,12 +25,12 @@ describe('article-categories endpoints', () => {
     });
   });
 
-  describe('POST /article-categories', () => {
+  describe('POST /article_categories', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
         res = await request(app).post('/article-categories').send({
-          name: 'dessert'
+          name: 'info'
         });
       });
 
@@ -47,10 +47,10 @@ describe('article-categories endpoints', () => {
       let res;
       beforeAll(async () => {
         ArticlesCategory.create({
-          name: 'entrée'
+          name: 'follow'
         });
         res = await request(app).post('/article-categories').send({
-          name: 'entrée'
+          name: 'follow'
         });
       });
 
