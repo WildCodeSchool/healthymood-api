@@ -2,7 +2,6 @@ const User = require('../models/user.model.js');
 
 class authController {
   static async login (req, res) {
-    console.log('ok auth');
     const clientPayload = req.body;
     try {
       const { token } = await User.login(clientPayload.email, clientPayload.password);

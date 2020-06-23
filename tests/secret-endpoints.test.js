@@ -5,7 +5,7 @@ const User = require('../models/user.model.js');
 describe('secret endpoints', () => {
   describe('GET /secret', () => {
     it('should get secret with valid token', async () => {
-      await User.create('john doe', 'john.doe@gmail.com', 'admin123');
+      await User.create({ username: 'john doe', email: 'john.doe@gmail.com', password: 'admin123' });
       const { token } = await User.login('john.doe@gmail.com', 'admin123');
       await request(app).get('/secret')
         .set('Authorization', `Bearer ${token}`)

@@ -35,7 +35,6 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(extractToken);
 
 // routes
-app.post('/auth/login', require('./controllers/auth.controller').login);
 app.use('/ingredients', require('./routes/ingredient.routes.js'));
 app.use('/meal_types', require('./routes/meal_types.routes.js'));
 app.use('/recipe-categories', require('./routes/recipe-categories.routes.js'));
@@ -44,7 +43,7 @@ app.use('/addresses', require('./routes/addresse.routes.js'));
 app.use('/generic_pages', require('./routes/generic_pages.routes'));
 app.use('/recipes', require('./routes/recipe.routes.js'));
 app.use('/users', require('./routes/user.routes.js'));
-// app.use('/auth', require('./routes/auth.routes.js'));
+app.use('/auth', require('./routes/auth.routes.js'));
 
 app.use('/secret', requireAuth, require('./routes/secret.routes.js'));
 
