@@ -31,7 +31,7 @@ class ArticlesController {
   static async findAll (req, res) {
     const {per_page, sort_order, sort_by} = req.query; // eslint-disable-line
     try {
-      const data = (await Article.getSome(per_page, sort_by, sort_order)) // eslint-disable-line
+      const data = (await Article.getSome({limit: per_page, order_by: sort_by, sort_order})) // eslint-disable-line
         .map((a) => new Article(a))
         .map((a) => ({
           id: a.id,
