@@ -20,7 +20,7 @@ class User {
   }
 
   static async create (newUser) {
-    const { email, password, firstname, lastname, username, avatar, is_admin, blocked, fb_uid, address_id } = newUser; // eslint-disable-line
+    const { email, password, firstname, lastname, username, avatar, is_admin=false, blocked=false, fb_uid, address_id } = newUser; // eslint-disable-line
     const hash = await argon2.hash(password);
     return db
       .query(
