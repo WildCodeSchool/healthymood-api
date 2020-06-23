@@ -46,7 +46,7 @@ describe('recipe-categories endpoints', () => {
     describe('when a recipe-categories with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        RecipesCategory.create({
+        await RecipesCategory.create({
           name: 'entrée'
         });
         res = await request(app).post('/recipe-categories').send({

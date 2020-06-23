@@ -41,7 +41,7 @@ describe('mealtypes endpoints', () => {
     describe('when a mealtype with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        Mealtypes.create({
+        await Mealtypes.create({
           name: 'brunch'
         });
         res = await request(app).post('/meal_types').send({

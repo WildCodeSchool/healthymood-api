@@ -47,7 +47,7 @@ describe('ingredients endpoints', () => {
     describe('when an ingredient with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        Ingredient.create({
+        await Ingredient.create({
           name: 'poireau',
           is_allergen: true
         });
