@@ -14,7 +14,7 @@ class DishTypesController {
       const dishtypes = new DishTypes(req.body);
       if (await DishTypes.nameAlreadyExists(dishtypes.name)) {
         res.status(400).send({
-          errorMessage: 'A dish type with this name already exists !'
+          errorMessage: 'A dishtype with this name already exists !'
         });
       } else {
         const data = await DishTypes.create(dishtypes);
@@ -23,7 +23,7 @@ class DishTypesController {
     } catch (err) {
       res.status(500).send({
         errorMessage:
-          err.message || 'Some error occurred while creating A dish type.'
+          err.message || 'Some error occurred while creating A dishtype.'
       });
     }
   }
@@ -40,7 +40,7 @@ class DishTypesController {
     } catch (err) {
       res.status(500).send({
         errorMessage:
-          err.message || 'Some error occurred while retrieving A dish type.'
+          err.message || 'Some error occurred while retrieving A dishtype.'
       });
     }
   }

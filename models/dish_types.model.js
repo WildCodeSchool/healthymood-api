@@ -8,7 +8,7 @@ class DishTypes {
 
   static async create (newDishTypes) {
     return db
-      .query('INSERT INTO meal_types SET ?', newDishTypes)
+      .query('INSERT INTO dish_types SET ?', newDishTypes)
       .then((res) => {
         newDishTypes.id = res.insertId;
         return newDishTypes;
