@@ -37,6 +37,7 @@ app.use(extractToken);
 // routes
 app.use('/ingredients', require('./routes/ingredient.routes.js'));
 app.use('/meal_types', require('./routes/meal_types.routes.js'));
+app.use('/diet', require('./routes/diet.routes.js'));
 app.use('/recipe-categories', require('./routes/recipe-categories.routes.js'));
 app.use('/notifications', require('./routes/notification.routes.js'));
 app.use('/addresses', require('./routes/addresse.routes.js'));
