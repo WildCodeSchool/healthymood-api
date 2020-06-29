@@ -62,7 +62,7 @@ describe('genericPage endpoints', () => {
     describe('when an genericPage with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        GenericPage.create({
+        await GenericPage.create({
           title: 'Sauce ketchup',
           slug: 'sauce-ketchup-healthy',
           published: true,
