@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../server.js');
 const Ingredient = require('../models/ingredient.model.js');
+const { describe, beforeAll } = require('jest-circus');
 
 describe('ingredients endpoints', () => {
   describe('GET /ingredients', () => {
@@ -26,6 +27,22 @@ describe('ingredients endpoints', () => {
   });
 
   describe('POST /ingredients', () => {
+    describe('When user is not authenticated', () => {
+      let res;
+      beforeAll(async () => {
+        res = await request(app).post('/ingredients').send({
+          name: 'navet',
+          is_allergen: false
+        });
+      });
+      it('returns 401 status', async () => {
+        expect(res.statusCode).toEqual(401);
+      });
+
+      it('return an error message', async () => {
+        expect(res.body).toHaveProperty('errorMessage');
+      });
+    });
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
