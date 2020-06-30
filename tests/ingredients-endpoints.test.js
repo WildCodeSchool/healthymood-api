@@ -1,7 +1,6 @@
 const request = require('supertest');
 const app = require('../server.js');
 const Ingredient = require('../models/ingredient.model.js');
-const { describe, beforeAll } = require('jest-circus');
 
 describe('ingredients endpoints', () => {
   describe('GET /ingredients', () => {
