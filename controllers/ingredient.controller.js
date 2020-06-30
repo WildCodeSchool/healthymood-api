@@ -11,6 +11,7 @@ class IngredientsController {
     if (!req.body.name) {
       return res.status(400).send({ errorMessage: 'Name can not be empty!' });
     }
+    console.log(req.body);
 
     try {
       const ingredient = new Ingredient(req.body);

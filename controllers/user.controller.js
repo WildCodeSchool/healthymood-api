@@ -8,14 +8,24 @@ class UsersController {
       return typeof str === 'string' && str.length > 0;
     };
 
-    if (!isNotEmptyString(clientPayload.username) || !isNotEmptyString(clientPayload.email) || !isNotEmptyString(clientPayload.password)) {
+    console.log(clientPayload);
+
+    if (
+      !isNotEmptyString(clientPayload.username) ||
+      !isNotEmptyString(clientPayload.email) ||
+      !isNotEmptyString(clientPayload.password)
+    ) {
       return res.status(422).send({ errorMessage: 'Missing attribute !' });
     }
     try {
       const user = new User(clientPayload);
-      if (await User.usernameAlreadyExists(user.username) || await User.emailAlreadyExists(user.email)) {
+      if (
+        (await User.usernameAlreadyExists(user.username)) ||
+        (await User.emailAlreadyExists(user.email))
+      ) {
         res.status(400).send({
-          errorMessage: 'A user with this username or this email already exists !'
+          errorMessage:
+            'A user with this username or this email already exists !'
         });
       } else {
         const data = await User.create(user);
@@ -78,10 +88,7 @@ class UsersController {
     }
 
     try {
-      const data = await User.updateById(
-        req.params.id,
-        new User(req.body)
-      );
+      const data = await User.updateById(req.params.id, new User(req.body));
       res.send({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
