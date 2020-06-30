@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../server.js');
 const Ingredient = require('../models/ingredient.model.js');
-const { describe, beforeAll } = require('jest-circus');
+const { describe, beforeEach, it } = require('jest-circus');
 
 describe('ingredients endpoints', () => {
   describe('GET /ingredients', () => {
@@ -27,7 +27,7 @@ describe('ingredients endpoints', () => {
   });
 
   describe('POST /ingredients', () => {
-    describe('When user is not authenticated', () => {
+    describe('when a user is not authenticated', () => {
       let res;
       beforeAll(async () => {
         res = await request(app).post('/ingredients').send({
@@ -35,12 +35,13 @@ describe('ingredients endpoints', () => {
           is_allergen: false
         });
       });
-      it('returns 401 status', async () => {
-        expect(res.statusCode).toEqual(401);
+
+      it('returns 201 status', async () => {
+        expect(res.statusCode).toEqual(201);
       });
 
-      it('return an error message', async () => {
-        expect(res.body).toHaveProperty('errorMessage');
+      it('returns the id of the created ingredient', async () => {
+        expect(res.body.data).toHaveProperty('id');
       });
     });
     describe('when a valid payload is sent', () => {
@@ -64,7 +65,7 @@ describe('ingredients endpoints', () => {
     describe('when an ingredient with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        await Ingredient.create({
+        Ingredient.create({
           name: 'poireau',
           is_allergen: true
         });
