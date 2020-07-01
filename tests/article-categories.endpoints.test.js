@@ -3,7 +3,7 @@ const app = require('../server.js');
 const ArticlesCategory = require('../models/article-categories.model.js');
 
 describe('article-categories endpoints', () => {
-  describe('GET /article-categories', () => {
+  describe('GET /article_categories', () => {
     describe('when there are two article categories in DB', () => {
       let res;
       beforeEach(async () => {
