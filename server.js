@@ -5,7 +5,7 @@ const cors = require('cors');
 const extractToken = require('./middlewares/extractToken');
 const requireAuth = require('./middlewares/requireAuth');
 const YAML = require('yamljs');
-require('dotenv').config();
+
 
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
 
@@ -37,14 +37,18 @@ app.use(extractToken);
 // routes
 app.use('/ingredients', require('./routes/ingredient.routes.js'));
 app.use('/meal_types', require('./routes/meal_types.routes.js'));
-app.use('/recipe-categories', require('./routes/recipe-categories.routes.js'));
+app.use('/recipe_categories', require('./routes/recipe-categories.routes.js'));
 app.use('/notifications', require('./routes/notification.routes.js'));
 app.use('/addresses', require('./routes/addresse.routes.js'));
 app.use('/generic_pages', require('./routes/generic_pages.routes'));
 app.use('/recipes', require('./routes/recipe.routes.js'));
 app.use('/users', require('./routes/user.routes.js'));
 app.use('/auth', require('./routes/auth.routes.js'));
+<<<<<<< Updated upstream
 
+=======
+app.use('/article_categories', require('./routes/article-categories.routes'));
+>>>>>>> Stashed changes
 app.use('/secret', requireAuth, require('./routes/secret.routes.js'));
 
 app.use((err, req, res, next) => {
