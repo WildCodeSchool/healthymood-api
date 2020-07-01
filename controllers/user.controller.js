@@ -76,7 +76,6 @@ class UsersController {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
-
     try {
       const { is_admin, blocked } = req.body;// eslint-disable-lint
       const data = await User.updateById(

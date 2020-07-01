@@ -13,7 +13,6 @@ describe('article-categories endpoints', () => {
         ]);
         res = await request(app).get('/article_categories');
       });
-
       it('status is 200', async () => {
         expect(res.status).toBe(200);
       });
@@ -46,7 +45,7 @@ describe('article-categories endpoints', () => {
     describe('when a article-categories with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        ArticlesCategory.create({
+        await ArticlesCategory.create({
           name: 'follow'
         });
         res = await request(app).post('/article_categories').send({
