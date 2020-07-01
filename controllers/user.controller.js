@@ -1,7 +1,7 @@
 const User = require('../models/user.model.js');
 
 class UsersController {
-  static async create(req, res) {
+  static async create (req, res) {
     const clientPayload = req.body;
 
     const isNotEmptyString = (str) => {
@@ -29,7 +29,7 @@ class UsersController {
     }
   }
 
-  static async findAll(req, res) {
+  static async findAll (req, res) {
     try {
       const data = (await User.getAll())
         .map((u) => new User(u))
@@ -55,7 +55,7 @@ class UsersController {
     }
   }
 
-  static async findOne(req, res) {
+  static async findOne (req, res) {
     try {
       const data = await User.findById(req.params.id);
       res.send({ data });
@@ -72,7 +72,7 @@ class UsersController {
     }
   }
 
-  static async update(req, res) {
+  static async update (req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -96,7 +96,7 @@ class UsersController {
     }
   }
 
-  static async delete(req, res) {
+  static async delete (req, res) {
     try {
       await User.remove(req.params.id);
       res.send({ message: 'User was deleted successfully!' });
