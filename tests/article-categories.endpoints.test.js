@@ -11,7 +11,7 @@ describe('article-categories endpoints', () => {
           ArticlesCategory.create({ name: 'information' }),
           ArticlesCategory.create({ name: 'a la une' })
         ]);
-        res = await request(app).get('/article-categories');
+        res = await request(app).get('/article_categories');
       });
 
       it('status is 200', async () => {
@@ -25,11 +25,11 @@ describe('article-categories endpoints', () => {
     });
   });
 
-  xdescribe('POST /article_categories', () => {
+  describe('POST /article_categories', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/article-categories').send({
+        res = await request(app).post('/article_categories').send({
           name: 'info'
         });
       });
@@ -43,13 +43,13 @@ describe('article-categories endpoints', () => {
       });
     });
 
-    xdescribe('when a article-categories with the same name already exists in DB', () => {
+    describe('when a article-categories with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
         ArticlesCategory.create({
           name: 'follow'
         });
-        res = await request(app).post('/article-categories').send({
+        res = await request(app).post('/article_categories').send({
           name: 'follow'
         });
       });
