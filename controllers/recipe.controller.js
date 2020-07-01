@@ -29,28 +29,46 @@ class RecipesController {
   }
 
   static async findAll (req, res) {
-    try {
-      const data = (await Recipe.getAll())
-        .map((r) => new Recipe(r))
-        .map((r) => ({
-          id: r.id,
-          name: r.name,
-          content: r.content,
-          created_at: r.created_at,
-          updated_at: r.updated_at,
-          preparation_duration_seconds: r.preparation_duration_seconds,
-          budget: r.budget,
-          slug: r.slug,
-          calories: r.calories,
-          published: r.published,
-          user_id: r.user_id
-        }));
-      res.send({ data });
-    } catch (err) {
-      res.status(500).send({
-        errorMessage:
-          err.message || 'Some error occurred while retrieving recipes.'
-      });
+    if (req.query.search) {
+      try {
+        const data = await Recipe.findByKeyWord(req.query.search);
+        res.send({ data });
+      } catch (err) {
+        if (err.kind === 'not_found') {
+          res.status(404).send({
+            errorMessage: `Recipe with keyword ${req.query.search} not found.`
+          });
+        } else {
+          res.status(500).send({
+            errorMessage:
+              'Error retrieving Recipe with keyword ' + req.query.search
+          });
+        }
+      }
+    } else {
+      try {
+        const data = (await Recipe.getAll())
+          .map((r) => new Recipe(r))
+          .map((r) => ({
+            id: r.id,
+            name: r.name,
+            content: r.content,
+            created_at: r.created_at,
+            updated_at: r.updated_at,
+            preparation_duration_seconds: r.preparation_duration_seconds,
+            budget: r.budget,
+            slug: r.slug,
+            calories: r.calories,
+            published: r.published,
+            user_id: r.user_id
+          }));
+        res.send({ data });
+      } catch (err) {
+        res.status(500).send({
+          errorMessage:
+            err.message || 'Some error occurred while retrieving recipes.'
+        });
+      }
     }
   }
 

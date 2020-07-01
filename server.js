@@ -10,7 +10,7 @@ const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
 
 const app = express();
-const PORT = process.env.PORT || (process.env.NODE_ENV === 'test' ? 3001 : 3000);
+const PORT = process.env.PORT || (process.env.NODE_ENV === 'test' ? 4001 : 4000);
 
 process.on('unhandledRejection', error => {
   console.error('unhandledRejection', JSON.stringify(error), error.stack);
@@ -38,17 +38,15 @@ app.use(extractToken);
 app.use('/ingredients', require('./routes/ingredient.routes.js'));
 app.use('/meal_types', require('./routes/meal_types.routes.js'));
 app.use('/recipe_categories', require('./routes/recipe-categories.routes.js'));
+app.use('/diet', require('./routes/diet.routes.js'));
+app.use('/dish_types', require('./routes/dish_types.routes.js'));
 app.use('/notifications', require('./routes/notification.routes.js'));
 app.use('/addresses', require('./routes/addresse.routes.js'));
 app.use('/generic_pages', require('./routes/generic_pages.routes'));
 app.use('/recipes', require('./routes/recipe.routes.js'));
 app.use('/users', require('./routes/user.routes.js'));
 app.use('/auth', require('./routes/auth.routes.js'));
-<<<<<<< Updated upstream
-
-=======
 app.use('/article_categories', require('./routes/article-categories.routes'));
->>>>>>> Stashed changes
 app.use('/secret', requireAuth, require('./routes/secret.routes.js'));
 
 app.use((err, req, res, next) => {
