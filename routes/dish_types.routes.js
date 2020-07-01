@@ -4,7 +4,7 @@ const router = require('express').Router();
 router.post('/', dishtypesController.create);
 router.get('/', dishtypesController.findAll);
 router.get('/:id', dishtypesController.findOne);
-router.put('/:id', dishtypesController.update);
+router.patch('/:id', dishtypesController.update);
 router.delete('/:id', dishtypesController.delete);
 
 module.exports = router;
