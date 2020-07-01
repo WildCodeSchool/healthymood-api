@@ -46,7 +46,7 @@ describe('article-categories endpoints', () => {
     xdescribe('when a article-categories with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        await ArticlesCategory.create({
+        ArticlesCategory.create({
           name: 'follow'
         });
         res = await request(app).post('/article-categories').send({
