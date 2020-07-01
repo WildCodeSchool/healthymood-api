@@ -74,12 +74,11 @@ class UsersController {
 
   static async update(req, res) {
     if (!req.body) {
-
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
 
     try {
-      const { is_admin, blocked } = req.body
+      const { is_admin, blocked } = req.body;// eslint-disable-lint
       const data = await User.updateById(
         req.params.id, { is_admin, blocked }
       );
@@ -90,7 +89,7 @@ class UsersController {
           errorMessage: `User with id ${req.params.id} not found.`
         });
       } else {
-        console.error(err)
+        console.error(err);
         res.status(500).send({
           errorMessage: 'Error updating user with id ' + req.params.id
         });

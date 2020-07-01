@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY;
 
 class User {
-  constructor(user) {
+  constructor (user) {
     this.id = user.id;
     this.firstname = user.firstname;
     this.lastname = user.lastname;
@@ -19,7 +19,7 @@ class User {
     this.address_id = user.address_id;
   }
 
-  static async create(newUser) {
+  static async create (newUser) {
     const { email, password, firstname, lastname, username, avatar, is_admin = false, blocked = false, fb_uid, address_id } = newUser; // eslint-disable-line
     const hash = await argon2.hash(password);
     return db
@@ -44,7 +44,7 @@ class User {
       });
   }
 
-  static async login(email, password) {
+  static async login (email, password) {
     const user = await User.findByEmail(email);
     if (!user) {
       throw new Error('user not found');
@@ -60,7 +60,7 @@ class User {
     }
   }
 
-  static async findById(id) {
+  static async findById (id) {
     return db
       .query('SELECT * FROM users WHERE id = ?', [id])
       .then((rows) => {
@@ -74,7 +74,7 @@ class User {
       });
   }
 
-  static async findByEmail(email) {
+  static async findByEmail (email) {
     return db
       .query('SELECT * FROM users WHERE email = ?', [email])
       .then((rows) => {
@@ -88,7 +88,7 @@ class User {
       });
   }
 
-  static async usernameAlreadyExists(username) {
+  static async usernameAlreadyExists (username) {
     return db
       .query('SELECT * FROM users WHERE username = ?', [username])
       .then((rows) => {
@@ -100,7 +100,7 @@ class User {
       });
   }
 
-  static async emailAlreadyExists(email) {
+  static async emailAlreadyExists (email) {
     return db
       .query('SELECT * FROM users WHERE email = ?', [email])
       .then((rows) => {
@@ -112,10 +112,11 @@ class User {
       });
   }
 
-  static async getAll(result) {
+  static async getAll (result) {
     return db.query('SELECT * FROM users');
   }
-  static async updateById(id, user) {
+
+  static async updateById (id, user) {
     return db
       .query('UPDATE users SET  is_admin = ?, blocked = ?  WHERE id = ?', [
         user.is_admin,
@@ -124,7 +125,8 @@ class User {
       ])
       .then(() => this.findById(id));
   }
-  static async remove(id) {
+
+  static async remove (id) {
     return db.query('DELETE FROM users WHERE id = ?', id).then((res) => {
       if (res.affectedRows !== 0) {
         return Promise.resolve();
@@ -136,7 +138,7 @@ class User {
     });
   }
 
-  static async removeAll(result) {
+  static async removeAll (result) {
     return db.query('DELETE FROM users');
   }
 }

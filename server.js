@@ -6,7 +6,6 @@ const extractToken = require('./middlewares/extractToken');
 const requireAuth = require('./middlewares/requireAuth');
 const YAML = require('yamljs');
 
-
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
 
 const app = express();
