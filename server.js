@@ -42,7 +42,7 @@ app.use('/notifications', require('./routes/notification.routes.js'));
 app.use('/addresses', require('./routes/addresse.routes.js'));
 app.use('/generic_pages', require('./routes/generic_pages.routes'));
 app.use('/recipes', require('./routes/recipe.routes.js'));
-app.use('/recipe-categories', require('./routes/recipe-categories.routes.js'));
+app.use('/recipe_categories', require('./routes/recipe-categories.routes.js'));
 app.use('/users', require('./routes/user.routes.js'));
 app.use('/auth', require('./routes/auth.routes.js'));
 app.use('/articles', require('./routes/article.routes.js'));
