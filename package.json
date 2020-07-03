@@ -11,7 +11,7 @@
     "start-watch": "npm-run-all migrate start:server:watch",
     "tests:setup-db": "docker-compose up -d test_db",
     "tests:migrate-db": "db-migrate up -e test",
-    "test": "jest",
+    "test": "jest --testRunner='jest-circus/runner' --maxWorkers=1",
     "lint": "semistandard --fix"
   },
   "husky": {
@@ -41,9 +41,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "argon2": "^0.26.2",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-jwt": "^5.3.3",
+    "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
     "npm-run-all": "^4.1.5",
     "yamljs": "^0.3.0"
@@ -51,11 +54,11 @@
   "devDependencies": {
     "husky": "^4.2.5",
     "jest": "^26.0.1",
+    "jest-circus": "^26.0.1",
     "nodemon": "^2.0.4",
     "semistandard": "^14.2.0",
     "supertest": "^4.0.2",
     "swagger-jsdoc": "^4.0.0",
-    "swagger-ui-express": "^4.1.4",
-    "jest-circus": "^26.0.1"
+    "swagger-ui-express": "^4.1.4"
   }
 }
