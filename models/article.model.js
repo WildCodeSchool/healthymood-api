@@ -1,7 +1,7 @@
 const db = require('../db.js');
 
 class Article {
-  constructor (article) {
+  constructor(article) {
     this.id = article.id;
     this.title = article.title;
     this.slug = article.slug;
@@ -13,7 +13,7 @@ class Article {
     this.user_id = article.user_id;
   }
 
-  static async create (newArticle) {
+  static async create(newArticle) {
     return db
       .query('INSERT INTO articles SET ?', newArticle)
       .then((res) => {
@@ -22,7 +22,7 @@ class Article {
       });
   }
 
-  static async findById (id) {
+  static async findById(id) {
     return db
       .query('SELECT * FROM articles WHERE id = ?', [id])
       .then((rows) => {
@@ -36,7 +36,7 @@ class Article {
       });
   }
 
-  static async findByKeyWord (keyword) {
+  static async findByKeyWord(keyword) {
     const sqlValues = `%${keyword}%`;
     return db.query(
       'SELECT * FROM articles WHERE title LIKE ? OR content LIKE ?',
@@ -52,11 +52,10 @@ class Article {
     if (number) {
       sql += ` LIMIT ${number}`;
     }
-    console.log(sql);
     return db.query(sql);
   }
 
-  static async updateById (id, article) {
+  static async updateById(id, article) {
     return db
       .query('UPDATE articles SET title = ?, slug = ?, content = ?, image = ?, created_at = ?, updated_at = ?, article_category_id = ?, user_id = ? WHERE id = ?', [
         article.title,
@@ -72,7 +71,7 @@ class Article {
       .then(() => this.findById(id));
   }
 
-  static async remove (id) {
+  static async remove(id) {
     return db.query('DELETE FROM articles WHERE id = ?', id).then((res) => {
       if (res.affectedRows !== 0) {
         return Promise.resolve();
@@ -84,7 +83,7 @@ class Article {
     });
   }
 
-  static async removeAll (result) {
+  static async removeAll(result) {
     return db.query('DELETE FROM articles');
   }
 }
