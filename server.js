@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const cors = require('cors');
+const extractToken = require('./middlewares/extractToken');
+const requireAuth = require('./middlewares/requireAuth');
 const YAML = require('yamljs');
-require('dotenv').config();
 
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
 
@@ -29,6 +31,23 @@ app.use(cors());
 if (process.env.NODE_ENV !== 'production') {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
+app.use(extractToken);
+
+// routes
+app.use('/ingredients', require('./routes/ingredient.routes.js'));
+app.use('/meal_types', require('./routes/meal_types.routes.js'));
+app.use('/diet', require('./routes/diet.routes.js'));
+app.use('/dish_types', require('./routes/dish_types.routes.js'));
+app.use('/notifications', require('./routes/notification.routes.js'));
+app.use('/addresses', require('./routes/addresse.routes.js'));
+app.use('/generic_pages', require('./routes/generic_pages.routes'));
+app.use('/recipes', require('./routes/recipe.routes.js'));
+app.use('/recipe_categories', require('./routes/recipe-categories.routes.js'));
+app.use('/users', require('./routes/user.routes.js'));
+app.use('/auth', require('./routes/auth.routes.js'));
+app.use('/articles', require('./routes/article.routes.js'));
+app.use('/article_categories', require('./routes/article-categories.routes'));
+app.use('/secret', requireAuth, require('./routes/secret.routes.js'));
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
     res.status(401).send('invalid token...');
@@ -39,19 +58,6 @@ app.use((error, req, res, next) => {
   res.status(500).send('Something Broke!');
 });
 app.set('x-powered-by', false);
-
-// routes
-app.use('/ingredients', require('./routes/ingredient.routes.js'));
-app.use('/meal_types', require('./routes/meal_types.routes.js'));
-app.use('/recipe-categories', require('./routes/recipe-categories.routes.js'));
-app.use('/notifications', require('./routes/notification.routes.js'));
-app.use('/users', require('./routes/user.routes.js'));
-app.use('/recipes', require('./routes/recipe.routes.js'));
-app.use('/generic_pages', require('./routes/generic_pages.routes.js'));
-app.use('/addresses', require('./routes/addresse.routes.js'));
-app.use('/meal_types', require('./routes/meal_types.routes.js'));
-app.use('/articles', require('./routes/article.routes.js'));
-app.use('/article-categories', require('./routes/article-categories.routes.js'));
 
 // set port, listen for requests
 const server = app.listen(PORT, () => {

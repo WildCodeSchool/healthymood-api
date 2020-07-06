@@ -8,8 +8,8 @@ describe('ingredients endpoints', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          Ingredient.create({ name: 'patates', is_allergen: false }),
-          Ingredient.create({ name: 'carottes', is_allergen: true })
+          Ingredient.create({ name: 'patates', is_allergen: false, calories: 100 }),
+          Ingredient.create({ name: 'carottes', is_allergen: true, calories: 200 })
         ]);
         res = await request(app).get('/ingredients');
       });
@@ -31,7 +31,8 @@ describe('ingredients endpoints', () => {
       beforeAll(async () => {
         res = await request(app).post('/ingredients').send({
           name: 'navet',
-          is_allergen: false
+          is_allergen: false,
+          calories: 100
         });
       });
 
@@ -47,13 +48,15 @@ describe('ingredients endpoints', () => {
     describe('when an ingredient with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        Ingredient.create({
+        await Ingredient.create({
           name: 'poireau',
-          is_allergen: true
+          is_allergen: true,
+          calories: 90
         });
         res = await request(app).post('/ingredients').send({
           name: 'poireau',
-          is_allergen: true
+          is_allergen: true,
+          calories: 90
         });
       });
 

@@ -27,6 +27,7 @@ jobs:
       - run: DB_HOST=localhost DB_PORT=3306 DB_USER=tester DB_PASS=WildWildPass DB_NAME=healthymood_api_database_test db-migrate up
       - run: npm test
         env:
+          JWT_PRIVATE_KEY: YUUYGF67@453!!5FSvt
           CI: true
           PORT: 3001
           DB_DIALECT: mysql

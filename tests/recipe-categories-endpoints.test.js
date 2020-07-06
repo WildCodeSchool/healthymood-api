@@ -11,7 +11,7 @@ describe('recipe-categories endpoints', () => {
           RecipesCategory.create({ name: 'dejeuner' }),
           RecipesCategory.create({ name: 'diner' })
         ]);
-        res = await request(app).get('/recipe-categories');
+        res = await request(app).get('/recipe_categories');
       });
 
       it('status is 200', async () => {
@@ -29,7 +29,7 @@ describe('recipe-categories endpoints', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/recipe-categories').send({
+        res = await request(app).post('/recipe_categories').send({
           name: 'dessert'
         });
       });
@@ -46,10 +46,10 @@ describe('recipe-categories endpoints', () => {
     describe('when a recipe-categories with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        RecipesCategory.create({
+        await RecipesCategory.create({
           name: 'entrée'
         });
-        res = await request(app).post('/recipe-categories').send({
+        res = await request(app).post('/recipe_categories').send({
           name: 'entrée'
         });
       });
