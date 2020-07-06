@@ -3,7 +3,7 @@ const app = require('../server.js');
 const ArticlesCategory = require('../models/article-categories.model.js');
 
 describe('article-categories endpoints', () => {
-  describe('GET /article_categories', () => {
+  describe('GET /article-categories', () => {
     describe('when there are two article categories in DB', () => {
       let res;
       beforeEach(async () => {
@@ -11,7 +11,7 @@ describe('article-categories endpoints', () => {
           ArticlesCategory.create({ name: 'information' }),
           ArticlesCategory.create({ name: 'a la une' })
         ]);
-        res = await request(app).get('/article_categories');
+        res = await request(app).get('/article-categories');
       });
       it('status is 200', async () => {
         expect(res.status).toBe(200);
@@ -24,11 +24,11 @@ describe('article-categories endpoints', () => {
     });
   });
 
-  describe('POST /article_categories', () => {
+  describe('POST /article-categories', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/article_categories').send({
+        res = await request(app).post('/article-categories').send({
           name: 'info'
         });
       });
@@ -48,7 +48,7 @@ describe('article-categories endpoints', () => {
         await ArticlesCategory.create({
           name: 'follow'
         });
-        res = await request(app).post('/article_categories').send({
+        res = await request(app).post('/article-categories').send({
           name: 'follow'
         });
       });
