@@ -8,8 +8,6 @@ class UsersController {
       return typeof str === 'string' && str.length > 0;
     };
 
-    console.log(clientPayload);
-
     if (
       !isNotEmptyString(clientPayload.username) ||
       !isNotEmptyString(clientPayload.email) ||
