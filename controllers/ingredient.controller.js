@@ -37,7 +37,8 @@ class IngredientsController {
         .map((i) => ({
           id: i.id,
           name: i.name,
-          is_allergen: i.is_allergen
+          is_allergen: i.is_allergen,
+          calories: i.calories
         }));
       res.send({ data });
     } catch (err) {
