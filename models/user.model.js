@@ -20,7 +20,7 @@ class User {
   }
 
   static async create (newUser) {
-    const { email, password, firstname, lastname, username, avatar, is_admin=false, blocked=false, fb_uid, address_id } = newUser; // eslint-disable-line
+    const { email, password, firstname, lastname, username, avatar, is_admin = false, blocked = false, fb_uid, address_id } = newUser; // eslint-disable-line
     const hash = await argon2.hash(password);
     return db
       .query(
@@ -118,17 +118,9 @@ class User {
 
   static async updateById (id, user) {
     return db
-      .query('UPDATE users SET firstname = ?, lastname = ?, username = ?, email = ?, avatar = ?, password = ?, fb_uid = ?, is_admin = ?, blocked = ?, address_id = ?,  WHERE id = ?', [
-        user.firstname,
-        user.lastname,
-        user.username,
-        user.email,
-        user.avatar,
-        user.password,
-        user.fb_uid,
+      .query('UPDATE users SET  is_admin = ?, blocked = ?  WHERE id = ?', [
         user.is_admin,
         user.blocked,
-        user.address_id,
         id
       ])
       .then(() => this.findById(id));

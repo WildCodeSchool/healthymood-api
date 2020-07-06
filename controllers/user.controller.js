@@ -84,7 +84,6 @@ class UsersController {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
-
     try {
       const data = await User.updateById(req.params.id, new User(req.body));
       res.send({ data });
@@ -94,6 +93,7 @@ class UsersController {
           errorMessage: `User with id ${req.params.id} not found.`
         });
       } else {
+        console.error(err);
         res.status(500).send({
           errorMessage: 'Error updating user with id ' + req.params.id
         });
