@@ -56,7 +56,7 @@ describe('Articles endpoints', () => {
         beforeEach(async () => {
           await Promise.all([
             Article.create({
-              title: 'Premier article',
+              title: 'Salade de riz',
               slug: 'premier-article',
               content: 'Awesome content',
               image: '/ma-super-image',
@@ -65,7 +65,7 @@ describe('Articles endpoints', () => {
               user_id: 1
             }),
             Article.create({
-              title: 'Deuxième article',
+              title: 'Salade de pates',
               slug: 'deuxieme-article',
               content: 'Awesome content',
               image: '/ma-super-image',
@@ -74,7 +74,7 @@ describe('Articles endpoints', () => {
               user_id: 1
             }),
             Article.create({
-              title: 'Troisième article',
+              title: 'Riz au lait',
               slug: 'troisieme-article',
               content: 'Awesome content',
               image: '/ma-super-image',
