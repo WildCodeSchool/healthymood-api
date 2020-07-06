@@ -1,14 +1,14 @@
 const db = require('../db.js');
 
 class Ingredient {
-  constructor(ingredient) {
+  constructor (ingredient) {
     this.id = ingredient.id;
     this.name = ingredient.name;
     this.is_allergen = ingredient.is_allergen;
     this.calories = ingredient.calories;
   }
 
-  static async create(newIngredient) {
+  static async create (newIngredient) {
     return db
       .query('INSERT INTO ingredients SET ?', newIngredient)
       .then((res) => {
@@ -17,7 +17,7 @@ class Ingredient {
       });
   }
 
-  static async findById(id) {
+  static async findById (id) {
     return db
       .query(`SELECT * FROM ingredients WHERE id = ${id}`)
       .then((rows) => {
@@ -31,7 +31,7 @@ class Ingredient {
       });
   }
 
-  static async nameAlreadyExists(name) {
+  static async nameAlreadyExists (name) {
     return db
       .query('SELECT * FROM ingredients WHERE name = ?', [name])
       .then((rows) => {
@@ -43,11 +43,11 @@ class Ingredient {
       });
   }
 
-  static async getAll(result) {
+  static async getAll (result) {
     return db.query('SELECT * FROM ingredients');
   }
 
-  static async updateById(id, ingredient) {
+  static async updateById (id, ingredient) {
     return db
       .query('UPDATE ingredients SET name = ?, is_allergen = ? , calories = ? WHERE id = ?', [
         ingredient.name,
@@ -58,7 +58,7 @@ class Ingredient {
       .then(() => this.findById(id));
   }
 
-  static async remove(id) {
+  static async remove (id) {
     return db.query('DELETE FROM ingredients WHERE id = ?', id).then((res) => {
       if (res.affectedRows !== 0) {
         return Promise.resolve();
@@ -70,7 +70,7 @@ class Ingredient {
     });
   }
 
-  static async removeAll(result) {
+  static async removeAll (result) {
     return db.query('DELETE FROM ingredients');
   }
 }

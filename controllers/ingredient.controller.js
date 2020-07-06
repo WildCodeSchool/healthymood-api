@@ -1,7 +1,7 @@
 const Ingredient = require('../models/ingredient.model.js');
 
 class IngredientsController {
-  static async create(req, res) {
+  static async create (req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -30,7 +30,7 @@ class IngredientsController {
     }
   }
 
-  static async findAll(req, res) {
+  static async findAll (req, res) {
     try {
       const data = (await Ingredient.getAll())
         .map((i) => new Ingredient(i))
@@ -49,7 +49,7 @@ class IngredientsController {
     }
   }
 
-  static async findOne(req, res) {
+  static async findOne (req, res) {
     try {
       const data = await Ingredient.findById(req.params.id);
       res.send({ data });
@@ -66,7 +66,7 @@ class IngredientsController {
     }
   }
 
-  static async update(req, res) {
+  static async update (req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -90,7 +90,7 @@ class IngredientsController {
     }
   }
 
-  static async delete(req, res) {
+  static async delete (req, res) {
     try {
       await Ingredient.remove(req.params.id);
       res.send({ message: 'Ingredient was deleted successfully!' });
