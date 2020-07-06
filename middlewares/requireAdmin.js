@@ -8,12 +8,10 @@ module.exports = async (req, res, next) => {
   } else {
     const userRecord = await User.findById(decodedToken.id);
     req.currentUser = userRecord;
-    if (!userRecord) {
-      return res.sendStatus(401);
-    } else if (userRecord.blocked) {
+    if (!userRecord.is_admin) {
       return res
         .status(403)
-        .send({ errorMessage: 'This account is Blocked !' });
+        .send({ errorMessage: 'This user is not an Admin' });
     } else {
       return next();
     }

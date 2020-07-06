@@ -5,18 +5,20 @@ const cors = require('cors');
 const extractToken = require('./middlewares/extractToken');
 const requireAuth = require('./middlewares/requireAuth');
 const YAML = require('yamljs');
+const requireAdmin = require('./middlewares/requireAdmin');
 require('dotenv').config();
 
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
 
 const app = express();
-const PORT = process.env.PORT || (process.env.NODE_ENV === 'test' ? 4001 : 4000);
+const PORT =
+  process.env.PORT || (process.env.NODE_ENV === 'test' ? 4001 : 4000);
 
-process.on('unhandledRejection', error => {
+process.on('unhandledRejection', (error) => {
   console.error('unhandledRejection', JSON.stringify(error), error.stack);
   process.exit(1);
 });
-process.on('uncaughtException', error => {
+process.on('uncaughtException', (error) => {
   console.log('uncaughtException', JSON.stringify(error), error.stack);
   process.exit(1);
 });
@@ -48,9 +50,17 @@ app.use('/users', require('./routes/user.routes.js'));
 app.use('/auth', require('./routes/auth.routes.js'));
 app.use('/recipes', require('./routes/recipe.routes.js'));
 app.use('/articles', require('./routes/article.routes.js'));
-app.use('/article-categories', require('./routes/article-categories.routes.js'));
+app.use(
+  '/article-categories',
+  require('./routes/article-categories.routes.js')
+);
 
-app.use('/secret', requireAuth, require('./routes/secret.routes.js'));
+app.use(
+  '/secret',
+  requireAuth,
+  requireAdmin,
+  require('./routes/secret.routes.js')
+);
 
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
