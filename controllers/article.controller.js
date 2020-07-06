@@ -29,27 +29,45 @@ class ArticlesController {
   }
 
   static async findAll (req, res) {
-    const {per_page, sort_order, sort_by} = req.query; // eslint-disable-line
-    try {
-      const data = (await Article.getSome(per_page, sort_by, sort_order)) // eslint-disable-line
-        .map((a) => new Article(a))
-        .map((a) => ({
-          id: a.id,
-          title: a.title,
-          content: a.content,
-          image: a.image,
-          created_at: a.created_at,
-          updated_at: a.updated_at,
-          slug: a.slug,
-          article_category_id: a.article_category_id,
-          user_id: a.user_id
-        }));
-      res.send({ data });
-    } catch (err) {
-      res.status(500).send({
-        errorMessage:
-          err.message || 'Some error occurred while retrieving article.'
-      });
+    const { per_page, sort_order, sort_by } = req.query; // eslint-disable-line
+    if (req.query.search) {
+      try {
+        const data = await Article.findByKeyWord(req.query.search);
+        res.send({ data });
+      } catch (err) {
+        if (err.kind === 'not_found') {
+          res.status(404).send({
+            errorMessage: `Article with keyword ${req.query.search} not found.`
+          });
+        } else {
+          res.status(500).send({
+            errorMessage:
+              'Error retrieving Article with keyword' + req.query.search
+          });
+        }
+      }
+    } else {
+      try {
+        const data = (await Article.getSome(per_page, sort_by, sort_order)) // eslint-disable-line
+          .map((a) => new Article(a))
+          .map((a) => ({
+            id: a.id,
+            title: a.title,
+            content: a.content,
+            image: a.image,
+            created_at: a.created_at,
+            updated_at: a.updated_at,
+            slug: a.slug,
+            article_category_id: a.article_category_id,
+            user_id: a.user_id
+          }));
+        res.send({ data });
+      } catch (err) {
+        res.status(500).send({
+          errorMessage:
+            err.message || 'Some error occurred while retrieving article.'
+        });
+      }
     }
   }
 
