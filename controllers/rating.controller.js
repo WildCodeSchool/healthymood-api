@@ -17,6 +17,7 @@ class RatingsController {
     }
 
     try {
+      // const user_id = req.currentUser.id;
       const rating = new Rating(req.body);
       const data = await Rating.create(rating);
       res.status(201).send({ data });
