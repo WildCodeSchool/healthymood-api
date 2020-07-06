@@ -9,13 +9,14 @@ const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
 
 const app = express();
-const PORT = process.env.PORT || (process.env.NODE_ENV === 'test' ? 4001 : 4000);
+const PORT =
+  process.env.PORT || (process.env.NODE_ENV === 'test' ? 4001 : 4000);
 
-process.on('unhandledRejection', error => {
+process.on('unhandledRejection', (error) => {
   console.error('unhandledRejection', JSON.stringify(error), error.stack);
   process.exit(1);
 });
-process.on('uncaughtException', error => {
+process.on('uncaughtException', (error) => {
   console.log('uncaughtException', JSON.stringify(error), error.stack);
   process.exit(1);
 });
@@ -48,6 +49,7 @@ app.use('/auth', require('./routes/auth.routes.js'));
 app.use('/articles', require('./routes/article.routes.js'));
 app.use('/article_categories', require('./routes/article-categories.routes'));
 app.use('/secret', requireAuth, require('./routes/secret.routes.js'));
+app.use('/rating', requireAuth, require('./routes/rating.routes.js'));
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
     res.status(401).send('invalid token...');
