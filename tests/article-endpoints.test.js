@@ -83,7 +83,7 @@ describe('Articles endpoints', () => {
               user_id: 1
             })
           ]);
-          res = await request(app).get('/recipes/?search=salade');
+          res = await request(app).get('/articles/?search=salade');
         });
 
         it('status is 200', async () => {

@@ -7,7 +7,7 @@ require('dotenv').config();
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
 
 const app = express();
-const PORT = process.env.PORT || (process.env.NODE_ENV === 'test' ? 5001 : 5000);
+const PORT = process.env.PORT || (process.env.NODE_ENV === 'test' ? 4001 : 4000);
 
 process.on('unhandledRejection', error => {
   console.error('unhandledRejection', JSON.stringify(error), error.stack);
