@@ -2,25 +2,19 @@ const Rating = require('../models/rating.model.js');
 
 class RatingsController {
   static async create (req, res) {
-    console.log(req.currentUser);
     if (!req.body) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
 
-    if (!req.body.title) {
-      return res.status(400).send({ errorMessage: 'Title can not be empty!' });
-    } else if (!req.body.content) {
-      return res
-        .status(400)
-        .send({ errorMessage: 'Content can not be empty!' });
+    if (!req.body.score || !req.body.recipe_id) {
+      return res.status(400).send({ errorMessage: 'One attribute is missing' });
     }
 
     try {
-      // const user_id = req.currentUser.id;
       const rating = new Rating(req.body);
-      const data = await Rating.create(rating);
+      const data = await Rating.create({ ...rating, user_id: req.currentUser.id });
       res.status(201).send({ data });
     } catch (err) {
       res.status(500).send({
