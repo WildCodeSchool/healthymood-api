@@ -8,9 +8,15 @@ class FavoritesController {
         .send({ errorMessage: 'Content can not be empty!' });
     }
 
+    if (!req.body.recipe_id || !req.body.user_id) {
+      return res.status(400).send({ errorMessage: 'One attribute is missing' });
+    }
     try {
       const favorite = new Favorite(req.body);
-      const data = await Favorite.create(favorite);
+      const data = await Favorite.create({
+        ...favorite,
+        user_id: req.currentUser.id
+      });
       res.status(201).send({ data });
     } catch (err) {
       res.status(500).send({
