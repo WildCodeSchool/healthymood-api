@@ -2,6 +2,7 @@ const Rating = require('../models/rating.model.js');
 
 class RatingsController {
   static async create (req, res) {
+    console.log(req.currentUser);
     if (!req.body) {
       return res
         .status(400)
