@@ -1,8 +1,8 @@
 const ratingsController = require('../controllers/rating.controller.js');
-const requireAuth = require('../middlewares/requireAuth.js');
+const tryUser = require('../middlewares/requireAuth.js');
 const router = require('express').Router();
 
-router.post('/', requireAuth, ratingsController.create);
+router.post('/', tryUser, ratingsController.create);
 router.get('/', ratingsController.findAll);
 router.get('/:id', ratingsController.findOne);
 router.patch('/:id', ratingsController.update);

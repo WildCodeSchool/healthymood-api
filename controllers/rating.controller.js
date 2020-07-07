@@ -14,7 +14,11 @@ class RatingsController {
 
     try {
       const rating = new Rating(req.body);
-      const data = await Rating.create({ ...rating, user_id: req.currentUser.id });
+      const data = await Rating.create({
+        ...rating,
+        user_id: req.currentUser.id
+      });
+      console.log({ data });
       res.status(201).send({ data });
     } catch (err) {
       res.status(500).send({
