@@ -1,4 +1,5 @@
 const Article = require('../models/article.model.js');
+const { tryParseInt } = require('../helpers/number');
 
 class ArticlesController {
   static async create (req, res) {
@@ -28,29 +29,43 @@ class ArticlesController {
     }
   }
 
+  // static async findAll (req, res) {
+  //   const {per_page, sort_order, sort_by} = req.query; // eslint-disable-line
+  //   try {
+  //     const data = (await Article.getSome({limit: per_page, order_by: sort_by, sort_order})) // eslint-disable-line
+  //       .map((a) => new Article(a))
+  //       .map((a) => ({
+  //         id: a.id,
+  //         title: a.title,
+  //         content: a.content,
+  //         image: a.image,
+  //         created_at: a.created_at,
+  //         updated_at: a.updated_at,
+  //         slug: a.slug,
+  //         article_category_id: a.article_category_id,
+  //         user_id: a.user_id
+  //       }));
+  //     res.send({ data });
+  //   } catch (err) {
+  //     res.status(500).send({
+  //       errorMessage:
+  //         err.message || 'Some error occurred while retrieving article.'
+  //     });
+  //   }
+  // }
+
   static async findAll (req, res) {
-    const {per_page, sort_order, sort_by} = req.query; // eslint-disable-line
-    try {
-      const data = (await Article.getSome({limit: per_page, order_by: sort_by, sort_order})) // eslint-disable-line
-        .map((a) => new Article(a))
-        .map((a) => ({
-          id: a.id,
-          title: a.title,
-          content: a.content,
-          image: a.image,
-          created_at: a.created_at,
-          updated_at: a.updated_at,
-          slug: a.slug,
-          article_category_id: a.article_category_id,
-          user_id: a.user_id
-        }));
-      res.send({ data });
-    } catch (err) {
-      res.status(500).send({
-        errorMessage:
-          err.message || 'Some error occurred while retrieving article.'
-      });
-    }
+    const page = tryParseInt(req.query.page, 1);
+    const perPage = tryParseInt(req.query.per_page, 10);
+    console.log(req.query);
+    const limit = perPage;
+    const offset = (page - 1) * limit;
+    console.log(page, perPage, limit, offset);
+    const { results, total } = await Article.getSome(limit, offset);
+    const rangeEnd = page * perPage;
+    const rangeBegin = rangeEnd - perPage + 1;
+    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+    res.send({ data: results });
   }
 
   static async findLast (req, res) {

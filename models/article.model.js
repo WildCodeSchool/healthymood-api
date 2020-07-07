@@ -36,17 +36,30 @@ class Article {
       });
   }
 
-  static async getSome ({limit, order_by, sort_order = 'asc'}) { // eslint-disable-line
-    let sql = 'SELECT * FROM articles';
-    limit = parseInt(limit, 10);
-    if (order_by) { // eslint-disable-line
-      sort_order = (typeof sort_order === 'string' && sort_order.toLowerCase()) === 'desc' ? 'DESC' : 'ASC'; // eslint-disable-line
-      sql += ` ORDER BY ${db.escapeId(order_by)} ${sort_order}`; // eslint-disable-line
+  // static async getSome ({limit, order_by, sort_order = 'asc'}) { // eslint-disable-line
+  //   let sql = 'SELECT * FROM articles';
+  //   limit = parseInt(limit, 10);
+  //   if (order_by) { // eslint-disable-line
+  //     sort_order = (typeof sort_order === 'string' && sort_order.toLowerCase()) === 'desc' ? 'DESC' : 'ASC'; // eslint-disable-line
+  //     sql += ` ORDER BY ${db.escapeId(order_by)} ${sort_order}`; // eslint-disable-line
+  //   }
+  //   if (limit) {
+  //     sql += ` LIMIT ${limit}`;
+  //   }
+  //   return db.query(sql);
+  // }
+
+  static async getSome (limit, offset) {
+    const total = await db.query('select count(id) as count from articles').then(rows => rows[0].count);
+    let sql = 'select * from articles';
+    if (limit !== undefined && offset !== undefined) {
+      sql = `${sql} limit ${limit} offset ${offset}`;
     }
-    if (limit) {
-      sql += ` LIMIT ${limit}`;
-    }
-    return db.query(sql);
+
+    return db.query(sql).then(rows => ({
+      results: rows.map(a => new Article(a)),
+      total
+    }));
   }
 
   static async updateById (id, article) {
