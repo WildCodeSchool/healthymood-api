@@ -1,4 +1,5 @@
 const Ingredient = require('../models/ingredient.model.js');
+const { tryParseInt } = require('../helpers/number');
 
 class IngredientsController {
   static async create (req, res) {
@@ -30,23 +31,38 @@ class IngredientsController {
     }
   }
 
+  // static async findAll (req, res) {
+  //   try {
+  //     const data = (await Ingredient.getAll())
+  //       .map((i) => new Ingredient(i))
+  //       .map((i) => ({
+  //         id: i.id,
+  //         name: i.name,
+  //         is_allergen: i.is_allergen,
+  //         calories: i.calories
+  //       }));
+  //     res.send({ data });
+  //   } catch (err) {
+  //     res.status(500).send({
+  //       errorMessage:
+  //         err.message || 'Some error occurred while retrieving ingredients.'
+  //     });
+  //   }
+  // }
+
   static async findAll (req, res) {
-    try {
-      const data = (await Ingredient.getAll())
-        .map((i) => new Ingredient(i))
-        .map((i) => ({
-          id: i.id,
-          name: i.name,
-          is_allergen: i.is_allergen,
-          calories: i.calories
-        }));
-      res.send({ data });
-    } catch (err) {
-      res.status(500).send({
-        errorMessage:
-          err.message || 'Some error occurred while retrieving ingredients.'
-      });
-    }
+    const page = tryParseInt(req.query.page, 1);
+    const perPage = tryParseInt(req.query.per_page, 10);
+    const orderBy = req.query.sort_by;
+    const sortOrder = req.query.sort_order;
+    console.log(req.query);
+    const limit = perPage;
+    const offset = (page - 1) * limit;
+    const { results, total } = await Ingredient.getSome(limit, offset, sortOrder, orderBy);
+    const rangeEnd = page * perPage;
+    const rangeBegin = rangeEnd - perPage + 1;
+    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+    res.send({ data: results });
   }
 
   static async findOne (req, res) {

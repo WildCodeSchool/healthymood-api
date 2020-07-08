@@ -47,6 +47,22 @@ class Ingredient {
     return db.query('SELECT * FROM ingredients');
   }
 
+  static async getSome (limit, offset, sortOrder = 'asc', orderBy) {
+    const total = await db.query('select count(id) as count from ingredients').then(rows => rows[0].count);
+    let sql = 'select * from ingredients';
+    if (orderBy) {
+      sortOrder = (typeof sortOrder === 'string' && sortOrder.toLowerCase()) === 'desc' ? 'DESC' : 'ASC';
+      sql += ` ORDER BY ${db.escapeId(orderBy)} ${sortOrder}`;
+    }
+    if (limit !== undefined && offset !== undefined) {
+      sql += ` limit ${limit} offset ${offset}`;
+    }
+    return db.query(sql).then(rows => ({
+      results: rows.map(i => new Ingredient(i)),
+      total
+    }));
+  }
+
   static async updateById (id, ingredient) {
     return db
       .query('UPDATE ingredients SET name = ?, is_allergen = ? , calories = ? WHERE id = ?', [
