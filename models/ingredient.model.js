@@ -5,6 +5,7 @@ class Ingredient {
     this.id = ingredient.id;
     this.name = ingredient.name;
     this.is_allergen = ingredient.is_allergen;
+    this.calories = ingredient.calories;
   }
 
   static async create (newIngredient) {
@@ -48,9 +49,10 @@ class Ingredient {
 
   static async updateById (id, ingredient) {
     return db
-      .query('UPDATE ingredients SET name = ?, is_allergen = ? WHERE id = ?', [
+      .query('UPDATE ingredients SET name = ?, is_allergen = ? , calories = ? WHERE id = ?', [
         ingredient.name,
         ingredient.is_allergen,
+        ingredient.calories,
         id
       ])
       .then(() => this.findById(id));
