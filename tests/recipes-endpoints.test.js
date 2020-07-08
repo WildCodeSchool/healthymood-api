@@ -101,7 +101,7 @@ describe('Recipes endpoints', () => {
             user_id: 1
           })
         ]);
-        res = await request(app).get('/recipes/?search=salade');
+        res = await request(app).get('/recipes/?search=salade&meal_types[]=1&meal_types[]=6');
       });
 
       it('status is 200', async () => {

@@ -30,9 +30,9 @@ class RecipesController {
   }
 
   static async findAll (req, res) {
-    if (req.query.search) {
+    if (req.query) {
       try {
-        const data = await Recipe.findByKeyWord(req.query.search);
+        const data = await Recipe.findByKeyWord(req.query);
         res.send({ data });
       } catch (err) {
         if (err.kind === 'not_found') {
