@@ -20,7 +20,18 @@ class User {
   }
 
   static async create (newUser) {
-    const { email, password, firstname, lastname, username, avatar, is_admin = false, blocked = false, fb_uid, address_id } = newUser; // eslint-disable-line
+    const {
+      email,
+      password,
+      firstname,
+      lastname,
+      username,
+      avatar,
+      is_admin = false,
+      blocked = false,
+      fb_uid,
+      address_id
+    } = newUser; // eslint-disable-line
     const hash = await argon2.hash(password);
     return db
       .query(
@@ -35,7 +46,7 @@ class User {
           is_admin, // eslint-disable-line
           blocked,
           fb_uid, // eslint-disable-line
-          address_id // eslint-disable-line
+          address_id, // eslint-disable-line
         ]
       )
       .then((res) => {
@@ -61,17 +72,15 @@ class User {
   }
 
   static async findById (id) {
-    return db
-      .query('SELECT * FROM users WHERE id = ?', [id])
-      .then((rows) => {
-        if (rows.length) {
-          return Promise.resolve(rows[0]);
-        } else {
-          const err = new Error();
-          err.kind = 'not_found';
-          return Promise.reject(err);
-        }
-      });
+    return db.query('SELECT * FROM users WHERE id = ?', [id]).then((rows) => {
+      if (rows.length) {
+        return Promise.resolve(rows[0]);
+      } else {
+        const err = new Error();
+        err.kind = 'not_found';
+        return Promise.reject(err);
+      }
+    });
   }
 
   static async findByEmail (email) {
