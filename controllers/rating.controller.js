@@ -11,13 +11,22 @@ class RatingsController {
     if (!req.body.score || !req.body.recipe_id) {
       return res.status(400).send({ errorMessage: 'One attribute is missing' });
     }
+    const user_id = req.currentUser.id; // eslint-disable-line
+    const recipe_id = req.body.recipe_id; // eslint-disable-line
+    const score = req.body.score;
+    let data = null;
 
     try {
-      const rating = new Rating(req.body);
-      const data = await Rating.create({
-        ...rating,
-        user_id: req.currentUser.id
-      });
+      const existingRating = await Rating.find(recipe_id, user_id);
+      if (existingRating) {
+        data = await Rating.updateById(existingRating.id, { score: score });
+      } else {
+        data = await Rating.create({
+          recipe_id,
+          user_id,
+          score
+        });
+      }
       console.log({ data });
       res.status(201).send({ data });
     } catch (err) {

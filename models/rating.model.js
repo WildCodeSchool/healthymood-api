@@ -26,6 +26,21 @@ class Rating {
       }
     });
   }
+  // eslint-disable-next-line
+  static async find(recipe_id, user_id) {
+    return db
+      .query('SELECT * FROM ratings WHERE recipe_id = ? AND user_id = ?', [
+        recipe_id, // eslint-disable-line
+        user_id, // eslint-disable-line
+      ])
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(rows[0]);
+        } else {
+          return null;
+        }
+      });
+  }
 
   static async getAll (result) {
     return db.query('SELECT * FROM ratings');
