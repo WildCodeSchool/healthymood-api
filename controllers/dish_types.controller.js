@@ -1,66 +1,62 @@
-const Ingredient = require('../models/ingredient.model.js');
+const DishTypes = require('../models/dish_types.model.js');
 
-class IngredientsController {
+class DishTypesController {
   static async create (req, res) {
     if (!req.body) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
-
     if (!req.body.name) {
       return res.status(400).send({ errorMessage: 'Name can not be empty!' });
     }
-
     try {
-      const ingredient = new Ingredient(req.body);
-      if (await Ingredient.nameAlreadyExists(ingredient.name)) {
+      const dishtypes = new DishTypes(req.body);
+      if (await DishTypes.nameAlreadyExists(dishtypes.name)) {
         res.status(400).send({
-          errorMessage: 'An ingredient with this name already exists !'
+          errorMessage: 'A dishtype with this name already exists !'
         });
       } else {
-        const data = await Ingredient.create(ingredient);
+        const data = await DishTypes.create(dishtypes);
         res.status(201).send({ data });
       }
     } catch (err) {
       res.status(500).send({
         errorMessage:
-          err.message || 'Some error occurred while creating the Ingredient.'
+          err.message || 'Some error occurred while creating A dishtype.'
       });
     }
   }
 
   static async findAll (req, res) {
     try {
-      const data = (await Ingredient.getAll())
-        .map((i) => new Ingredient(i))
-        .map((i) => ({
-          id: i.id,
-          name: i.name,
-          is_allergen: i.is_allergen,
-          calories: i.calories
+      const data = (await DishTypes.getAll())
+        .map((m) => new DishTypes(m))
+        .map((m) => ({
+          id: m.id,
+          name: m.name
         }));
       res.send({ data });
     } catch (err) {
       res.status(500).send({
         errorMessage:
-          err.message || 'Some error occurred while retrieving ingredients.'
+          err.message || 'Some error occurred while retrieving A dishtype.'
       });
     }
   }
 
   static async findOne (req, res) {
     try {
-      const data = await Ingredient.findById(req.params.id);
+      const data = await DishTypes.findById(req.params.id);
       res.send({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
-          errorMessage: `Ingredient with id ${req.params.id} not found.`
+          errorMessage: `A dishtype with id ${req.params.id} not found.`
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Error retrieving Ingredient with id ' + req.params.id
+          errorMessage: 'Error retrieving  dishtype with id ' + req.params.id
         });
       }
     }
@@ -72,19 +68,19 @@ class IngredientsController {
     }
 
     try {
-      const data = await Ingredient.updateById(
+      const data = await DishTypes.updateById(
         req.params.id,
-        new Ingredient(req.body)
+        new DishTypes(req.body)
       );
       res.send({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
-          errorMessage: `Ingredient with id ${req.params.id} not found.`
+          errorMessage: `dishtypes with id ${req.params.id} not found.`
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Error updating Ingredient with id ' + req.params.id
+          errorMessage: 'Error updating dishtype with id ' + req.params.id
         });
       }
     }
@@ -92,20 +88,20 @@ class IngredientsController {
 
   static async delete (req, res) {
     try {
-      await Ingredient.remove(req.params.id);
-      res.send({ message: 'Ingredient was deleted successfully!' });
+      await DishTypes.remove(req.params.id);
+      res.send({ message: 'dishtypes was deleted successfully!' });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
-          errorMessage: `Not found Ingredient with id ${req.params.id}.`
+          errorMessage: `Not found dishtype with id ${req.params.id}.`
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Could not delete Ingredient with id ' + req.params.id
+          errorMessage: 'Could not delete dishtype with id ' + req.params.id
         });
       }
     }
   }
 }
 
-module.exports = IngredientsController;
+module.exports = DishTypesController;

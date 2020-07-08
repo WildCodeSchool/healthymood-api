@@ -50,6 +50,53 @@ describe('Articles endpoints', () => {
       });
     });
 
+    describe(' GET /articles/?search=keyword', () => {
+      describe(' when there are 3 articles in DB but only two matching', () => {
+        let res;
+        beforeEach(async () => {
+          await Promise.all([
+            Article.create({
+              title: 'Salade de riz',
+              slug: 'premier-article',
+              content: 'Awesome content',
+              image: '/ma-super-image',
+              created_at: '2020-12-30 23:59:59',
+              article_category_id: 3,
+              user_id: 1
+            }),
+            Article.create({
+              title: 'Salade de pates',
+              slug: 'deuxieme-article',
+              content: 'Awesome content',
+              image: '/ma-super-image',
+              created_at: '2020-12-30 23:59:59',
+              article_category_id: 3,
+              user_id: 1
+            }),
+            Article.create({
+              title: 'Riz au lait',
+              slug: 'troisieme-article',
+              content: 'Awesome content',
+              image: '/ma-super-image',
+              created_at: '2020-12-30 23:59:59',
+              article_category_id: 3,
+              user_id: 1
+            })
+          ]);
+          res = await request(app).get('/articles/?search=salade');
+        });
+
+        it('status is 200', async () => {
+          expect(res.status).toBe(200);
+        });
+
+        it('the returned data is an array containing two elements', async () => {
+          expect(Array.isArray(res.body.data));
+          expect(res.body.data.length).toBe(2); // <-- Ahahaha des barres
+        });
+      });
+    });
+
     describe('when there are three articles in DB', () => {
       let res;
       beforeEach(async () => {

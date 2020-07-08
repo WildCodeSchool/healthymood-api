@@ -36,15 +36,24 @@ class Article {
       });
   }
 
-  static async getSome(number, order_by, sort_order = 'asc') { // eslint-disable-line
+  static async findByKeyWord(keyword) {
+    const sqlValues = `%${keyword}%`;
+    return db.query(
+      'SELECT * FROM articles WHERE title LIKE ? OR content LIKE ?',
+      [sqlValues, sqlValues]
+    );
+  }
+
+  static async getSome({ limit, order_by, sort_order = 'asc' }) { // eslint-disable-line
     let sql = 'SELECT * FROM articles';
+    limit = parseInt(limit, 10);
     if (order_by) { // eslint-disable-line
-      sql += ` ORDER BY ${order_by} ${sort_order}`; // eslint-disable-line
+      sort_order = (typeof sort_order === 'string' && sort_order.toLowerCase()) === 'desc' ? 'DESC' : 'ASC'; // eslint-disable-line
+      sql += ` ORDER BY ${db.escapeId(order_by)} ${sort_order}`; // eslint-disable-line
     }
-    if (number) {
-      sql += ` LIMIT ${number}`;
+    if (limit) {
+      sql += ` LIMIT ${limit}`;
     }
-    console.log(sql);
     return db.query(sql);
   }
 
