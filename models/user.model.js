@@ -27,10 +27,10 @@ class User {
       lastname,
       username,
       avatar,
-      is_admin = false,
+      is_admin = false, // eslint-disable-line
       blocked = false,
-      fb_uid,
-      address_id
+      fb_uid, // eslint-disable-line
+      address_id, // eslint-disable-line
     } = newUser; // eslint-disable-line
     const hash = await argon2.hash(password);
     return db

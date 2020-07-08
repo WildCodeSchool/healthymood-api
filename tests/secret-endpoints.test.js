@@ -39,7 +39,6 @@ describe('secret endpoints', () => {
         password: 'admin123',
         blocked: true
       });
-      const { token } = await User.login('john.doe@gmail.com', 'admin123');
       await request(app).get('/secret').expect(401);
     });
   });
