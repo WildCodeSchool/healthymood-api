@@ -49,7 +49,7 @@ app.use("/auth", require("./routes/auth.routes.js"));
 app.use("/articles", require("./routes/article.routes.js"));
 app.use("/article_categories", require("./routes/article-categories.routes"));
 app.use("/secret", requireAuth, require("./routes/secret.routes.js"));
-app.use("/compte/favorites", require("./routes/favorite.routes.js"));
+app.use("/ratings", require("./routes/rating.routes.js"));
 app.use((err, req, res, next) => {
   if (err.name === "UnauthorizedError") {
     app.use("/favorites", requireAuth, require("./routes/favorite.routes.js"));
