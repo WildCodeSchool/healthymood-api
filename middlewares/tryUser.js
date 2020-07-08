@@ -1,4 +1,4 @@
-const User = require("../models/user.model.js");
+const User = require('../models/user.model.js');
 
 module.exports = async (req, res, next) => {
   const decodedToken = req.token;
