@@ -80,7 +80,7 @@ describe('ingredients endpoints', () => {
         res = await request(app).get('/ingredients?per_page=10&page=1');
       });
 
-      it('has 6 ressources per page', async () => {
+      it('has 10 ressources per page', async () => {
         expect(res.body.data.length).toBe(10);
         expect(res.header['content-range']).toBe('1-10/15');
       });
