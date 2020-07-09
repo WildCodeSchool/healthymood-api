@@ -24,7 +24,7 @@ describe('ingredients endpoints', () => {
       });
     });
 
-    describe('Paginated ingredients', () => {
+    describe('Ingredient sorted by name', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
@@ -41,15 +41,80 @@ describe('ingredients endpoints', () => {
           Ingredient.create({ name: 'patate', is_allergen: false, calories: 72 }),
           Ingredient.create({ name: 'ciboulette', is_allergen: true, calories: 7 }),
           Ingredient.create({ name: 'mozza', is_allergen: false, calories: 180 }),
+          Ingredient.create({ name: 'paprika', is_allergen: true, calories: 5 })
+        ]);
+        res = await request(app).get('/ingredients?per_page=10&sort_by=name&sort_order=asc');
+      });
+      it('status is 200', async () => {
+        expect(res.status).toBe(200);
+      });
+
+      it('the returned data is an array containing ten elements', async () => {
+        expect(Array.isArray(res.body.data));
+        expect(res.body.data.length).toBe(10);
+        expect(res.body.data[0].name).toBe('ail');
+        expect(res.body.data[1].name).toBe('aubergine');
+      });
+    });
+
+    describe('Paginated ingredients', () => {
+      let res;
+      beforeEach(async () => {
+        await Promise.all([
+          Ingredient.create({ name: 'céleri', is_allergen: false, calories: 100 }),
+          Ingredient.create({ name: 'crevette', is_allergen: true, calories: 50 }),
+          Ingredient.create({ name: 'basilic', is_allergen: false, calories: 10 }),
+          Ingredient.create({ name: 'parmesan', is_allergen: true, calories: 200 }),
+          Ingredient.create({ name: 'courgette', is_allergen: false, calories: 60 }),
+          Ingredient.create({ name: 'tomate', is_allergen: false, calories: 30 }),
+          Ingredient.create({ name: 'carotte', is_allergen: true, calories: 35 }),
+          Ingredient.create({ name: 'ail', is_allergen: true, calories: 25 }),
+          Ingredient.create({ name: 'aubergine', is_allergen: true, calories: 55 }),
+          Ingredient.create({ name: 'chou', is_allergen: false, calories: 46 }),
+          Ingredient.create({ name: 'patate', is_allergen: false, calories: 72 }),
+          Ingredient.create({ name: 'ciboulette', is_allergen: true, calories: 7 }),
+          Ingredient.create({ name: 'mozza', is_allergen: false, calories: 180 }),
           Ingredient.create({ name: 'paprika', is_allergen: true, calories: 5 }),
           Ingredient.create({ name: 'thym', is_allergen: false, calories: 3 })
         ]);
         res = await request(app).get('/ingredients?per_page=10&page=1');
       });
 
-      it('has 10 ressources per page', async () => {
+      it('has 6 ressources per page', async () => {
         expect(res.body.data.length).toBe(10);
         expect(res.header['content-range']).toBe('1-10/15');
+      });
+    });
+
+    describe('Filtered ingredients', () => {
+      let res;
+      beforeEach(async () => {
+        await Promise.all([
+          Ingredient.create({ name: 'céleri', is_allergen: false, calories: 100 }),
+          Ingredient.create({ name: 'crevette', is_allergen: true, calories: 50 }),
+          Ingredient.create({ name: 'basilic', is_allergen: false, calories: 10 }),
+          Ingredient.create({ name: 'parmesan', is_allergen: true, calories: 200 }),
+          Ingredient.create({ name: 'courgette', is_allergen: false, calories: 60 }),
+          Ingredient.create({ name: 'tomate', is_allergen: false, calories: 30 }),
+          Ingredient.create({ name: 'carotte', is_allergen: true, calories: 35 }),
+          Ingredient.create({ name: 'ail', is_allergen: true, calories: 25 }),
+          Ingredient.create({ name: 'aubergine', is_allergen: true, calories: 55 }),
+          Ingredient.create({ name: 'chou', is_allergen: false, calories: 46 }),
+          Ingredient.create({ name: 'patate', is_allergen: false, calories: 72 }),
+          Ingredient.create({ name: 'ciboulette', is_allergen: true, calories: 7 }),
+          Ingredient.create({ name: 'mozza', is_allergen: false, calories: 180 }),
+          Ingredient.create({ name: 'paprika', is_allergen: true, calories: 5 }),
+          Ingredient.create({ name: 'thym', is_allergen: false, calories: 3 })
+        ]);
+        res = await request(app).get('/ingredients?per_page=10&page=1&is_allergen=1');
+      });
+
+      it('filters ingredients by is_allergen value', async () => {
+        expect(Array.isArray(res.body.data));
+        expect(res.body.data[0]).toHaveProperty('is_allergen', 1);
+        expect(res.body.data[1]).toHaveProperty('is_allergen', 1);
+        expect(res.body.data[2]).toHaveProperty('is_allergen', 1);
+        expect(res.body.data[3]).toHaveProperty('is_allergen', 1);
       });
     });
   });

@@ -47,12 +47,15 @@ class Ingredient {
     return db.query('SELECT * FROM ingredients');
   }
 
-  static async getSome (limit, offset, sortOrder = 'asc', orderBy) {
+  static async getSome (limit, offset, sortOrder = 'asc', orderBy, isAllergen) {
     const total = await db.query('select count(id) as count from ingredients').then(rows => rows[0].count);
     let sql = 'select * from ingredients';
     if (orderBy) {
-      sortOrder = (typeof sortOrder === 'string' && sortOrder.toLowerCase()) === 'desc' ? 'DESC' : 'ASC';
+      sortOrder = (typeof sortOrder === 'string' && sortOrder.toLowerCase()) === 'asc' ? 'ASC' : 'DESC';
       sql += ` ORDER BY ${db.escapeId(orderBy)} ${sortOrder}`;
+    }
+    if (isAllergen) {
+      sql += ` WHERE is_allergen = ${isAllergen}`;
     }
     if (limit !== undefined && offset !== undefined) {
       sql += ` limit ${limit} offset ${offset}`;
