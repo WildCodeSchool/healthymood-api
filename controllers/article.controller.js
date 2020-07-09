@@ -1,4 +1,5 @@
 const Article = require('../models/article.model.js');
+const { tryParseInt } = require('../helpers/number');
 
 class ArticlesController {
   static async create (req, res) {
@@ -29,7 +30,6 @@ class ArticlesController {
   }
 
   static async findAll (req, res) {
-    const { per_page, sort_order, sort_by } = req.query; // eslint-disable-line
     if (req.query.search) {
       try {
         const data = await Article.findByKeyWord(req.query.search);
@@ -42,30 +42,38 @@ class ArticlesController {
         } else {
           res.status(500).send({
             errorMessage:
-              'Error retrieving Article with keyword' + req.query.search
+                'Error retrieving Article with keyword ' + req.query.search
           });
         }
       }
-    } else {
-      try {
-        const data = (await Article.getSome({ limit: per_page, order_by: sort_by, sort_order })) // eslint-disable-line
-          .map((a) => new Article(a))
-          .map((a) => ({
-            id: a.id,
-            title: a.title,
-            content: a.content,
-            image: a.image,
-            created_at: a.created_at,
-            updated_at: a.updated_at,
-            slug: a.slug,
-            article_category_id: a.article_category_id,
-            user_id: a.user_id
-          }));
-        res.send({ data });
-      } catch (err) {
+    }
+    const page = tryParseInt(req.query.page, 1);
+    const perPage = tryParseInt(req.query.per_page, 10);
+    const orderBy = req.query.sort_by;
+    const sortOrder = req.query.sort_order;
+    console.log(req.query);
+    const limit = perPage;
+    const offset = (page - 1) * limit;
+    console.log(page, perPage, limit, offset);
+    const { results, total } = await Article.getSome(limit, offset, sortOrder, orderBy);
+    const rangeEnd = page * perPage;
+    const rangeBegin = rangeEnd - perPage + 1;
+    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+    res.send({ data: results });
+  }
+
+  static async findOne (req, res) {
+    try {
+      const data = await Article.findById(req.params.id);
+      res.send({ data });
+    } catch (err) {
+      if (err.kind === 'not_found') {
+        res.status(404).send({
+          errorMessage: `Article with id ${req.params.id} not found.`
+        });
+      } else {
         res.status(500).send({
-          errorMessage:
-            err.message || 'Some error occurred while retrieving article.'
+          errorMessage: 'Error retrieving Article with id ' + req.params.id
         });
       }
     }
@@ -92,23 +100,6 @@ class ArticlesController {
         errorMessage:
           err.message || 'Some error occurred while retrieving article.'
       });
-    }
-  }
-
-  static async findOne (req, res) {
-    try {
-      const data = await Article.findById(req.params.id);
-      res.send({ data });
-    } catch (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          errorMessage: `Article with id ${req.params.id} not found.`
-        });
-      } else {
-        res.status(500).send({
-          errorMessage: 'Error retrieving Article with id ' + req.params.id
-        });
-      }
     }
   }
 

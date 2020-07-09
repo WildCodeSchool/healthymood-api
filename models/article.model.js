@@ -44,17 +44,20 @@ class Article {
     );
   }
 
-  static async getSome({ limit, order_by, sort_order = 'asc' }) { // eslint-disable-line
-    let sql = 'SELECT * FROM articles';
-    limit = parseInt(limit, 10);
-    if (order_by) { // eslint-disable-line
-      sort_order = (typeof sort_order === 'string' && sort_order.toLowerCase()) === 'desc' ? 'DESC' : 'ASC'; // eslint-disable-line
-      sql += ` ORDER BY ${db.escapeId(order_by)} ${sort_order}`; // eslint-disable-line
+  static async getSome (limit, offset, sortOrder = 'asc', orderBy) {
+    const total = await db.query('select count(id) as count from articles').then(rows => rows[0].count);
+    let sql = 'select * from articles';
+    if (orderBy) {
+      sortOrder = (typeof sortOrder === 'string' && sortOrder.toLowerCase()) === 'desc' ? 'DESC' : 'ASC';
+      sql += ` ORDER BY ${db.escapeId(orderBy)} ${sortOrder}`;
     }
-    if (limit) {
-      sql += ` LIMIT ${limit}`;
+    if (limit !== undefined && offset !== undefined) {
+      sql += ` limit ${limit} offset ${offset}`;
     }
-    return db.query(sql);
+    return db.query(sql).then(rows => ({
+      results: rows.map(a => new Article(a)),
+      total
+    }));
   }
 
   static async updateById (id, article) {
