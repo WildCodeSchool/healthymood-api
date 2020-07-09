@@ -4,7 +4,6 @@ const swaggerUi = require('swagger-ui-express');
 const cors = require('cors');
 const extractToken = require('./middlewares/extractToken');
 const requireAuth = require('./middlewares/requireAuth');
-const requireAdmin = require('./middlewares/requireAdmin');
 const YAML = require('yamljs');
 require('dotenv').config();
 
@@ -49,17 +48,9 @@ app.use('/recipe_categories', require('./routes/recipe-categories.routes.js'));
 app.use('/users', require('./routes/user.routes.js'));
 app.use('/auth', require('./routes/auth.routes.js'));
 app.use('/articles', require('./routes/article.routes.js'));
-app.use(
-  '/article-categories',
-  require('./routes/article-categories.routes.js')
-);
-
-app.use(
-  '/secret',
-  requireAuth,
-  requireAdmin,
-  require('./routes/secret.routes.js')
-);
+app.use('/article_categories', require('./routes/article-categories.routes'));
+app.use('/secret', requireAuth, require('./routes/secret.routes.js'));
+app.use('/ratings', require('./routes/rating.routes.js'));
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
     res.status(401).send('invalid token...');
