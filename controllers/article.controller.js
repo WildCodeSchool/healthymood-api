@@ -1,7 +1,7 @@
 const Article = require('../models/article.model.js');
 
 class ArticlesController {
-  static async create (req, res) {
+  static async create(req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -28,7 +28,7 @@ class ArticlesController {
     }
   }
 
-  static async findAll (req, res) {
+  static async findAll(req, res) {
     const { per_page, sort_order, sort_by } = req.query; // eslint-disable-line
     if (req.query.search) {
       try {
@@ -71,7 +71,7 @@ class ArticlesController {
     }
   }
 
-  static async findLast (req, res) {
+  static async findLast(req, res) {
     try {
       const data = (await Article.getLastArticles())
         .map((a) => new Article(a))
@@ -95,7 +95,7 @@ class ArticlesController {
     }
   }
 
-  static async findOne (req, res) {
+  static async findOne(req, res) {
     try {
       const data = await Article.findById(req.params.id);
       res.send({ data });
@@ -112,7 +112,7 @@ class ArticlesController {
     }
   }
 
-  static async update (req, res) {
+  static async update(req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -121,6 +121,7 @@ class ArticlesController {
       const data = await Article.updateById(req.params.id, new Article(req.body));
       res.send({ data });
     } catch (err) {
+      console.log(err)
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Article with id ${req.params.id} not found.`
@@ -133,7 +134,7 @@ class ArticlesController {
     }
   }
 
-  static async delete (req, res) {
+  static async delete(req, res) {
     try {
       await Article.remove(req.params.id);
       res.send({ message: 'Article was deleted successfully!' });

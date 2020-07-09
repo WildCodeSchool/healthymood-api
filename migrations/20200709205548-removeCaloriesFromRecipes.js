@@ -19,7 +19,7 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  var filePath = path.join(__dirname, 'sqls', '20200706081124-addCaloriesToInggredients-up.sql');
+  var filePath = path.join(__dirname, 'sqls', '20200709205548-removeCaloriesFromRecipes-up.sql');
   return new Promise( function( resolve, reject ) {
     fs.readFile(filePath, {encoding: 'utf-8'}, function(err,data){
       if (err) return reject(err);
@@ -34,7 +34,7 @@ exports.up = function(db) {
 };
 
 exports.down = function(db) {
-  var filePath = path.join(__dirname, 'sqls', '20200706081124-addCaloriesToInggredients-down.sql');
+  var filePath = path.join(__dirname, 'sqls', '20200709205548-removeCaloriesFromRecipes-down.sql');
   return new Promise( function( resolve, reject ) {
     fs.readFile(filePath, {encoding: 'utf-8'}, function(err,data){
       if (err) return reject(err);

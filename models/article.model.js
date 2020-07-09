@@ -59,11 +59,10 @@ class Article {
 
   static async updateById(id, article) {
     return db
-      .query('UPDATE articles SET title = ?, slug = ?, content = ?, created_at = ?, user_id = ? WHERE id = ?', [
+      .query('UPDATE articles SET title = ?, slug = ?, content = ?, user_id = ? WHERE id = ?', [
         article.title,
         article.slug,
         article.content,
-        article.created_at,
         article.user_id,
         id
       ])

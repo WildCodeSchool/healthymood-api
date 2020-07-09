@@ -1,7 +1,7 @@
 const db = require('../db.js');
 
 class GenericPage {
-  constructor (genericPage) {
+  constructor(genericPage) {
     this.id = genericPage.id;
     this.title = genericPage.title;
     this.slug = genericPage.slug;
@@ -10,7 +10,7 @@ class GenericPage {
     this.user_id = genericPage.user_id;
   }
 
-  static async create (newGenericPage) {
+  static async create(newGenericPage) {
     return db
       .query('INSERT INTO generic_pages SET ?', newGenericPage)
       .then((res) => {
@@ -19,7 +19,7 @@ class GenericPage {
       });
   }
 
-  static async findById (id) {
+  static async findById(id) {
     return db
       .query('SELECT * FROM generic_pages WHERE id = ?', [id])
       .then((rows) => {
@@ -33,7 +33,7 @@ class GenericPage {
       });
   }
 
-  static async nameAlreadyExists (slug) {
+  static async nameAlreadyExists(slug) {
     return db
       .query('SELECT * FROM generic_pages WHERE slug = ?', [slug])
       .then((rows) => {
@@ -45,23 +45,24 @@ class GenericPage {
       });
   }
 
-  static async getAll (result) {
+  static async getAll(result) {
     return db.query('SELECT * FROM generic_pages');
   }
 
-  static async updateById (id, genericPages) {
+  static async updateById(id, genericPages) {
     return db
       .query('UPDATE generic_pages SET title = ?, slug = ?, published = ?, content = ?, user_id = ? WHERE id = ?', [
         genericPages.title,
         genericPages.slug,
         genericPages.published,
         genericPages.content,
-        genericPages.user_id
+        genericPages.user_id,
+        id
       ])
       .then(() => this.findById(id));
   }
 
-  static async remove (id) {
+  static async remove(id) {
     return db.query('DELETE FROM generic_pages WHERE id = ?', id).then((res) => {
       if (res.affectedRows !== 0) {
         return Promise.resolve();
@@ -73,7 +74,7 @@ class GenericPage {
     });
   }
 
-  static async removeAll (result) {
+  static async removeAll(result) {
     return db.query('DELETE FROM generic_pages');
   }
 }

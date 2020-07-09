@@ -45,13 +45,8 @@ app.use('/recipes', require('./routes/recipe.routes.js'));
 app.use('/recipe_categories', require('./routes/recipe-categories.routes.js'));
 app.use('/users', require('./routes/user.routes.js'));
 app.use('/auth', require('./routes/auth.routes.js'));
-<<<<<<< HEAD
-app.use('/article_categories', require('./routes/article-categories.routes'));
-
-=======
 app.use('/articles', require('./routes/article.routes.js'));
 app.use('/article_categories', require('./routes/article-categories.routes'));
->>>>>>> 404ae95ad3a9dae07e9f8d4ca7a3bbd69e21afba
 app.use('/secret', requireAuth, require('./routes/secret.routes.js'));
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {

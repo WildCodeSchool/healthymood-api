@@ -1,7 +1,7 @@
 const Recipe = require('../models/recipe.model.js');
 
 class RecipesController {
-  static async create (req, res) {
+  static async create(req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -28,7 +28,7 @@ class RecipesController {
     }
   }
 
-  static async findAll (req, res) {
+  static async findAll(req, res) {
     if (req.query.search) {
       try {
         const data = await Recipe.findByKeyWord(req.query.search);
@@ -58,7 +58,6 @@ class RecipesController {
             preparation_duration_seconds: r.preparation_duration_seconds,
             budget: r.budget,
             slug: r.slug,
-            calories: r.calories,
             published: r.published,
             user_id: r.user_id
           }));
@@ -72,7 +71,7 @@ class RecipesController {
     }
   }
 
-  static async findOne (req, res) {
+  static async findOne(req, res) {
     try {
       const data = await Recipe.findById(req.params.id);
       res.send({ data });
@@ -89,7 +88,7 @@ class RecipesController {
     }
   }
 
-  static async update (req, res) {
+  static async update(req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -110,11 +109,12 @@ class RecipesController {
     }
   }
 
-  static async delete (req, res) {
+  static async delete(req, res) {
     try {
       await Recipe.remove(req.params.id);
       res.send({ message: 'Recipe was deleted successfully!' });
     } catch (err) {
+      console.log(err)
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Not found Recipe with id ${req.params.id}.`
