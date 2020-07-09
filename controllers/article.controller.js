@@ -29,7 +29,7 @@ class ArticlesController {
     }
   }
 
-  static async findAll (req, res) { 
+  static async findAll (req, res) {
     if (req.query.search) {
       try {
         const data = await Article.findByKeyWord(req.query.search);
@@ -46,21 +46,20 @@ class ArticlesController {
           });
         }
       }
-    } else{
-      const page = tryParseInt(req.query.page, 1);
-      const perPage = tryParseInt(req.query.per_page, 10);
-      const orderBy = req.query.sort_by;
-      const sortOrder = req.query.sort_order;
-      console.log(req.query);
-      const limit = perPage;
-      const offset = (page - 1) * limit;
-      console.log(page, perPage, limit, offset);
-      const { results, total } = await Article.getSome(limit, offset, sortOrder, orderBy);
-      const rangeEnd = page * perPage;
-      const rangeBegin = rangeEnd - perPage + 1;
-      res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
-      res.send({ data: results });
     }
+    const page = tryParseInt(req.query.page, 1);
+    const perPage = tryParseInt(req.query.per_page, 10);
+    const orderBy = req.query.sort_by;
+    const sortOrder = req.query.sort_order;
+    console.log(req.query);
+    const limit = perPage;
+    const offset = (page - 1) * limit;
+    console.log(page, perPage, limit, offset);
+    const { results, total } = await Article.getSome(limit, offset, sortOrder, orderBy);
+    const rangeEnd = page * perPage;
+    const rangeBegin = rangeEnd - perPage + 1;
+    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+    res.send({ data: results });
   }
 
   static async findOne (req, res) {
