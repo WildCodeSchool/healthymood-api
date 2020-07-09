@@ -1,55 +1,51 @@
 const request = require('supertest');
 const app = require('../server.js');
-const ArticlesCategory = require('../models/article-categories.model.js');
+const Diettypes = require('../models/diet.model.js');
 
-describe('article-categories endpoints', () => {
-  describe('GET /article_categories', () => {
-    describe('when there are two article categories in DB', () => {
+describe('diettypes endpoints', () => {
+  describe('GET /diet', () => {
+    describe('when there are two diettypes in DB', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          ArticlesCategory.create({ name: 'information' }),
-          ArticlesCategory.create({ name: 'a la une' })
+          Diettypes.create({ name: 'Gluten free' }),
+          Diettypes.create({ name: 'Lactose free' })
         ]);
-        res = await request(app).get('/article_categories');
+        res = await request(app).get('/diet');
       });
       it('status is 200', async () => {
         expect(res.status).toBe(200);
       });
-
       it('the returned data is an array containing two elements', async () => {
         expect(Array.isArray(res.body.data));
         expect(res.body.data.length).toBe(2);
       });
     });
   });
-
-  describe('POST /article_categories', () => {
+  describe('POST /diet', () => {
     describe('when a valid payload is sent', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/article_categories').send({
-          name: 'info'
+        res = await request(app).post('/diet').send({
+          name: 'Flexitarian'
         });
       });
-
       it('returns 201 status', async () => {
         expect(res.statusCode).toEqual(201);
       });
 
-      it('returns the id of the created article-categories', async () => {
+      it('returns the id of the created diettypes', async () => {
         expect(res.body.data).toHaveProperty('id');
       });
     });
-
-    describe('when a article-categories with the same name already exists in DB', () => {
+    describe('when a diettype with the same name already exists in DB', () => {
       let res;
       beforeAll(async () => {
-        await ArticlesCategory.create({
-          name: 'follow'
+        await Diettypes.create({
+          name: 'Vegan'
         });
-        res = await request(app).post('/article_categories').send({
-          name: 'follow'
+        res = await request(app).post('/diet').send({
+          name: 'Vegan'
         });
       });
 

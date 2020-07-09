@@ -1,25 +1,23 @@
 const db = require('../db.js');
 
-class Ingredient {
-  constructor (ingredient) {
-    this.id = ingredient.id;
-    this.name = ingredient.name;
-    this.is_allergen = ingredient.is_allergen;
-    this.calories = ingredient.calories;
+class DishTypes {
+  constructor (dishTypes) {
+    this.id = dishTypes.id;
+    this.name = dishTypes.name;
   }
 
-  static async create (newIngredient) {
+  static async create (newDishTypes) {
     return db
-      .query('INSERT INTO ingredients SET ?', newIngredient)
+      .query('INSERT INTO dish_types SET ?', newDishTypes)
       .then((res) => {
-        newIngredient.id = res.insertId;
-        return newIngredient;
+        newDishTypes.id = res.insertId;
+        return newDishTypes;
       });
   }
 
   static async findById (id) {
     return db
-      .query('SELECT * FROM ingredients WHERE id = ?', [id])
+      .query('SELECT * FROM dish_types WHERE id = ?', [id])
       .then((rows) => {
         if (rows.length) {
           return Promise.resolve(rows[0]);
@@ -33,7 +31,7 @@ class Ingredient {
 
   static async nameAlreadyExists (name) {
     return db
-      .query('SELECT * FROM ingredients WHERE name = ?', [name])
+      .query('SELECT * FROM dish_types WHERE name = ?', [name])
       .then((rows) => {
         if (rows.length) {
           return Promise.resolve(true);
@@ -44,22 +42,20 @@ class Ingredient {
   }
 
   static async getAll (result) {
-    return db.query('SELECT * FROM ingredients');
+    return db.query('SELECT * FROM dish_types');
   }
 
-  static async updateById (id, ingredient) {
+  static async updateById (id, dishTypes) {
     return db
-      .query('UPDATE ingredients SET name = ?, is_allergen = ? , calories = ? WHERE id = ?', [
-        ingredient.name,
-        ingredient.is_allergen,
-        ingredient.calories,
+      .query('UPDATE dish_types SET name = ? WHERE id = ?', [
+        dishTypes.name,
         id
       ])
       .then(() => this.findById(id));
   }
 
   static async remove (id) {
-    return db.query('DELETE FROM ingredients WHERE id = ?', id).then((res) => {
+    return db.query('DELETE FROM dish_types WHERE id = ?', id).then((res) => {
       if (res.affectedRows !== 0) {
         return Promise.resolve();
       } else {
@@ -71,8 +67,8 @@ class Ingredient {
   }
 
   static async removeAll (result) {
-    return db.query('DELETE FROM ingredients');
+    return db.query('DELETE FROM dish_types');
   }
 }
 
-module.exports = Ingredient;
+module.exports = DishTypes;
