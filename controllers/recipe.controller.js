@@ -88,7 +88,12 @@ class RecipesController {
       if (req.currentUser) {
         user_rating = await Rating.find(data.id, req.currentUser.id); // eslint-disable-line
       }
-      res.send({ data: { ...data, ingredients, user_rating } });
+      const category = await Recipe.getRecipeCategorie(data.id);
+
+      res.send({
+        data: { ...data, ingredients, user_rating, category }
+      });
+      console.log({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({

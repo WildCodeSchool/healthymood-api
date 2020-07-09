@@ -36,11 +36,9 @@ class Recipe {
   }
 
   static async findBySlug (slug) {
-    console.log(slug);
     return db
       .query('SELECT * FROM recipes WHERE slug = ?', [slug])
       .then((rows) => {
-        console.log(rows);
         if (rows.length) {
           return Promise.resolve(rows[0]);
         } else {
@@ -55,6 +53,20 @@ class Recipe {
     return db.query(
       'SELECT * FROM recipes LEFT JOIN recipe_ingredient_quantities riq ON recipes.id = riq.recipe_id JOIN ingredients ON ingredients.id = riq.ingredient_id WHERE recipe_id = ?',
       [recipe_id] // eslint-disable-line
+    );
+  }
+
+  static async getRecipeCategorie (recipe_categories) {
+    return db.query(
+      'SELECT * FROM recipes LEFT JOIN recipe_categories ON recipe_categories.id = recipes.recipe_category_id WHERE recipe_categories.id = ?',
+      [recipe_categories] // eslint-disable-line
+    );
+  }
+
+  static async getRecipeAuthor (user_id) {
+    return db.query(
+      'SELECT * FROM recipes LEFT JOIN users ON users.id = recipes.user_id WHERE user_id = ?',
+      [user_id] // eslint-disable-line
     );
   }
 
