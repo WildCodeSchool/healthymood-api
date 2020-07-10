@@ -59,10 +59,12 @@ class Recipe {
   }
 
   static async findByKeyWord (query) {
-    const keyword = query.search;
-    const mealTypes = query.meal_types;
+    const keyword = query.search ? query.search : '';
+    const mealTypes = query.meal_types ? query.meal_types : [];
     const sqlMealTypes = mealTypes.map(mealtype => parseInt(mealtype)).toString();
-    const sqlKeyword = `%${keyword}%`;
+    const sqlKeyword = query.search ? `%${keyword}%` : '';
+    console.log(sqlKeyword);
+    console.log(sqlMealTypes);
 
     return db.query(
 

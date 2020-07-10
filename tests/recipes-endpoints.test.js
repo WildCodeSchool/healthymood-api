@@ -108,7 +108,7 @@ describe('Recipes endpoints', () => {
           MealTypes.create({ name: 'collation' }),
           MealTypeRecipes.create({ recipe_id: 1, meal_type_id: 1 })
         ]);
-        res = await request(app).get('/recipes/?search=salade&meal_types[]=1');
+        res = await request(app).get('/recipes/?search=salade&meal_types[]=1&meal_types[]=8');
       });
 
       it('status is 200', async () => {
@@ -117,7 +117,7 @@ describe('Recipes endpoints', () => {
 
       it('the returned data is an array containing two elements', async () => {
         expect(Array.isArray(res.body.data));
-        expect(res.body.data.length).toBe(2); // <-- Ahahaha des barres
+        expect(res.body.data.length).toBe(3); // <-- Ahahaha des barres
       });
     });
   });
