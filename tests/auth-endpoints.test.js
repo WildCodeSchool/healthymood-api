@@ -20,7 +20,6 @@ describe('auth endpoints', () => {
           expect(res.body).toHaveProperty('token');
         });
     });
-
     it('should not login with invalid credentials', async () => {
       await User.create({
         username: 'john doe',
@@ -31,12 +30,11 @@ describe('auth endpoints', () => {
       });
       await request(app)
         .post('/auth/login')
-        .send({ email: 'jane.doe@gmail.com', password: 'admin123' })
-        .expect(400);
-      await request(app)
-        .post('/auth/login')
-        .send({ email: 'john.doe@gmail.com', password: 'admin321' })
-        .expect(400);
+        .send({ email: 'jane.doe@gmail.com', password: 'admin456' })
+        .expect(400)
+        .then((res) => {
+          expect(res.body).toHaveProperty('message');
+        });
     });
   });
 });

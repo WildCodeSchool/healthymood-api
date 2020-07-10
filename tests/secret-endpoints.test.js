@@ -8,15 +8,16 @@ describe('secret endpoints', () => {
       await User.create({
         username: 'john doe',
         email: 'john.doe@gmail.com',
-        password: 'admin123'
+        password: 'admin123',
+        blocked: false
       });
       const { token } = await User.login('john.doe@gmail.com', 'admin123');
       await request(app)
         .get('/secret')
         .set('Authorization', `Bearer ${token}`)
-        .expect(403)
+        .expect(200)
         .then((res) => {
-          expect(res.body).toHaveProperty('errorMessage');
+          expect(res.body).toHaveProperty('secret');
         });
     });
 
@@ -38,49 +39,7 @@ describe('secret endpoints', () => {
         password: 'admin123',
         blocked: true
       });
-      const { token } = await User.login('john.doe@gmail.com', 'admin123');
-      await request(app)
-        .get('/secret')
-        .set('Authorization', `Bearer ${token}`)
-        .expect(403)
-        .then((res) => {
-          expect(res.body).toHaveProperty('errorMessage');
-        });
-    });
-
-    it("should get secret with valid token but user isn't admin", async () => {
-      await User.create({
-        username: 'john doe',
-        email: 'john.doe@gmail.com',
-        password: 'admin123',
-        blocked: false
-      });
-      const { token } = await User.login('john.doe@gmail.com', 'admin123');
-      await request(app)
-        .get('/secret')
-        .set('Authorization', `Bearer ${token}`)
-        .expect(403)
-        .then((res) => {
-          expect(res.body).toHaveProperty('errorMessage');
-        });
-    });
-
-    it('should get secret with valid token and user is admin', async () => {
-      await User.create({
-        username: 'john doe',
-        email: 'john.doe@gmail.com',
-        password: 'admin123',
-        blocked: false,
-        is_admin: true
-      });
-      const { token } = await User.login('john.doe@gmail.com', 'admin123');
-      await request(app)
-        .get('/secret')
-        .set('Authorization', `Bearer ${token}`)
-        .expect(200)
-        .then((res) => {
-          expect(res.body).toHaveProperty('secret');
-        });
+      await request(app).get('/secret').expect(401);
     });
   });
 });

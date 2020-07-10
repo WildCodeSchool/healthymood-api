@@ -1,7 +1,7 @@
 const genericPagesController = require('../controllers/generic_page.controller.js');
 const router = require('express').Router();
-const requireAuth = require('../middlewares/requireAuth');
-const requireAdmin = require('../middlewares/requireAdmin');
+const requireAuth = require('../middlewares/requireAuth.js');
+const requireAdmin = require('../middlewares/requireAdmin.js');
 
 router.post('/', requireAuth, requireAdmin, genericPagesController.create);
 router.get('/', genericPagesController.findAll);

@@ -42,12 +42,12 @@ describe('genericPage endpoints', () => {
     describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/generic_pages').send({
+        res = await request(app).post('/dish_types').send({
           title: 'dzqdzqdz',
           slug: 'sauce-ketchup-healthy',
           published: true,
           content: 'gqes',
-          user_id: 2
+          user_id: 3
         });
       });
 
@@ -55,44 +55,32 @@ describe('genericPage endpoints', () => {
         expect(res.statusCode).toEqual(401);
       });
     });
-    describe('when a user is authenticated', () => {
+    describe('when a valid payload is sent', () => {
       let res;
       let token;
       beforeAll(async () => {
-        res = await request(app).post('/generic_pages').send({
-          title: 'dzqdzqdz',
-          slug: 'sauce-ketchup-healthy',
-          published: true,
-          content: 'gqes',
-          user_id: 2
-        });
-        token = (await authenticateHelper({
+        token = await authenticateHelper({
           blocked: false,
           isAdmin: true
-        }));
+        });
+        res = await request(app)
+          .post('/generic_pages')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            title: 'dzqdzqdz',
+            slug: 'sauce-ketchup-healthy',
+            published: true,
+            content: 'gqes',
+            user_id: 3
+          });
       });
 
-      describe('when a valid payload is sent', () => {
-        beforeAll(async () => {
-          res = await request(app)
-            .post('/generic_pages')
-            .set('Authorization', `Bearer ${token}`)
-            .send({
-              title: 'dzqdzqdz',
-              slug: 'sauce-ketchup-healthy',
-              published: true,
-              content: 'gqes',
-              user_id: 2
-            });
-        });
+      it('returns 201 status', async () => {
+        expect(res.statusCode).toEqual(201);
+      });
 
-        it('returns 201 status', async () => {
-          expect(res.statusCode).toEqual(201);
-        });
-
-        it('returns the id of the created genericPages', async () => {
-          expect(res.body.data).toHaveProperty('id');
-        });
+      it('returns the id of the created genericPages', async () => {
+        expect(res.body.data).toHaveProperty('id');
       });
     });
 
@@ -100,16 +88,17 @@ describe('genericPage endpoints', () => {
       let res;
       let token;
       beforeAll(async () => {
-        await GenericPage.create(
-          {
-            title: 'Sauce ketchup',
-            slug: 'sauce-ketchup-healthy',
-            published: true,
-            content: 'gqes',
-            user_id: 2
-          },
-          token = (await authenticateHelper({ blocked: false, isAdmin: true }))
-        );
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
+        await GenericPage.create({
+          title: 'Sauce ketchup',
+          slug: 'sauce-ketchup-healthy',
+          published: true,
+          content: 'gqes',
+          user_id: 3
+        });
         res = await request(app)
           .post('/generic_pages')
           .set('Authorization', `Bearer ${token}`)
@@ -118,7 +107,7 @@ describe('genericPage endpoints', () => {
             slug: 'sauce-ketchup-healthy',
             published: true,
             content: 'gqes',
-            user_id: 2
+            user_id: 3
           });
       });
 

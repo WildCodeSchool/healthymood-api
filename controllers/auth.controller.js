@@ -3,12 +3,12 @@ const User = require('../models/user.model.js');
 class authController {
   static async login (req, res) {
     const clientPayload = req.body;
-    const user = await User.findByEmail(clientPayload.email);
-    if (user.blocked) {
-      return res.status(403).send({ errorMessage: 'This user is blocked' });
-    }
 
     try {
+      const user = await User.findByEmail(clientPayload.email);
+      if (user.blocked) {
+        return res.status(403).send({ errorMessage: 'This user is blocked' });
+      }
       const { token } = await User.login(
         clientPayload.email,
         clientPayload.password

@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../server.js');
 const ArticlesCategory = require('../models/article-categories.model.js');
+const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('article-categories endpoints', () => {
   describe('GET /article-categories', () => {
@@ -25,7 +26,7 @@ describe('article-categories endpoints', () => {
   });
 
   describe('POST /article-categories', () => {
-    describe('when a valid payload is sent', () => {
+    describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
         res = await request(app).post('/article-categories').send({
@@ -33,24 +34,52 @@ describe('article-categories endpoints', () => {
         });
       });
 
+      it('returns 401 status', async () => {
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+    describe('when user is authenticated', () => {
+      let res;
+      let token;
+      beforeAll(async () => {
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
+        res = await request(app)
+          .post('/article-categories')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            name: 'info'
+          });
+      });
+
       it('returns 201 status', async () => {
         expect(res.statusCode).toEqual(201);
       });
 
-      it('returns the id of the created article-categories', async () => {
+      it('returns the id of the created category', async () => {
         expect(res.body.data).toHaveProperty('id');
       });
     });
 
     describe('when a article-categories with the same name already exists in DB', () => {
       let res;
+      let token;
       beforeAll(async () => {
         await ArticlesCategory.create({
           name: 'follow'
         });
-        res = await request(app).post('/article-categories').send({
-          name: 'follow'
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
         });
+        res = await request(app)
+          .post('/article-categories')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            name: 'follow'
+          });
       });
 
       it('returns a 400 status', async () => {
