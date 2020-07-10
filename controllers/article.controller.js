@@ -42,7 +42,7 @@ class ArticlesController {
         } else {
           res.status(500).send({
             errorMessage:
-                'Error retrieving Article with keyword ' + req.query.search
+              'Error retrieving Article with keyword ' + req.query.search
           });
         }
       }
@@ -51,11 +51,14 @@ class ArticlesController {
     const perPage = tryParseInt(req.query.per_page, 10);
     const orderBy = req.query.sort_by;
     const sortOrder = req.query.sort_order;
-    console.log(req.query);
     const limit = perPage;
     const offset = (page - 1) * limit;
-    console.log(page, perPage, limit, offset);
-    const { results, total } = await Article.getSome(limit, offset, sortOrder, orderBy);
+    const { results, total } = await Article.getSome(
+      limit,
+      offset,
+      sortOrder,
+      orderBy
+    );
     const rangeEnd = page * perPage;
     const rangeBegin = rangeEnd - perPage + 1;
     res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
@@ -109,7 +112,10 @@ class ArticlesController {
     }
 
     try {
-      const data = await Article.updateById(req.params.id, new Article(req.body));
+      const data = await Article.updateById(
+        req.params.id,
+        new Article(req.body)
+      );
       res.send({ data });
     } catch (err) {
       console.log(err);
