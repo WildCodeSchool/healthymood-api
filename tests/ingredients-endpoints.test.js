@@ -106,7 +106,7 @@ describe('ingredients endpoints', () => {
           Ingredient.create({ name: 'paprika', is_allergen: true, calories: 5 }),
           Ingredient.create({ name: 'thym', is_allergen: false, calories: 3 })
         ]);
-        res = await request(app).get('/ingredients?per_page=10&page=1&is_allergen=1');
+        res = await request(app).get('/ingredients?is_allergen=1');
       });
 
       it('filters ingredients by is_allergen value', async () => {
