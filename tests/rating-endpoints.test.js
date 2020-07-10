@@ -57,7 +57,6 @@ describe('ratings endpoints', () => {
           preparation_duration_seconds: 1500,
           budget: 3,
           slug: 'ma-recette-patates',
-          calories: 400,
           published: false,
           user_id: currentUser.id
         });
