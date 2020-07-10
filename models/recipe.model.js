@@ -1,4 +1,5 @@
 const db = require('../db.js');
+// const { query } = require('../db.js');
 
 class Recipe {
   constructor (recipe) {
@@ -59,16 +60,19 @@ class Recipe {
   }
 
   static async findByKeyWord (query) {
-    const search = query.search;
-    const mealTypes = query.meal_types;
-    const mealTypesInt = mealTypes.map(mealtype => parseInt(mealtype));
+    // const keyword = query.search;
     console.log(query);
-    console.log(mealTypes);
-    console.log(mealTypesInt);
-    const sqlValues = `%${search}%`;
+    const mealTypes = query.meal_types;
+    const mealTypesIntToString = mealTypes.map(mealtype => parseInt(mealtype)).toString();
+    console.log(mealTypesIntToString);
+
+    // const sqlKeyword = `%${keyword}%`;
+    const sqlMealTypes = mealTypesIntToString;
+    // UNION SELECT name FROM recipes WHERE recipes.name LIKE ? OR recipes.content LIKE ?
     return db.query(
-      'SELECT * FROM recipes WHERE name LIKE ? OR content LIKE ?',
-      [sqlValues, sqlValues]
+
+      'SELECT DISTINCT recipes.name FROM meal_type_recipes INNER JOIN recipes ON meal_type_recipes.recipe_id = recipes.id WHERE meal_type_recipes.meal_type_id IN (?)',
+      [sqlMealTypes]
     );
   }
 

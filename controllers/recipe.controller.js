@@ -30,7 +30,8 @@ class RecipesController {
   }
 
   static async findAll (req, res) {
-    if (req.query.search !== undefined) {
+    if (Object.keys(req.query).length !== 0) {
+      console.log(req.query);
       try {
         const data = await Recipe.findByKeyWord(req.query);
         res.send({ data });
