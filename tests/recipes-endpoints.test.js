@@ -16,7 +16,6 @@ describe('Recipes endpoints', () => {
             preparation_duration_seconds: 1200,
             budget: 5,
             slug: 'ma-recette',
-            calories: 300,
             published: true,
             user_id: 1
           }),
@@ -28,7 +27,6 @@ describe('Recipes endpoints', () => {
             preparation_duration_seconds: 1300,
             budget: 4,
             slug: 'ma-recette-riz',
-            calories: 350,
             published: true,
             user_id: 1
           }),
@@ -40,7 +38,6 @@ describe('Recipes endpoints', () => {
             preparation_duration_seconds: 1500,
             budget: 3,
             slug: 'ma-recette-patates',
-            calories: 400,
             published: false,
             user_id: 1
           })
@@ -72,7 +69,6 @@ describe('Recipes endpoints', () => {
             preparation_duration_seconds: 1200,
             budget: 5,
             slug: 'ma-recette',
-            calories: 300,
             published: true,
             user_id: 1
           }),
@@ -84,7 +80,6 @@ describe('Recipes endpoints', () => {
             preparation_duration_seconds: 1300,
             budget: 4,
             slug: 'ma-recette-riz',
-            calories: 350,
             published: true,
             user_id: 1
           }),
@@ -96,7 +91,6 @@ describe('Recipes endpoints', () => {
             preparation_duration_seconds: 1500,
             budget: 3,
             slug: 'ma-recette-patates',
-            calories: 400,
             published: false,
             user_id: 1
           })
@@ -127,7 +121,6 @@ describe('Recipes endpoints', () => {
           preparation_duration_seconds: 1500,
           budget: 3,
           slug: 'ma-recette-patates',
-          calories: 400,
           published: false,
           user_id: 1
         });
