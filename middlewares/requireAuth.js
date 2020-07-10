@@ -10,6 +10,10 @@ module.exports = async (req, res, next) => {
     req.currentUser = userRecord;
     if (!userRecord) {
       return res.sendStatus(401);
+    } else if (userRecord.blocked) {
+      return res
+        .status(403)
+        .send({ errorMessage: 'This account is Blocked !' });
     } else {
       return next();
     }

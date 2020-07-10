@@ -1,10 +1,12 @@
 const mealtypesController = require('../controllers/meal_types.controller.js');
 const router = require('express').Router();
+const requireAuth = require('../middlewares/requireAuth.js');
+const requireAdmin = require('../middlewares/requireAdmin.js');
 
-router.post('/', mealtypesController.create);
+router.post('/', requireAuth, requireAdmin, mealtypesController.create);
 router.get('/', mealtypesController.findAll);
 router.get('/:id', mealtypesController.findOne);
-router.patch('/:id', mealtypesController.update);
-router.delete('/:id', mealtypesController.delete);
+router.patch('/:id', requireAuth, requireAdmin, mealtypesController.update);
+router.delete('/:id', requireAuth, requireAdmin, mealtypesController.delete);
 
 module.exports = router;

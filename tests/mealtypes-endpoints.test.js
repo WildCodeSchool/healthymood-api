@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../server.js');
 const Mealtypes = require('../models/meal_types.model.js');
+const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('mealtypes endpoints', () => {
   describe('GET /meal_types', () => {
@@ -23,12 +24,32 @@ describe('mealtypes endpoints', () => {
     });
   });
   describe('POST /meal_types', () => {
-    describe('when a valid payload is sent', () => {
+    describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/meal_types').send({
+        res = await request(app).post('/dish_types').send({
           name: 'dessert'
         });
+      });
+
+      it('returns 401 status', async () => {
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+    describe('when a valid payload is sent', () => {
+      let res;
+      let token;
+      beforeAll(async () => {
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
+        res = await request(app)
+          .post('/meal_types')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            name: 'dessert'
+          });
       });
       it('returns 201 status', async () => {
         expect(res.statusCode).toEqual(201);
@@ -40,13 +61,21 @@ describe('mealtypes endpoints', () => {
     });
     describe('when a mealtype with the same name already exists in DB', () => {
       let res;
+      let token;
       beforeAll(async () => {
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
         await Mealtypes.create({
           name: 'brunch'
         });
-        res = await request(app).post('/meal_types').send({
-          name: 'brunch'
-        });
+        res = await request(app)
+          .post('/meal_types')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            name: 'brunch'
+          });
       });
 
       it('returns a 400 status', async () => {
