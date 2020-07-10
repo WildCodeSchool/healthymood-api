@@ -54,6 +54,7 @@ app.use(
 );
 
 app.use('/secret', requireAuth, require('./routes/secret.routes.js'));
+app.use('/ratings', require('./routes/rating.routes.js'));
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
     res.status(401).send('invalid token...');
