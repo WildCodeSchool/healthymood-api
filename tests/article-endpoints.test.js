@@ -154,82 +154,54 @@ describe('Articles endpoints', () => {
       it('status is 200', async () => {
         expect(res.body.data.length).toBe(2);
         expect(res.header['content-range']).toBe('1-2/5');
-        describe('POST /articles', () => {
-          describe('when a user is not authenticated on admin', () => {
-            let res;
-            beforeAll(async () => {
-              res = await request(app).post('/article-categories').send({
-                title: 'article de malade mental',
-                slug: 'article-de-malade-mental',
-                content: 'my content is crazy as fuck',
-                image: '/ma-super-image',
-                created_at: '2020-12-30 23:59:59',
-                article_category_id: 1,
-                user_id: 1
-              });
-            });
-
-            it('returns 401 status', async () => {
-              expect(res.statusCode).toEqual(401);
-            });
-          });
-          describe('when a valid payload is sent', () => {
-            let res;
-            let token;
-            beforeAll(async () => {
-              token = await authenticateHelper({
-                blocked: false,
-                isAdmin: true
-              });
-              res = await request(app)
-                .post('/articles')
-                .set('Authorization', `Bearer ${token}`)
-                .send({
-                  title: 'article de malade mental',
-                  slug: 'article-de-malade-mental',
-                  content: 'my content is crazy as fuck',
-                  image: '/ma-super-image',
-                  created_at: '2020-12-30 23:59:59',
-                  article_category_id: 1,
-                  user_id: 1
-                });
-            });
-
-            it('returns 201 status', async () => {
-              expect(res.statusCode).toEqual(201);
-            });
-          });
-
-          describe('POST /articles', () => {
-            describe('when a valid payload is sent', () => {
-              let res;
-              beforeAll(async () => {
-                res = await request(app).post('/articles').send({
-                  title: 'article de malade mental',
-                  slug: 'article-de-malade-mental',
-                  content: 'my content is crazy as fuck',
-                  image: '/ma-super-image',
-                  created_at: '2020-12-30 23:59:59',
-                  article_category_id: 1,
-                  user_id: 1
-                });
-              });
-
-              it('returns 201 status', async () => {
-                expect(res.statusCode).toEqual(201);
-              });
-
-              it('returns the id of the created article', async () => {
-                expect(res.body.data).toHaveProperty('id');
-              });
-              it('returns the title and content of the created article', async () => {
-                expect(res.body.data).toHaveProperty('title');
-                expect(res.body.data).toHaveProperty('content');
-              });
-            });
-          });
-        });
       });
     })
   })
+
+  describe('POST /articles', () => {
+    describe('when a user is not authenticated on admin', () => {
+      let res;
+      beforeAll(async () => {
+        res = await request(app).post('/article-categories').send({
+          title: 'article de malade mental',
+          slug: 'article-de-malade-mental',
+          content: 'my content is crazy as fuck',
+          image: '/ma-super-image',
+          created_at: '2020-12-30 23:59:59',
+          article_category_id: 1,
+          user_id: 1
+        });
+      });
+
+      it('returns 401 status', async () => {
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+    describe('when a valid payload is sent', () => {
+      let res;
+      let token;
+      beforeAll(async () => {
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
+        res = await request(app)
+          .post('/articles')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            title: 'article de malade mental',
+            slug: 'article-de-malade-mental',
+            content: 'my content is crazy as fuck',
+            image: '/ma-super-image',
+            created_at: '2020-12-30 23:59:59',
+            article_category_id: 1,
+            user_id: 1
+          });
+      });
+
+      it('returns 201 status', async () => {
+        expect(res.statusCode).toEqual(201);
+      });
+    });
+  });
 })
