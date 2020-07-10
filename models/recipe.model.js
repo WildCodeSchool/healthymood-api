@@ -1,7 +1,7 @@
-const db = require("../db.js");
+const db = require('../db.js');
 
 class Recipe {
-  constructor(recipe) {
+  constructor (recipe) {
     this.id = recipe.id;
     this.name = recipe.name;
     this.image = recipe.image;
@@ -16,34 +16,34 @@ class Recipe {
     this.user_id = recipe.user_id;
   }
 
-  static async create(newRecipe) {
-    return db.query("INSERT INTO recipes SET ?", newRecipe).then((res) => {
+  static async create (newRecipe) {
+    return db.query('INSERT INTO recipes SET ?', newRecipe).then((res) => {
       newRecipe.id = res.insertId;
       return newRecipe;
     });
   }
 
-  static async findById(id) {
-    return db.query("SELECT * FROM recipes WHERE id = ?", [id]).then((rows) => {
+  static async findById (id) {
+    return db.query('SELECT * FROM recipes WHERE id = ?', [id]).then((rows) => {
       if (rows.length) {
         return Promise.resolve(rows[0]);
       } else {
         const err = new Error();
-        err.kind = "not_found";
+        err.kind = 'not_found';
         return Promise.reject(err);
       }
     });
   }
 
-  static async findBySlug(slug) {
+  static async findBySlug (slug) {
     return db
-      .query("SELECT * FROM recipes WHERE slug = ?", [slug])
+      .query('SELECT * FROM recipes WHERE slug = ?', [slug])
       .then((rows) => {
         if (rows.length) {
           return Promise.resolve(rows[0]);
         } else {
           const err = new Error();
-          err.kind = "not_found";
+          err.kind = 'not_found';
           return Promise.reject(err);
         }
       });
@@ -51,7 +51,7 @@ class Recipe {
   // eslint-disable-next-line
   static async getRecipeIngredients(recipe_id) {
     return db.query(
-      "SELECT * FROM recipes LEFT JOIN recipe_ingredient_quantities riq ON recipes.id = riq.recipe_id JOIN ingredients ON ingredients.id = riq.ingredient_id WHERE recipe_id = ?",
+      'SELECT * FROM recipes LEFT JOIN recipe_ingredient_quantities riq ON recipes.id = riq.recipe_id JOIN ingredients ON ingredients.id = riq.ingredient_id WHERE recipe_id = ?',
       [recipe_id] // eslint-disable-line
     );
   }
@@ -59,7 +59,7 @@ class Recipe {
   static async getRecipeCategorie(recipe_categories) {
     return db
       .query(
-        "SELECT recipe_categories.name FROM recipes LEFT JOIN recipe_categories ON recipe_categories.id = recipes.recipe_category_id WHERE recipe_categories.id = ?",
+        'SELECT recipe_categories.name FROM recipes LEFT JOIN recipe_categories ON recipe_categories.id = recipes.recipe_category_id WHERE recipe_categories.id = ?',
         [recipe_categories] // eslint-disable-line
       )
       .then((rows) => {
@@ -68,7 +68,7 @@ class Recipe {
           return Promise.resolve(rows[0]);
         } else {
           const err = new Error();
-          err.kind = "not_found";
+          err.kind = 'not_found';
           return Promise.reject(err);
         }
       });
@@ -77,15 +77,16 @@ class Recipe {
   static async getMealTypeCategorie(recipe_id) {
     return db
       .query(
-        "SELECT meal_types.name FROM recipes LEFT JOIN meal_type_recipes mtr ON recipes.id = mtr.recipe_id JOIN meal_types ON meal_types.id = mtr.recipe_id WHERE recipe_id = ?",
+        'SELECT meal_types.name FROM recipes LEFT JOIN meal_type_recipes mtr ON recipes.id = mtr.recipe_id JOIN meal_types ON meal_types.id = mtr.recipe_id WHERE recipe_id = ?',
         [recipe_id] // eslint-disable-line
       )
       .then((rows) => {
+        console.log(rows);
         if (rows.length) {
           return Promise.resolve(rows[0]);
         } else {
           const err = new Error();
-          err.kind = "not_found";
+          err.kind = 'not_found';
           return Promise.reject(err);
         }
       });
@@ -94,7 +95,7 @@ class Recipe {
   static async getRecipeAuthor(user_id) {
     return db
       .query(
-        "SELECT users.username FROM recipes LEFT JOIN users ON users.id = recipes.user_id WHERE user_id = ?", // eslint-disable-next-line
+        'SELECT users.username FROM recipes LEFT JOIN users ON users.id = recipes.user_id WHERE user_id = ?', // eslint-disable-next-line
         [user_id]
       )
       .then((rows) => {
@@ -102,28 +103,28 @@ class Recipe {
           return Promise.resolve(rows[0]);
         } else {
           const err = new Error();
-          err.kind = "not_found";
+          err.kind = 'not_found';
           return Promise.reject(err);
         }
       });
   }
 
-  static async findByKeyWord(keyword) {
+  static async findByKeyWord (keyword) {
     const sqlValues = `%${keyword}%`;
     return db.query(
-      "SELECT * FROM recipes WHERE name LIKE ? OR content LIKE ?",
+      'SELECT * FROM recipes WHERE name LIKE ? OR content LIKE ?',
       [sqlValues, sqlValues]
     );
   }
 
-  static async getAll(result) {
-    return db.query("SELECT * FROM recipes");
+  static async getAll (result) {
+    return db.query('SELECT * FROM recipes');
   }
 
-  static async updateById(id, recipe) {
+  static async updateById (id, recipe) {
     return db
       .query(
-        "UPDATE recipes SET name = ?, content = ?, image = ?, created_at = ?, updated_at = ?, preparation_duration_seconds = ?, budget = ?, slug = ?, calories = ?, published = ?, user_id = ?  WHERE id = ?",
+        'UPDATE recipes SET name = ?, content = ?, image = ?, created_at = ?, updated_at = ?, preparation_duration_seconds = ?, budget = ?, slug = ?, calories = ?, published = ?, user_id = ?  WHERE id = ?',
         [
           recipe.name,
           recipe.content,
@@ -136,26 +137,26 @@ class Recipe {
           recipe.calories,
           recipe.published,
           recipe.user_id,
-          id,
+          id
         ]
       )
       .then(() => this.findById(id));
   }
 
-  static async remove(id) {
-    return db.query("DELETE FROM recipes WHERE id = ?", id).then((res) => {
+  static async remove (id) {
+    return db.query('DELETE FROM recipes WHERE id = ?', id).then((res) => {
       if (res.affectedRows !== 0) {
         return Promise.resolve();
       } else {
         const err = new Error();
-        err.kind = "not_found";
+        err.kind = 'not_found';
         return Promise.reject(err);
       }
     });
   }
 
-  static async removeAll(result) {
-    return db.query("DELETE FROM recipes");
+  static async removeAll (result) {
+    return db.query('DELETE FROM recipes');
   }
 }
 
