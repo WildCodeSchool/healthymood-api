@@ -34,6 +34,29 @@ class Recipe {
     });
   }
 
+  static async findBySlug (slug) {
+    console.log(slug);
+    return db
+      .query('SELECT * FROM recipes WHERE slug = ?', [slug])
+      .then((rows) => {
+        console.log(rows);
+        if (rows.length) {
+          return Promise.resolve(rows[0]);
+        } else {
+          const err = new Error();
+          err.kind = 'not_found';
+          return Promise.reject(err);
+        }
+      });
+  }
+  // eslint-disable-next-line
+  static async getRecipeIngredients(recipe_id) {
+    return db.query(
+      'SELECT * FROM recipes LEFT JOIN recipe_ingredient_quantities riq ON recipes.id = riq.recipe_id JOIN ingredients ON ingredients.id = riq.ingredient_id WHERE recipe_id = ?',
+      [recipe_id] // eslint-disable-line
+    );
+  }
+
   static async findByKeyWord (keyword) {
     const sqlValues = `%${keyword}%`;
     return db.query(
