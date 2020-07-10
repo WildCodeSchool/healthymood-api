@@ -116,7 +116,7 @@ describe('Recipes endpoints', () => {
 
       it('the returned data is an array containing two elements', async () => {
         expect(Array.isArray(res.body.data));
-        expect(res.body.data.length).toBe(1); // <-- Ahahaha des barres
+        expect(res.body.data.length).toBe(2); // <-- Ahahaha des barres
       });
     });
   });
