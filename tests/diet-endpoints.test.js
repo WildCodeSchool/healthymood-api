@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../server.js');
 const Diettypes = require('../models/diet.model.js');
+const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('diettypes endpoints', () => {
   describe('GET /diet', () => {
@@ -23,12 +24,32 @@ describe('diettypes endpoints', () => {
     });
   });
   describe('POST /diet', () => {
-    describe('when a valid payload is sent', () => {
+    describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/diet').send({
+        res = await request(app).post('/article-categories').send({
           name: 'Flexitarian'
         });
+      });
+
+      it('returns 401 status', async () => {
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+    describe('when a valid payload is sent', () => {
+      let token;
+      let res;
+      beforeAll(async () => {
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
+        res = await request(app)
+          .post('/diet')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            name: 'Flexitarian'
+          });
       });
       it('returns 201 status', async () => {
         expect(res.statusCode).toEqual(201);
@@ -40,13 +61,21 @@ describe('diettypes endpoints', () => {
     });
     describe('when a diettype with the same name already exists in DB', () => {
       let res;
+      let token;
       beforeAll(async () => {
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
         await Diettypes.create({
           name: 'Vegan'
         });
-        res = await request(app).post('/diet').send({
-          name: 'Vegan'
-        });
+        res = await request(app)
+          .post('/diet')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            name: 'Vegan'
+          });
       });
 
       it('returns a 400 status', async () => {
