@@ -59,7 +59,6 @@ class RecipesController {
             preparation_duration_seconds: r.preparation_duration_seconds,
             budget: r.budget,
             slug: r.slug,
-            calories: r.calories,
             published: r.published,
             user_id: r.user_id,
           }));
