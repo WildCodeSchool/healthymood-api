@@ -77,7 +77,7 @@ class Recipe {
           recipe.name,
           recipe.content,
           recipe.image,
-          recipe.created_at,
+          // recipe.created_at,
           recipe.updated_at,
           recipe.preparation_duration_seconds,
           recipe.budget,
