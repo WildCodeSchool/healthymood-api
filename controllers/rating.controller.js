@@ -27,7 +27,6 @@ class RatingsController {
           score
         });
       }
-
       res.status(201).send({ data });
     } catch (err) {
       res.status(500).send({

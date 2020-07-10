@@ -56,7 +56,8 @@ class GenericPage {
         genericPages.slug,
         genericPages.published,
         genericPages.content,
-        genericPages.user_id
+        genericPages.user_id,
+        id
       ])
       .then(() => this.findById(id));
   }

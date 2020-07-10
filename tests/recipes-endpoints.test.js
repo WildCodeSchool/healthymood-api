@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../server.js');
 const Recipe = require('../models/recipe.model.js');
+const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('Recipes endpoints', () => {
   describe('GET /recipes', () => {
@@ -110,10 +111,10 @@ describe('Recipes endpoints', () => {
   });
 
   describe('POST /recipes', () => {
-    describe('when a valid payload is sent', () => {
+    describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/recipes').send({
+        res = await request(app).post('/dish_types').send({
           name: 'salade de pommes de terre',
           image: '/ma-super-image-de-patates',
           content: 'awesome patates',
@@ -124,6 +125,35 @@ describe('Recipes endpoints', () => {
           published: false,
           user_id: 1
         });
+      });
+
+      it('returns 401 status', async () => {
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+    describe('when a valid payload is sent', () => {
+      let res;
+      let token;
+      beforeAll(async () => {
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
+        res = await request(app)
+          .post('/recipes')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            name: 'salade de pommes de terre',
+            image: '/ma-super-image-de-patates',
+            content: 'awesome patates',
+            created_at: '2020-12-30 23:59:59',
+            preparation_duration_seconds: 1500,
+            budget: 3,
+            slug: 'ma-recette-patates',
+            calories: 400,
+            published: false,
+            user_id: 1
+          });
       });
 
       it('returns 201 status', async () => {
