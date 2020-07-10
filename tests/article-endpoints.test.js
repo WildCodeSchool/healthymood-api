@@ -155,8 +155,8 @@ describe('Articles endpoints', () => {
         expect(res.body.data.length).toBe(2);
         expect(res.header['content-range']).toBe('1-2/5');
       });
-    })
-  })
+    });
+  });
 
   describe('POST /articles', () => {
     describe('when a user is not authenticated on admin', () => {
@@ -204,4 +204,4 @@ describe('Articles endpoints', () => {
       });
     });
   });
-})
+});
