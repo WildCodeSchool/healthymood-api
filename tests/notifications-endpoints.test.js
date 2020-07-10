@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../server.js');
 const Notification = require('../models/notification.model.js');
+const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('notifications endpoints', () => {
   describe('GET /notifications', () => {
@@ -42,15 +43,35 @@ describe('notifications endpoints', () => {
   });
 
   describe('POST /notifications', () => {
-    describe('when a valid payload is sent', () => {
+    describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/notifications').send({
-          title: 'notif',
-          content: 'a notif',
-          link: 'https://google.com',
-          dispatch_planning: '2020-12-31 23:59:59'
+        res = await request(app).post('/dish_types').send({
+          name: 'dessert'
         });
+      });
+
+      it('returns 401 status', async () => {
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+    describe('when a valid payload is sent', () => {
+      let res;
+      let token;
+      beforeAll(async () => {
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
+        res = await request(app)
+          .post('/notifications')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            title: 'notif',
+            content: 'a notif',
+            link: 'https://google.com',
+            dispatch_planning: '2020-12-31 23:59:59'
+          });
       });
 
       it('returns 201 status', async () => {

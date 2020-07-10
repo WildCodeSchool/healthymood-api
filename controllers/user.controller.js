@@ -8,14 +8,22 @@ class UsersController {
       return typeof str === 'string' && str.length > 0;
     };
 
-    if (!isNotEmptyString(clientPayload.username) || !isNotEmptyString(clientPayload.email) || !isNotEmptyString(clientPayload.password)) {
+    if (
+      !isNotEmptyString(clientPayload.username) ||
+      !isNotEmptyString(clientPayload.email) ||
+      !isNotEmptyString(clientPayload.password)
+    ) {
       return res.status(422).send({ errorMessage: 'Missing attribute !' });
     }
     try {
       const user = new User(clientPayload);
-      if (await User.usernameAlreadyExists(user.username) || await User.emailAlreadyExists(user.email)) {
+      if (
+        (await User.usernameAlreadyExists(user.username)) ||
+        (await User.emailAlreadyExists(user.email))
+      ) {
         res.status(400).send({
-          errorMessage: 'A user with this username or this email already exists !'
+          errorMessage:
+            'A user with this username or this email already exists !'
         });
       } else {
         const data = await User.create(user);
@@ -77,10 +85,7 @@ class UsersController {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
     try {
-      const { is_admin, blocked } = req.body; // eslint-disable-line
-      const data = await User.updateById(
-        req.params.id, { is_admin, blocked }
-      );
+      const data = await User.updateById(req.params.id, new User(req.body));
       res.send({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
