@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../server.js');
 const Article = require('../models/article.model.js');
+const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('Articles endpoints', () => {
   describe('GET /articles', () => {
@@ -36,7 +37,9 @@ describe('Articles endpoints', () => {
             user_id: 1
           })
         ]);
-        res = await request(app).get('/articles?per_page=2&sort_by=created_at&sort_order=desc');
+        res = await request(app).get(
+          '/articles?per_page=2&sort_by=created_at&sort_order=desc'
+        );
       });
       it('status is 200', async () => {
         expect(res.status).toBe(200);
@@ -144,10 +147,10 @@ describe('Articles endpoints', () => {
   });
 
   describe('POST /articles', () => {
-    describe('when a valid payload is sent', () => {
+    describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/articles').send({
+        res = await request(app).post('/article-categories').send({
           title: 'article de malade mental',
           slug: 'article-de-malade-mental',
           content: 'my content is crazy as fuck',
@@ -156,6 +159,32 @@ describe('Articles endpoints', () => {
           article_category_id: 1,
           user_id: 1
         });
+      });
+
+      it('returns 401 status', async () => {
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+    describe('when a valid payload is sent', () => {
+      let res;
+      let token;
+      beforeAll(async () => {
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
+        res = await request(app)
+          .post('/articles')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            title: 'article de malade mental',
+            slug: 'article-de-malade-mental',
+            content: 'my content is crazy as fuck',
+            image: '/ma-super-image',
+            created_at: '2020-12-30 23:59:59',
+            article_category_id: 1,
+            user_id: 1
+          });
       });
 
       it('returns 201 status', async () => {
