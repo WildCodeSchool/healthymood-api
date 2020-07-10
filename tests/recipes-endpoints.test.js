@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../server.js');
 const Recipe = require('../models/recipe.model.js');
+const MealTypes = require('../models/meal_types.model.js');
 
 describe('Recipes endpoints', () => {
   describe('GET /recipes', () => {
@@ -99,9 +100,12 @@ describe('Recipes endpoints', () => {
             calories: 400,
             published: false,
             user_id: 1
-          })
+          }),
+          MealTypes.create({ name: 'entrée' }),
+          MealTypes.create({ name: 'dessert' }),
+          MealTypes.create({ name: 'collation' })
         ]);
-        res = await request(app).get('/recipes/?search=salade&meal_types[]=1&meal_types[]=6');
+        res = await request(app).get('/recipes/?search=salade&meal_types[]=1&meal_types[]=2');
       });
 
       it('status is 200', async () => {

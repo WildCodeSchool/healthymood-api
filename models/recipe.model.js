@@ -59,9 +59,13 @@ class Recipe {
   }
 
   static async findByKeyWord (query) {
-    const keyword = query.search;
+    const search = query.search;
+    const mealTypes = query.meal_types;
+    const mealTypesInt = mealTypes.map(mealtype => parseInt(mealtype));
     console.log(query);
-    const sqlValues = `%${keyword}%`;
+    console.log(mealTypes);
+    console.log(mealTypesInt);
+    const sqlValues = `%${search}%`;
     return db.query(
       'SELECT * FROM recipes WHERE name LIKE ? OR content LIKE ?',
       [sqlValues, sqlValues]
