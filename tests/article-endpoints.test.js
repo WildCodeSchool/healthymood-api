@@ -230,6 +230,6 @@ describe('Articles endpoints', () => {
           });
         });
       });
-    })
-  })
-})
+    });
+  });
+});
