@@ -58,21 +58,12 @@ class Recipe {
   }
 
   static async findByKeyWord (query) {
-    console.log(query.meal_types);
-    const keyword = query.search ? query.search : '';
-    const mealTypes = query.meal_types ? query.meal_types : [];
-    const sqlMealTypes = query.meal_types ? mealTypes.map(mealtype => parseInt(mealtype)) : [];
-    const sqlKeyword = query.search ? `%${keyword}%` : '';
-    console.log(sqlKeyword);
-    console.log(sqlMealTypes);
-
-    const request = `SELECT DISTINCT recipes.name FROM meal_type_recipes INNER JOIN recipes ON meal_type_recipes.recipe_id = recipes.id WHERE meal_type_recipes.meal_type_id IN (${sqlMealTypes}) UNION SELECT name FROM recipes WHERE recipes.name LIKE ${sqlKeyword} OR recipes.content LIKE ${sqlKeyword}`; //
-    console.log(request);
-
+    const sqlMealTypes = query.meal_types ? query.meal_types.map(mealtype => parseInt(mealtype)) : null;
+    const sqlKeyword = query.search ? `%${query.search}%` : null;
     return db.query(
 
-      'SELECT DISTINCT recipes.name FROM meal_type_recipes INNER JOIN recipes ON meal_type_recipes.recipe_id = recipes.id WHERE meal_type_recipes.meal_type_id IN (?) UNION SELECT name FROM recipes WHERE recipes.name LIKE ? OR recipes.content LIKE ?',
-      [sqlMealTypes, sqlKeyword, sqlKeyword]
+      'SELECT DISTINCT recipes.name FROM meal_type_recipes INNER JOIN recipes ON meal_type_recipes.recipe_id = recipes.id WHERE (? is NULL OR meal_type_recipes.meal_type_id IN (?)) AND (? is NULL OR recipes.name LIKE ? OR recipes.content LIKE ?)',
+      [sqlMealTypes, sqlMealTypes, sqlKeyword, sqlKeyword, sqlKeyword]
     ); //
   }
 

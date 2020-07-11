@@ -1,8 +1,6 @@
 const request = require('supertest');
 const app = require('../server.js');
 const Recipe = require('../models/recipe.model.js');
-const MealTypes = require('../models/meal_types.model.js');
-const MealTypeRecipes = require('../models/meal_type_recipes.model.js');
 const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('Recipes endpoints', () => {
@@ -96,13 +94,9 @@ describe('Recipes endpoints', () => {
             slug: 'ma-recette-patates',
             published: false,
             user_id: 1
-          }),
-          MealTypes.create({ name: 'entrée' }),
-          MealTypes.create({ name: 'dessert' }),
-          MealTypes.create({ name: 'collation' }),
-          MealTypeRecipes.create({ recipe_id: 1, meal_type_id: 1 })
+          })
         ]);
-        res = await request(app).get('/recipes/?search=salade&meal_types[]=1');
+        res = await request(app).get('/recipes/?search=salade');
       });
 
       it('status is 200', async () => {
@@ -111,7 +105,7 @@ describe('Recipes endpoints', () => {
 
       it('the returned data is an array containing two elements', async () => {
         expect(Array.isArray(res.body.data));
-        expect(res.body.data.length).toBe(2); // <-- Ahahaha des barres
+        expect(res.body.data.length).toBe(1); // <-- Ahahaha des barres
       });
     });
   });
