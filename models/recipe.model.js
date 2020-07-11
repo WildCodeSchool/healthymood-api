@@ -61,19 +61,19 @@ class Recipe {
     console.log(query.meal_types);
     const keyword = query.search ? query.search : '';
     const mealTypes = query.meal_types ? query.meal_types : [];
-    const sqlMealTypes = query.meal_types ? mealTypes.map(mealtype => parseInt(mealtype)).toString() : [];
+    const sqlMealTypes = query.meal_types ? mealTypes.map(mealtype => parseInt(mealtype)) : [];
     const sqlKeyword = query.search ? `%${keyword}%` : '';
     console.log(sqlKeyword);
     console.log(sqlMealTypes);
 
-    const request = `SELECT DISTINCT recipes.name FROM meal_type_recipes INNER JOIN recipes ON meal_type_recipes.recipe_id = recipes.id WHERE meal_type_recipes.meal_type_id IN (${sqlMealTypes})`;
+    const request = `SELECT DISTINCT recipes.name FROM meal_type_recipes INNER JOIN recipes ON meal_type_recipes.recipe_id = recipes.id WHERE meal_type_recipes.meal_type_id IN (${sqlMealTypes}) UNION SELECT name FROM recipes WHERE recipes.name LIKE ${sqlKeyword} OR recipes.content LIKE ${sqlKeyword}`; // 
     console.log(request);
 
     return db.query(
 
-      'SELECT DISTINCT recipes.name FROM meal_type_recipes INNER JOIN recipes ON meal_type_recipes.recipe_id = recipes.id WHERE meal_type_recipes.meal_type_id IN (?)', //  UNION SELECT name FROM recipes WHERE recipes.name LIKE ? OR recipes.content LIKE ?
-      [sqlMealTypes]
-    );
+      'SELECT DISTINCT recipes.name FROM meal_type_recipes INNER JOIN recipes ON meal_type_recipes.recipe_id = recipes.id WHERE meal_type_recipes.meal_type_id IN (?) UNION SELECT name FROM recipes WHERE recipes.name LIKE ? OR recipes.content LIKE ?',
+      [sqlMealTypes, sqlKeyword, sqlKeyword]
+    ); // 
   }
 
   static async getAll (result) {
