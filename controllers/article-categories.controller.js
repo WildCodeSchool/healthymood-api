@@ -1,4 +1,5 @@
 const ArticleCategory = require('../models/article-categories.model.js');
+const { tryParseInt } = require('../helpers/number');
 
 class ArticlesCategoryController {
   static async create (req, res) {
@@ -31,20 +32,15 @@ class ArticlesCategoryController {
   }
 
   static async findAll (req, res) {
-    try {
-      const data = (await ArticleCategory.getAll())
-        .map((a) => new ArticleCategory(a))
-        .map((a) => ({
-          id: a.id,
-          name: a.name
-        }));
-      res.send({ data });
-    } catch (err) {
-      res.status(500).send({
-        errorMessage:
-          err.message || 'Some error occurred while retrieving ArticleCategory.'
-      });
-    }
+    const page = tryParseInt(req.query.page, 1);
+    const perPage = tryParseInt(req.query.per_page, 10);
+    const limit = perPage;
+    const offset = (page - 1) * limit;
+    const rangeEnd = page * perPage;
+    const rangeBegin = rangeEnd - perPage + 1;
+    const { results, total } = await ArticleCategory.getSome(limit, offset);
+    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+    res.send({ data: results });
   }
 
   static async findOne (req, res) {

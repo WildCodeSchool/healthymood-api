@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../server.js');
-const ArticlesCategory = require('../models/article-categories.model.js');
+const ArticleCategory = require('../models/article-categories.model.js');
 const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('article-categories endpoints', () => {
@@ -9,8 +9,8 @@ describe('article-categories endpoints', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          ArticlesCategory.create({ name: 'information' }),
-          ArticlesCategory.create({ name: 'a la une' })
+          ArticleCategory.create({ name: 'information' }),
+          ArticleCategory.create({ name: 'a la une' })
         ]);
         res = await request(app).get('/article-categories');
       });
@@ -21,6 +21,35 @@ describe('article-categories endpoints', () => {
       it('the returned data is an array containing two elements', async () => {
         expect(Array.isArray(res.body.data));
         expect(res.body.data.length).toBe(2);
+      });
+    });
+
+    describe('Paginated article categories', () => {
+      let res;
+      beforeEach(async () => {
+        await Promise.all([
+          ArticleCategory.create({ name: 'info' }),
+          ArticleCategory.create({ name: 'dernières actu' }),
+          ArticleCategory.create({ name: 'actu vegan' }),
+          ArticleCategory.create({ name: 'remplacer le lait' }),
+          ArticleCategory.create({ name: 'comment manger sans gluten' }),
+          ArticleCategory.create({ name: 'aliments contenants du gluten' }),
+          ArticleCategory.create({ name: 'aliments contenant du lactose' }),
+          ArticleCategory.create({ name: 'aliments healthy' }),
+          ArticleCategory.create({ name: 'remplacer les oeufs' }),
+          ArticleCategory.create({ name: 'aliments allergènes' }),
+          ArticleCategory.create({ name: 'les fruits à coques' }),
+          ArticleCategory.create({ name: 'scoop sur le soja' }),
+          ArticleCategory.create({ name: 'les smoothies' }),
+          ArticleCategory.create({ name: 'remplacer le beurre' }),
+          ArticleCategory.create({ name: 'informations' })
+        ]);
+        res = await request(app).get('/article-categories?per_page=10&page=1');
+      });
+
+      it('has 10 ressources per page', async () => {
+        expect(res.body.data.length).toBe(10);
+        expect(res.header['content-range']).toBe('1-10/15');
       });
     });
   });
@@ -67,7 +96,7 @@ describe('article-categories endpoints', () => {
       let res;
       let token;
       beforeAll(async () => {
-        await ArticlesCategory.create({
+        await ArticleCategory.create({
           name: 'follow'
         });
         token = await authenticateHelper({
