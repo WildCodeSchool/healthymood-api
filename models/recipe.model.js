@@ -58,10 +58,11 @@ class Recipe {
   }
 
   static async findByKeyWord (query) {
+    console.log(query);
     const sqlMealTypes = query.meal_types ? query.meal_types.map(mealtype => parseInt(mealtype)) : null;
     const sqlKeyword = query.search ? `%${query.search}%` : null;
+    console.log(sqlKeyword);
     return db.query(
-
       'SELECT DISTINCT recipes.name FROM meal_type_recipes INNER JOIN recipes ON meal_type_recipes.recipe_id = recipes.id WHERE (? is NULL OR meal_type_recipes.meal_type_id IN (?)) AND (? is NULL OR recipes.name LIKE ? OR recipes.content LIKE ?)',
       [sqlMealTypes, sqlMealTypes, sqlKeyword, sqlKeyword, sqlKeyword]
     ); //
