@@ -59,7 +59,7 @@ class Recipe {
   }
 
   static async findByKeyWord (query) {
-    console.log(query.meal_types)
+    console.log(query.meal_types);
     const keyword = query.search ? query.search : '';
     const mealTypes = query.meal_types ? query.meal_types : [];
     const sqlMealTypes = query.meal_types ? mealTypes.map(mealtype => parseInt(mealtype)).toString() : [];
@@ -67,8 +67,8 @@ class Recipe {
     console.log(sqlKeyword);
     console.log(sqlMealTypes);
 
-    const request = `SELECT DISTINCT recipes.name FROM meal_type_recipes INNER JOIN recipes ON meal_type_recipes.recipe_id = recipes.id WHERE meal_type_recipes.meal_type_id IN (${sqlMealTypes})`
-    console.log(request)
+    const request = `SELECT DISTINCT recipes.name FROM meal_type_recipes INNER JOIN recipes ON meal_type_recipes.recipe_id = recipes.id WHERE meal_type_recipes.meal_type_id IN (${sqlMealTypes})`;
+    console.log(request);
 
     return db.query(
 
