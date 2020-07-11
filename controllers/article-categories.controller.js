@@ -33,7 +33,7 @@ class ArticlesCategoryController {
 
   static async findAll (req, res) {
     const page = tryParseInt(req.query.page, 1);
-    const perPage = tryParseInt(req.query.per_page, 10);
+    const perPage = tryParseInt(req.query.per_page, 8);
     const limit = perPage;
     const offset = (page - 1) * limit;
     const rangeEnd = page * perPage;

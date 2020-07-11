@@ -1,4 +1,5 @@
 const DietTypes = require('../models/diet.model.js');
+const { tryParseInt } = require('../helpers/number');
 
 class DietTypesController {
   static async create (req, res) {
@@ -29,20 +30,15 @@ class DietTypesController {
   }
 
   static async findAll (req, res) {
-    try {
-      const data = (await DietTypes.getAll())
-        .map((m) => new DietTypes(m))
-        .map((m) => ({
-          id: m.id,
-          name: m.name
-        }));
-      res.send({ data });
-    } catch (err) {
-      res.status(500).send({
-        errorMessage:
-          err.message || 'Some error occurred while retrieving A diettype.'
-      });
-    }
+    const page = tryParseInt(req.query.page, 1);
+    const perPage = tryParseInt(req.query.per_page, 8);
+    const limit = perPage;
+    const offset = (page - 1) * limit;
+    const rangeEnd = page * perPage;
+    const rangeBegin = rangeEnd - perPage + 1;
+    const { results, total } = await DietTypes.getSome(limit, offset);
+    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+    res.send({ data: results });
   }
 
   static async findOne (req, res) {

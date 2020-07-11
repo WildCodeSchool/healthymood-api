@@ -44,12 +44,12 @@ describe('article-categories endpoints', () => {
           ArticleCategory.create({ name: 'remplacer le beurre' }),
           ArticleCategory.create({ name: 'informations' })
         ]);
-        res = await request(app).get('/article-categories?per_page=10&page=1');
+        res = await request(app).get('/article-categories?per_page=8&page=1');
       });
 
       it('has 10 ressources per page', async () => {
-        expect(res.body.data.length).toBe(10);
-        expect(res.header['content-range']).toBe('1-10/15');
+        expect(res.body.data.length).toBe(8);
+        expect(res.header['content-range']).toBe('1-8/15');
       });
     });
   });
