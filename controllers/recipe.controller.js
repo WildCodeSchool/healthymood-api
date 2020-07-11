@@ -61,7 +61,6 @@ class RecipesController {
             preparation_duration_seconds: r.preparation_duration_seconds,
             budget: r.budget,
             slug: r.slug,
-            calories: r.calories,
             published: r.published,
             user_id: r.user_id
           }));
@@ -130,6 +129,7 @@ class RecipesController {
       await Recipe.remove(req.params.id);
       res.send({ message: 'Recipe was deleted successfully!' });
     } catch (err) {
+      console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Not found Recipe with id ${req.params.id}.`
