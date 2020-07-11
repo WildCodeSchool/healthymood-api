@@ -1,4 +1,5 @@
 const GenericPage = require('../models/generic_pages.model.js');
+const { tryParseInt } = require('../helpers/number');
 
 class GenericPagesController {
   static async create (req, res) {
@@ -33,24 +34,15 @@ class GenericPagesController {
   }
 
   static async findAll (req, res) {
-    try {
-      const data = (await GenericPage.getAll())
-        .map((i) => new GenericPage(i))
-        .map((i) => ({
-          id: i.id,
-          title: i.title,
-          slug: i.slug,
-          published: i.published,
-          content: i.content,
-          user_id: i.user_id
-        }));
-      res.send({ data });
-    } catch (err) {
-      res.status(500).send({
-        errorMessage:
-        err.message || 'Some error occurred while retrieving genericPage.'
-      });
-    }
+    const page = tryParseInt(req.query.page, 1);
+    const perPage = tryParseInt(req.query.per_page, 8);
+    const limit = perPage;
+    const offset = (page - 1) * limit;
+    const rangeEnd = page * perPage;
+    const rangeBegin = rangeEnd - perPage + 1;
+    const { results, total } = await GenericPage.getSome(limit, offset);
+    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+    res.send({ data: results });
   }
 
   static async findOne (req, res) {
