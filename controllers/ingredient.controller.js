@@ -33,7 +33,7 @@ class IngredientsController {
 
   static async findAll (req, res) {
     const page = tryParseInt(req.query.page, 1);
-    const perPage = tryParseInt(req.query.per_page, 10);
+    const perPage = tryParseInt(req.query.per_page, 8);
     const filterIngredientByAllergen = req.query.is_allergen;
     const orderBy = req.query.sort_by;
     const sortOrder = req.query.sort_order;

@@ -146,14 +146,59 @@ describe('Articles endpoints', () => {
             created_at: '2020-12-30 23:59:59',
             article_category_id: 3,
             user_id: 1
+          }),
+          Article.create({
+            title: 'sixième article',
+            slug: 'sixième-article',
+            content: 'Awesome content',
+            image: '/ma-super-image',
+            created_at: '2020-12-30 23:59:59',
+            article_category_id: 3,
+            user_id: 1
+          }),
+          Article.create({
+            title: 'septième article',
+            slug: 'septième-article',
+            content: 'Awesome content',
+            image: '/ma-super-image',
+            created_at: '2020-12-30 23:59:59',
+            article_category_id: 3,
+            user_id: 1
+          }),
+          Article.create({
+            title: 'huitième article',
+            slug: 'huitième-article',
+            content: 'Awesome content',
+            image: '/ma-super-image',
+            created_at: '2020-12-30 23:59:59',
+            article_category_id: 3,
+            user_id: 1
+          }),
+          Article.create({
+            title: 'neuvième article',
+            slug: 'neuvième-article',
+            content: 'Awesome content',
+            image: '/ma-super-image',
+            created_at: '2020-12-30 23:59:59',
+            article_category_id: 3,
+            user_id: 1
+          }),
+          Article.create({
+            title: 'dixième article',
+            slug: 'dixième-article',
+            content: 'Awesome content',
+            image: '/ma-super-image',
+            created_at: '2020-12-30 23:59:59',
+            article_category_id: 3,
+            user_id: 1
           })
         ]);
-        res = await request(app).get('/articles?per_page=2&page=1');
+        res = await request(app).get('/articles?per_page=8&page=1');
       });
 
       it('status is 200', async () => {
-        expect(res.body.data.length).toBe(2);
-        expect(res.header['content-range']).toBe('1-2/5');
+        expect(res.body.data.length).toBe(8);
+        expect(res.header['content-range']).toBe('1-8/10');
       });
     });
   });
