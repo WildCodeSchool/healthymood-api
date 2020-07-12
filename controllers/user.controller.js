@@ -1,4 +1,5 @@
 const User = require('../models/user.model.js');
+const { tryParseInt } = require('../helpers/number');
 
 class UsersController {
   static async create (req, res) {
@@ -38,29 +39,15 @@ class UsersController {
   }
 
   static async findAll (req, res) {
-    try {
-      const data = (await User.getAll())
-        .map((u) => new User(u))
-        .map((u) => ({
-          id: u.id,
-          firstname: u.firstname,
-          lastname: u.lastname,
-          username: u.username,
-          email: u.email,
-          password: 'secret',
-          fb_uid: u.fb_uid,
-          avatar: u.avatar,
-          is_admin: u.is_admin,
-          blocked: u.blocked,
-          address_id: u.address_id
-        }));
-      res.send({ data });
-    } catch (err) {
-      res.status(500).send({
-        errorMessage:
-          err.message || 'Some error occurred while retrieving users.'
-      });
-    }
+    const page = tryParseInt(req.query.page, 1);
+    const perPage = tryParseInt(req.query.per_page, 8);
+    const limit = perPage;
+    const offset = (page - 1) * limit;
+    const rangeEnd = page * perPage;
+    const rangeBegin = rangeEnd - perPage + 1;
+    const { results, total } = await User.getSome(limit, offset);
+    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+    res.send({ data: results });
   }
 
   static async findOne (req, res) {

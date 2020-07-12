@@ -83,6 +83,18 @@ class User {
     });
   }
 
+  static async getSome (limit, offset) {
+    const total = await db.query('select count(id) as count from users').then(rows => rows[0].count);
+    let sql = 'select * from users';
+    if (limit !== undefined && offset !== undefined) {
+      sql += ` limit ${limit} offset ${offset}`;
+    }
+    return db.query(sql).then(rows => ({
+      results: rows.map(u => new User(u)),
+      total
+    }));
+  }
+
   static async findByEmail (email) {
     return db
       .query('SELECT * FROM users WHERE email = ?', [email])
