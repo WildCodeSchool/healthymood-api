@@ -62,7 +62,8 @@ class RecipesController {
             budget: r.budget,
             slug: r.slug,
             published: r.published,
-            user_id: r.user_id
+            user_id: r.user_id,
+            image: r.image
           }));
         res.send({ data });
       } catch (err) {
