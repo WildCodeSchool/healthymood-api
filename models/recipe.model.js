@@ -13,7 +13,7 @@ class Recipe {
     this.slug = recipe.slug;
     this.published = recipe.published;
     this.user_id = recipe.user_id;
-    this.calories = recipe.calories;
+    /*     this.calories = recipe.calories; */
   }
 
   static async create (newRecipe) {
