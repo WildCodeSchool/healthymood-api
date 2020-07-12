@@ -1,4 +1,5 @@
 const RecipeCategory = require('../models/recipe-categories.model.js');
+const { tryParseInt } = require('../helpers/number');
 
 class RecipesCategoryController {
   static async create (req, res) {
@@ -31,20 +32,15 @@ class RecipesCategoryController {
   }
 
   static async findAll (req, res) {
-    try {
-      const data = (await RecipeCategory.getAll())
-        .map((i) => new RecipeCategory(i))
-        .map((i) => ({
-          id: i.id,
-          name: i.name
-        }));
-      res.send({ data });
-    } catch (err) {
-      res.status(500).send({
-        errorMessage:
-          err.message || 'Some error occurred while retrieving RecipeCategory.'
-      });
-    }
+    const page = tryParseInt(req.query.page, 1);
+    const perPage = tryParseInt(req.query.per_page, 8);
+    const limit = perPage;
+    const offset = (page - 1) * limit;
+    const rangeEnd = page * perPage;
+    const rangeBegin = rangeEnd - perPage + 1;
+    const { results, total } = await RecipeCategory.getSome(limit, offset);
+    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+    res.send({ data: results });
   }
 
   static async findOne (req, res) {
