@@ -1,5 +1,6 @@
 const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
+const { tryParseInt } = require('../helpers/number');
 
 class RecipesController {
   static async create (req, res) {
@@ -46,30 +47,18 @@ class RecipesController {
           });
         }
       }
-    } else {
-      try {
-        const data = (await Recipe.getAll())
-          .map((r) => new Recipe(r))
-          .map((r) => ({
-            id: r.id,
-            name: r.name,
-            content: r.content,
-            created_at: r.created_at,
-            updated_at: r.updated_at,
-            preparation_duration_seconds: r.preparation_duration_seconds,
-            budget: r.budget,
-            slug: r.slug,
-            published: r.published,
-            user_id: r.user_id
-          }));
-        res.send({ data });
-      } catch (err) {
-        res.status(500).send({
-          errorMessage:
-            err.message || 'Some error occurred while retrieving recipes.'
-        });
-      }
     }
+    const page = tryParseInt(req.query.page, 1);
+    const perPage = tryParseInt(req.query.per_page, 8);
+    const orderBy = req.query.sort_by;
+    const sortOrder = req.query.sort_order;
+    const limit = perPage;
+    const offset = (page - 1) * limit;
+    const { results, total } = await Recipe.getSome(limit, offset, sortOrder, orderBy);
+    const rangeEnd = page * perPage;
+    const rangeBegin = rangeEnd - perPage + 1;
+    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+    res.send({ data: results });
   }
 
   static async findOne (req, res) {

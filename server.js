@@ -48,7 +48,7 @@ app.use('/recipe_categories', require('./routes/recipe-categories.routes.js'));
 app.use('/users', require('./routes/user.routes.js'));
 app.use('/auth', require('./routes/auth.routes.js'));
 app.use('/articles', require('./routes/article.routes.js'));
-app.use('/article_categories',require('./routes/article-categories.routes.js')
+app.use('/article_categories', require('./routes/article-categories.routes.js')
 );
 
 app.use('/secret', requireAuth, require('./routes/secret.routes.js'));

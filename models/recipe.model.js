@@ -65,8 +65,20 @@ class Recipe {
     );
   }
 
-  static async getAll (result) {
-    return db.query('SELECT * FROM recipes');
+  static async getSome (limit, offset, sortOrder = 'asc', orderBy) {
+    const total = await db.query('select count(id) as count from recipes').then(rows => rows[0].count);
+    let sql = 'select * from recipes';
+    if (orderBy) {
+      sortOrder = (typeof sortOrder === 'string' && sortOrder.toLowerCase()) === 'desc' ? 'DESC' : 'ASC';
+      sql += ` ORDER BY ${db.escapeId(orderBy)} ${sortOrder}`;
+    }
+    if (limit !== undefined && offset !== undefined) {
+      sql += ` limit ${limit} offset ${offset}`;
+    }
+    return db.query(sql).then(rows => ({
+      results: rows.map(r => new Recipe(r)),
+      total
+    }));
   }
 
   static async updateById (id, recipe) {

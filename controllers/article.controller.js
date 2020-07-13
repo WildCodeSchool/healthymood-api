@@ -51,10 +51,8 @@ class ArticlesController {
     const perPage = tryParseInt(req.query.per_page, 8);
     const orderBy = req.query.sort_by;
     const sortOrder = req.query.sort_order;
-    console.log(req.query);
     const limit = perPage;
     const offset = (page - 1) * limit;
-    console.log(page, perPage, limit, offset);
     const { results, total } = await Article.getSome(limit, offset, sortOrder, orderBy);
     const rangeEnd = page * perPage;
     const rangeBegin = rangeEnd - perPage + 1;
