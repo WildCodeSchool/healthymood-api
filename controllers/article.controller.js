@@ -2,7 +2,7 @@ const Article = require('../models/article.model.js');
 const { tryParseInt } = require('../helpers/number');
 
 class ArticlesController {
-  static async create (req, res) {
+  static async create(req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -29,7 +29,7 @@ class ArticlesController {
     }
   }
 
-  static async findAll (req, res) {
+  static async findAll(req, res) {
     if (req.query.search) {
       try {
         const data = await Article.findByKeyWord(req.query.search);
@@ -42,7 +42,7 @@ class ArticlesController {
         } else {
           res.status(500).send({
             errorMessage:
-                'Error retrieving Article with keyword ' + req.query.search
+              'Error retrieving Article with keyword ' + req.query.search
           });
         }
       }
@@ -51,10 +51,8 @@ class ArticlesController {
     const perPage = tryParseInt(req.query.per_page, 10);
     const orderBy = req.query.sort_by;
     const sortOrder = req.query.sort_order;
-    console.log(req.query);
     const limit = perPage;
     const offset = (page - 1) * limit;
-    console.log(page, perPage, limit, offset);
     const { results, total } = await Article.getSome(limit, offset, sortOrder, orderBy);
     const rangeEnd = page * perPage;
     const rangeBegin = rangeEnd - perPage + 1;
@@ -62,7 +60,7 @@ class ArticlesController {
     res.send({ data: results });
   }
 
-  static async findOne (req, res) {
+  static async findOne(req, res) {
     try {
       const data = await Article.findById(req.params.id);
       res.send({ data });
@@ -79,7 +77,7 @@ class ArticlesController {
     }
   }
 
-  static async findLast (req, res) {
+  static async findLast(req, res) {
     try {
       const data = (await Article.getLastArticles())
         .map((a) => new Article(a))
@@ -103,7 +101,7 @@ class ArticlesController {
     }
   }
 
-  static async update (req, res) {
+  static async update(req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -112,7 +110,6 @@ class ArticlesController {
       const data = await Article.updateById(req.params.id, new Article(req.body));
       res.send({ data });
     } catch (err) {
-      console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Article with id ${req.params.id} not found.`
@@ -125,7 +122,7 @@ class ArticlesController {
     }
   }
 
-  static async delete (req, res) {
+  static async delete(req, res) {
     try {
       await Article.remove(req.params.id);
       res.send({ message: 'Article was deleted successfully!' });
