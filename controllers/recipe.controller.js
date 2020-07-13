@@ -93,20 +93,20 @@ class RecipesController {
         data = await Recipe.findById(req.params.id);
       }
       console.log(data);
-      
-      let ingredients = []
-      let category = null
-      let author = null
-      let mealType = []
+
+      let ingredients = [];
+      let category = null;
+      let author = null;
+      let mealType = [];
       let user_rating = null; // eslint-disable-line
 
       try {
-        ingredients = await Recipe.getRecipeIngredients(data.id)
+        ingredients = await Recipe.getRecipeIngredients(data.id);
         category = await Recipe.getRecipeCategorie(data.recipe_category_id);
         author = await Recipe.getRecipeAuthor(data.user_id);
         mealType = await Recipe.getMealTypeCategorie(data.id);
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
 
       if (req.currentUser) {
