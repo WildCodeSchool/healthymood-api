@@ -65,11 +65,6 @@ class Recipe {
     const ingredientsID = query.ingredients ? query.ingredients.map(ingredient => parseInt(ingredient)) : null;
     const dietsID = query.diets ? query.diets.map(diet => parseInt(diet)) : null;
     const calories = query.calories > 0 ? query.calories : null;
-    console.log(keyword);
-    console.log(mealTypesID);
-    console.log(ingredientsID);
-    console.log(dietsID);
-    console.log(calories);
 
     return db.query(
       'SELECT DISTINCT recipes.name, recipes.content, recipes.created_at, recipes.updated_at, recipes.preparation_duration_seconds, recipes.slug, recipes.published, recipes.user_id, recipes.calories FROM recipes LEFT JOIN meal_type_recipes ON meal_type_recipes.recipe_id = recipes.id LEFT JOIN recipe_ingredient_quantities ON recipe_ingredient_quantities.recipe_id = recipes.id LEFT JOIN diet_recipes ON diet_recipes.recipe_id = recipes.id WHERE (? is NULL OR meal_type_recipes.meal_type_id IN (?))  AND (? is NULL OR recipe_ingredient_quantities.ingredient_id IN (?)) AND (? is NULL OR diet_recipes.diet_id IN (?)) AND (? is NULL OR recipes.name LIKE ? OR recipes.content LIKE ?) AND (? is NULL or recipes.calories <= ?)',
