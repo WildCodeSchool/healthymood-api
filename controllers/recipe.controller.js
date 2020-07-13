@@ -33,6 +33,7 @@ class RecipesController {
     if (Object.keys(req.query).length !== 0) {
       console.log(req.query);
       try {
+        console.log('rentre dans search');
         const data = await Recipe.search(req.query);
         res.send({ data });
         console.log(data);
