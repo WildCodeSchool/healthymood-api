@@ -9,18 +9,24 @@ class RecipesController {
         .send({ errorMessage: 'Content can not be empty!' });
     }
 
-    if (!req.body.name) {
-      return res.status(400).send({ errorMessage: 'Name can not be empty!' });
+    if (!req.body.slug) {
+      return res.status(400).send({ errorMessage: 'slug can not be empty!' });
     } else if (!req.body.content) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
-
+    const user_id = req.currentUser.id;// eslint-disable-line
     try {
-      const recipe = new Recipe(req.body);
-      const data = await Recipe.create(recipe);
-      res.status(201).send({ data });
+      const recipe = new Recipe({ ...req.body, user_id: user_id });
+      if (await Recipe.nameAlreadyExists(recipe.slug)) {
+        res.status(400).send({
+          errorMessage: 'An Recipe with this slug already exists !'
+        });
+      } else {
+        const data = await Recipe.create(recipe);
+        res.status(201).send({ data });
+      }
     } catch (err) {
       res.status(500).send({
         errorMessage:

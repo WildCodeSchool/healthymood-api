@@ -1,7 +1,7 @@
 const GenericPage = require('../models/generic_pages.model.js');
 
 class GenericPagesController {
-  static async create (req, res) {
+  static async create(req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -13,7 +13,6 @@ class GenericPagesController {
     }
 
     const user_id = req.currentUser.id; // eslint-disable-line
-    console.log(user_id);
     try {
       const genericPage = new GenericPage({ ...req.body, user_id: user_id });
       if (await GenericPage.nameAlreadyExists(genericPage.slug)) {
@@ -27,12 +26,12 @@ class GenericPagesController {
     } catch (err) {
       res.status(500).send({
         errorMessage:
-        err.message || 'Some error occurred while creating the genericPage.'
+          err.message || 'Some error occurred while creating the genericPage.'
       });
     }
   }
 
-  static async findAll (req, res) {
+  static async findAll(req, res) {
     try {
       const data = (await GenericPage.getAll())
         .map((i) => new GenericPage(i))
@@ -48,12 +47,12 @@ class GenericPagesController {
     } catch (err) {
       res.status(500).send({
         errorMessage:
-        err.message || 'Some error occurred while retrieving genericPage.'
+          err.message || 'Some error occurred while retrieving genericPage.'
       });
     }
   }
 
-  static async findOne (req, res) {
+  static async findOne(req, res) {
     try {
       const data = await GenericPage.findById(req.params.id);
       res.send({ data });
@@ -70,7 +69,7 @@ class GenericPagesController {
     }
   }
 
-  static async update (req, res) {
+  static async update(req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -82,7 +81,6 @@ class GenericPagesController {
       );
       res.send({ data });
     } catch (err) {
-      console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `GenericPage with id ${req.params.id} not found.`
@@ -95,7 +93,7 @@ class GenericPagesController {
     }
   }
 
-  static async delete (req, res) {
+  static async delete(req, res) {
     try {
       await GenericPage.remove(req.params.id);
       res.send({ message: 'GenericPage was deleted successfully!' });

@@ -22,6 +22,18 @@ class Recipe {
     });
   }
 
+  static async nameAlreadyExists (slug) {
+    return db
+      .query('SELECT * FROM recipes WHERE slug = ?', [slug])
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(true);
+        } else {
+          return Promise.resolve(false);
+        }
+      });
+  }
+
   static async findById (id) {
     return db.query('SELECT * FROM recipes WHERE id = ?', [id]).then((rows) => {
       if (rows.length) {
@@ -123,12 +135,11 @@ class Recipe {
   static async updateById (id, recipe) {
     return db
       .query(
-        'UPDATE recipes SET name = ?, content = ?, image = ?, created_at = ?, updated_at = ?, preparation_duration_seconds = ?, budget = ?, slug = ?, published = ?, user_id = ?  WHERE id = ?',
+        'UPDATE recipes SET name = ?, content = ?, image = ?, updated_at = ?, preparation_duration_seconds = ?, budget = ?, slug = ?, published = ?, user_id = ?  WHERE id = ?',
         [
           recipe.name,
           recipe.content,
           recipe.image,
-          // recipe.created_at,
           recipe.updated_at,
           recipe.preparation_duration_seconds,
           recipe.budget,
