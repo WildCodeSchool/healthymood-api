@@ -3,8 +3,8 @@ const app = require('../server.js');
 const ArticleCategory = require('../models/article-categories.model.js');
 const { authenticateHelper } = require('../helpers/authenticateHelper');
 
-describe('article-categories endpoints', () => {
-  describe('GET /article-categories', () => {
+describe('article categories endpoints', () => {
+  describe('GET /article_categories', () => {
     describe('when there are two article categories in DB', () => {
       let res;
       beforeEach(async () => {
@@ -12,7 +12,7 @@ describe('article-categories endpoints', () => {
           ArticleCategory.create({ name: 'information' }),
           ArticleCategory.create({ name: 'a la une' })
         ]);
-        res = await request(app).get('/article-categories');
+        res = await request(app).get('/article_categories');
       });
       it('status is 200', async () => {
         expect(res.status).toBe(200);
@@ -44,7 +44,7 @@ describe('article-categories endpoints', () => {
           ArticleCategory.create({ name: 'remplacer le beurre' }),
           ArticleCategory.create({ name: 'informations' })
         ]);
-        res = await request(app).get('/article-categories?per_page=8&page=1');
+        res = await request(app).get('/article_categories?per_page=8&page=1');
       });
 
       it('has 10 ressources per page', async () => {
@@ -54,11 +54,11 @@ describe('article-categories endpoints', () => {
     });
   });
 
-  describe('POST /article-categories', () => {
+  describe('POST /article_categories', () => {
     describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/article-categories').send({
+        res = await request(app).post('/article_categories').send({
           name: 'info'
         });
       });
@@ -76,7 +76,7 @@ describe('article-categories endpoints', () => {
           isAdmin: true
         });
         res = await request(app)
-          .post('/article-categories')
+          .post('/article_categories')
           .set('Authorization', `Bearer ${token}`)
           .send({
             name: 'info'
@@ -92,7 +92,7 @@ describe('article-categories endpoints', () => {
       });
     });
 
-    describe('when a article-categories with the same name already exists in DB', () => {
+    describe('when a article categories with the same name already exists in DB', () => {
       let res;
       let token;
       beforeAll(async () => {
@@ -104,7 +104,7 @@ describe('article-categories endpoints', () => {
           isAdmin: true
         });
         res = await request(app)
-          .post('/article-categories')
+          .post('/article_categories')
           .set('Authorization', `Bearer ${token}`)
           .send({
             name: 'follow'

@@ -4,7 +4,7 @@ const RecipesCategory = require('../models/recipe-categories.model.js');
 const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('recipe-categories endpoints', () => {
-  describe('GET /recipe-categories', () => {
+  describe('GET /recipe_categories', () => {
     describe('when there are two recipe categories in DB', () => {
       let res;
       beforeEach(async () => {
@@ -54,11 +54,11 @@ describe('recipe-categories endpoints', () => {
     });
   });
 
-  describe('POST /recipe-categories', () => {
+  describe('POST /recipe_categories', () => {
     describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/dish_types').send({
+        res = await request(app).post('/recipe_categories').send({
           name: 'dessert'
         });
       });
