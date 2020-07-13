@@ -62,12 +62,14 @@ class Recipe {
     console.log(query);
     const mealTypesID = query.meal_types ? query.meal_types.map(mealtype => parseInt(mealtype)) : null;
     const keyword = query.search ? `%${query.search}%` : null;
+    const ingredientsID = query.ingredients ? query.ingredients.map(ingredient => parseInt(ingredient)) : null;
     console.log(keyword);
     console.log(mealTypesID);
+    console.log(ingredientsID);
 
     return db.query(
-      'SELECT DISTINCT recipes.name, recipes.content, recipes.created_at, recipes.updated_at, recipes.preparation_duration_seconds, recipes.slug, recipes.published, recipes.user_id FROM meal_type_recipes RIGHT JOIN recipes ON meal_type_recipes.recipe_id = recipes.id WHERE ((?) is NULL OR meal_type_recipes.meal_type_id IN (?)) AND (? is NULL OR recipes.name LIKE ? OR recipes.content LIKE ?)',
-      [mealTypesID ? mealTypesID[0] : null, mealTypesID, keyword, keyword, keyword]
+      'SELECT DISTINCT recipes.name, recipes.content, recipes.created_at, recipes.updated_at, recipes.preparation_duration_seconds, recipes.slug, recipes.published, recipes.user_id FROM recipes LEFT JOIN meal_type_recipes ON meal_type_recipes.recipe_id = recipes.id LEFT JOIN recipe_ingredient_quantities ON recipe_ingredient_quantities.recipe_id = recipes.id WHERE (? is NULL OR meal_type_recipes.meal_type_id IN (?))  AND (? is NULL OR recipe_ingredient_quantities.ingredient_id IN (?)) AND (? is NULL OR recipes.name LIKE ? OR recipes.content LIKE ?)',
+      [mealTypesID ? mealTypesID[0] : null, mealTypesID, ingredientsID ? ingredientsID[0] : null, ingredientsID, keyword, keyword, keyword]
     ); //
   }
 
