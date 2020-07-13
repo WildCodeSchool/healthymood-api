@@ -63,13 +63,15 @@ class Recipe {
     const mealTypesID = query.meal_types ? query.meal_types.map(mealtype => parseInt(mealtype)) : null;
     const keyword = query.search ? `%${query.search}%` : null;
     const ingredientsID = query.ingredients ? query.ingredients.map(ingredient => parseInt(ingredient)) : null;
+    const dietsID = query.diets ? query.diets.map(diet => parseInt(diet)) : null;
     console.log(keyword);
     console.log(mealTypesID);
     console.log(ingredientsID);
+    console.log(dietsID);
 
     return db.query(
-      'SELECT DISTINCT recipes.name, recipes.content, recipes.created_at, recipes.updated_at, recipes.preparation_duration_seconds, recipes.slug, recipes.published, recipes.user_id FROM recipes LEFT JOIN meal_type_recipes ON meal_type_recipes.recipe_id = recipes.id LEFT JOIN recipe_ingredient_quantities ON recipe_ingredient_quantities.recipe_id = recipes.id WHERE (? is NULL OR meal_type_recipes.meal_type_id IN (?))  AND (? is NULL OR recipe_ingredient_quantities.ingredient_id IN (?)) AND (? is NULL OR recipes.name LIKE ? OR recipes.content LIKE ?)',
-      [mealTypesID ? mealTypesID[0] : null, mealTypesID, ingredientsID ? ingredientsID[0] : null, ingredientsID, keyword, keyword, keyword]
+      'SELECT DISTINCT recipes.name, recipes.content, recipes.created_at, recipes.updated_at, recipes.preparation_duration_seconds, recipes.slug, recipes.published, recipes.user_id FROM recipes LEFT JOIN meal_type_recipes ON meal_type_recipes.recipe_id = recipes.id LEFT JOIN recipe_ingredient_quantities ON recipe_ingredient_quantities.recipe_id = recipes.id LEFT JOIN diet_recipes ON diet_recipes.recipe_id = recipes.id WHERE (? is NULL OR meal_type_recipes.meal_type_id IN (?))  AND (? is NULL OR recipe_ingredient_quantities.ingredient_id IN (?)) AND (? is NULL OR diet_recipes.diet_id IN (?)) AND (? is NULL OR recipes.name LIKE ? OR recipes.content LIKE ?)',
+      [mealTypesID ? mealTypesID[0] : null, mealTypesID, ingredientsID ? ingredientsID[0] : null, ingredientsID, dietsID ? dietsID[0] : null, dietsID, keyword, keyword, keyword]
     ); //
   }
 
