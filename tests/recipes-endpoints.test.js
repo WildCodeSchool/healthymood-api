@@ -5,59 +5,6 @@ const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('Recipes endpoints', () => {
   describe('GET /recipes', () => {
-    describe('Last recipes', () => {
-      let res;
-      beforeEach(async () => {
-        await Promise.all([
-          Recipe.create({
-            name: 'salade de pâte',
-            image: '/ma-super-image',
-            content: 'awesome content',
-            created_at: '2020-12-30 23:59:59',
-            preparation_duration_seconds: 1200,
-            budget: 5,
-            slug: 'ma-recette',
-            published: true,
-            user_id: 1
-          }),
-          Recipe.create({
-            name: 'salade de riz',
-            image: '/ma-super-image-riz',
-            content: 'awesome recipe',
-            created_at: '2010-12-30 23:59:59',
-            preparation_duration_seconds: 1300,
-            budget: 4,
-            slug: 'ma-recette-riz',
-            published: true,
-            user_id: 1
-          }),
-          Recipe.create({
-            name: 'salade de pommes de terre',
-            image: '/ma-super-image-de-patates',
-            content: 'awesome patates',
-            created_at: '2018-12-30 23:59:59',
-            preparation_duration_seconds: 1500,
-            budget: 3,
-            slug: 'ma-recette-patates',
-            published: false,
-            user_id: 1
-          })
-        ]);
-        res = await request(app).get(
-          '/recipes?per_page=2&sort_by=created_at&sort_order=desc'
-        );
-      });
-      it('status is 200', async () => {
-        expect(res.status).toBe(200);
-      });
-
-      it('the returned data is an array containing two elements', async () => {
-        expect(Array.isArray(res.body.data));
-        expect(res.body.data.length).toBe(2);
-        expect(res.body.data[0].title).toBe('salade de pâte');
-        expect(res.body.data[1].title).toBe('salade de pommes de terre');
-      });
-    });
     describe('when there are three recipes in DB', () => {
       let res;
       beforeEach(async () => {

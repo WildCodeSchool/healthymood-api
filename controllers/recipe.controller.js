@@ -50,11 +50,9 @@ class RecipesController {
     }
     const page = tryParseInt(req.query.page, 1);
     const perPage = tryParseInt(req.query.per_page, 8);
-    const orderBy = req.query.sort_by;
-    const sortOrder = req.query.sort_order;
     const limit = perPage;
     const offset = (page - 1) * limit;
-    const { results, total } = await Recipe.getSome(limit, offset, sortOrder, orderBy);
+    const { results, total } = await Recipe.getSome(limit, offset);
     const rangeEnd = page * perPage;
     const rangeBegin = rangeEnd - perPage + 1;
     res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);

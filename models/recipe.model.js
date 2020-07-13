@@ -65,13 +65,9 @@ class Recipe {
     );
   }
 
-  static async getSome (limit, offset, sortOrder = 'asc', orderBy) {
+  static async getSome (limit, offset) {
     const total = await db.query('select count(id) as count from recipes').then(rows => rows[0].count);
     let sql = 'select * from recipes';
-    if (orderBy) {
-      sortOrder = (typeof sortOrder === 'string' && sortOrder.toLowerCase()) === 'desc' ? 'DESC' : 'ASC';
-      sql += ` ORDER BY ${db.escapeId(orderBy)} ${sortOrder}`;
-    }
     if (limit !== undefined && offset !== undefined) {
       sql += ` limit ${limit} offset ${offset}`;
     }
