@@ -88,11 +88,20 @@ class RecipesController {
         data = await Recipe.findById(req.params.id);
       }
       console.log(data);
-      const ingredients = await Recipe.getRecipeIngredients(data.id);
-      const category = await Recipe.getRecipeCategorie(data.recipe_category_id);
-      const author = await Recipe.getRecipeAuthor(data.user_id);
-      const mealType = await Recipe.getMealTypeCategorie(data.id);
+      let ingredients = [];
+      let category = null;
+      let author = null;
+      let mealType = [];
       let user_rating = null; // eslint-disable-line
+
+      try {
+        ingredients = await Recipe.getRecipeIngredients(data.id);
+        category = await Recipe.getRecipeCategorie(data.recipe_category_id);
+        author = await Recipe.getRecipeAuthor(data.user_id);
+        mealType = await Recipe.getMealTypeCategorie(data.id);
+      } catch (err) {
+        console.error(err);
+      }
 
       if (req.currentUser) {
         user_rating = await Rating.find(data.id, req.currentUser.id); // eslint-disable-line
@@ -101,7 +110,6 @@ class RecipesController {
       res.send({
         data: { ...data, ingredients, user_rating, category, author, mealType }
       });
-      console.log('test : { data }');
     } catch (err) {
       console.log(err);
       if (err.kind === 'not_found') {
