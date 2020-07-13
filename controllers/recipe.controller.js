@@ -1,6 +1,5 @@
 const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
-const { tryParseInt } = require('../helpers/number');
 
 class RecipesController {
   static async create (req, res) {
@@ -10,24 +9,18 @@ class RecipesController {
         .send({ errorMessage: 'Content can not be empty!' });
     }
 
-    if (!req.body.slug) {
-      return res.status(400).send({ errorMessage: 'slug can not be empty!' });
+    if (!req.body.name) {
+      return res.status(400).send({ errorMessage: 'Name can not be empty!' });
     } else if (!req.body.content) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
-    const user_id = req.currentUser.id;// eslint-disable-line
+
     try {
-      const recipe = new Recipe({ ...req.body, user_id: user_id });
-      if (await Recipe.nameAlreadyExists(recipe.slug)) {
-        res.status(400).send({
-          errorMessage: 'An Recipe with this slug already exists !'
-        });
-      } else {
-        const data = await Recipe.create(recipe);
-        res.status(201).send({ data });
-      }
+      const recipe = new Recipe(req.body);
+      const data = await Recipe.create(recipe);
+      res.status(201).send({ data });
     } catch (err) {
       res.status(500).send({
         errorMessage:
@@ -53,16 +46,30 @@ class RecipesController {
           });
         }
       }
+    } else {
+      try {
+        const data = (await Recipe.getAll())
+          .map((r) => new Recipe(r))
+          .map((r) => ({
+            id: r.id,
+            name: r.name,
+            content: r.content,
+            created_at: r.created_at,
+            updated_at: r.updated_at,
+            preparation_duration_seconds: r.preparation_duration_seconds,
+            budget: r.budget,
+            slug: r.slug,
+            published: r.published,
+            user_id: r.user_id
+          }));
+        res.send({ data });
+      } catch (err) {
+        res.status(500).send({
+          errorMessage:
+            err.message || 'Some error occurred while retrieving recipes.'
+        });
+      }
     }
-    const page = tryParseInt(req.query.page, 1);
-    const perPage = tryParseInt(req.query.per_page, 8);
-    const limit = perPage;
-    const offset = (page - 1) * limit;
-    const { results, total } = await Recipe.getSome(limit, offset);
-    const rangeEnd = page * perPage;
-    const rangeBegin = rangeEnd - perPage + 1;
-    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
-    res.send({ data: results });
   }
 
   static async findOne (req, res) {
@@ -74,32 +81,14 @@ class RecipesController {
       } else {
         data = await Recipe.findById(req.params.id);
       }
-      console.log(data);
-
-      let ingredients = [];
-      let category = null;
-      let author = null;
-      let mealType = [];
+      const ingredients = await Recipe.getRecipeIngredients(data.id);
       let user_rating = null; // eslint-disable-line
-
-      try {
-        ingredients = await Recipe.getRecipeIngredients(data.id);
-        category = await Recipe.getRecipeCategorie(data.recipe_category_id);
-        author = await Recipe.getRecipeAuthor(data.user_id);
-        mealType = await Recipe.getMealTypeCategorie(data.id);
-      } catch (err) {
-        console.error(err);
-      }
-
+      console.log(req.currentUser);
       if (req.currentUser) {
         user_rating = await Rating.find(data.id, req.currentUser.id); // eslint-disable-line
       }
-
-      res.send({
-        data: { ...data, ingredients, user_rating, category, author, mealType }
-      });
+      res.send({ data: { ...data, ingredients, user_rating } });
     } catch (err) {
-      console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Recipe with id ${req.params.id} not found.`
