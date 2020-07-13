@@ -22,6 +22,18 @@ class Article {
       });
   }
 
+  static async nameAlreadyExists (slug) {
+    return db
+      .query('SELECT * FROM articles WHERE slug = ?', [slug])
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(true);
+        } else {
+          return Promise.resolve(false);
+        }
+      });
+  }
+
   static async findById (id) {
     return db
       .query('SELECT * FROM articles WHERE id = ?', [id])

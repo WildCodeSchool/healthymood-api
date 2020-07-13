@@ -13,7 +13,6 @@ class GenericPagesController {
     }
 
     const user_id = req.currentUser.id; // eslint-disable-line
-    console.log(user_id);
     try {
       const genericPage = new GenericPage({ ...req.body, user_id: user_id });
       if (await GenericPage.nameAlreadyExists(genericPage.slug)) {

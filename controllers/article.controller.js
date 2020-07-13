@@ -9,18 +9,27 @@ class ArticlesController {
         .send({ errorMessage: 'Content can not be empty!' });
     }
 
-    if (!req.body.title) {
-      return res.status(400).send({ errorMessage: 'Title can not be empty!' });
+    if (!req.body.slug) {
+      return res.status(400).send({ errorMessage: 'Slug can not be empty!' });
     } else if (!req.body.content) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
 
+    const user_id = req.currentUser.id; // eslint-disable-line
+
     try {
-      const article = new Article(req.body);
-      const data = await Article.create(article);
-      res.status(201).send({ data });
+      const article = new Article({ ...req.body, user_id: user_id });
+
+      if (await Article.nameAlreadyExists(article.slug)) {
+        res.status(400).send({
+          errorMessage: 'An article with this slug already exists !'
+        });
+      } else {
+        const data = await Article.create(article);
+        res.status(201).send({ data });
+      }
     } catch (err) {
       res.status(500).send({
         errorMessage:
