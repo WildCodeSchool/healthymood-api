@@ -8,27 +8,35 @@ class FavoritesController {
         .send({ errorMessage: 'Content can not be empty!' });
     }
 
-    if (!req.body.recipe_id || !req.body.user_id) {
+    if (!req.body.recipe_id || !req.currentUser.id) {
       return res.status(400).send({ errorMessage: 'One attribute is missing' });
     }
+    const user_id = req.currentUser.id; // eslint-disable-line
+    const recipe_id = req.body.recipe_id; // eslint-disable-line
+    /* const favorite = req.body.id */
+    let data = null;
     try {
-      const favorite = new Favorite(req.body);
-      const data = await Favorite.create({
-        ...favorite,
-        user_id: req.currentUser.id
-      });
+      const existingFavorite = await Favorite.find(user_id, recipe_id);
+      if (existingFavorite) {
+        data = await Favorite.remove(existingFavorite.id);
+      } else {
+        data = await Favorite.create({
+          recipe_id,
+          user_id
+        });
+      }
       res.status(201).send({ data });
     } catch (err) {
       res.status(500).send({
         errorMessage:
-          err.message || 'Some error occurred while creating the favorite.'
+          err.message || 'Some error occurred while creating the Favorite.'
       });
     }
   }
 
   static async findAll (req, res) {
     try {
-      const data = (await Favorite.getAll())
+      const data = (await Favorite.getAll(req.currentUser.id))
         .map((n) => new Favorite(n))
         .map((n) => ({
           id: n.id,

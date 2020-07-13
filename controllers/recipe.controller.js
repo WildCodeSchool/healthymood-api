@@ -1,5 +1,6 @@
 const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
+const Favorite = require('../models/favorite.model.js');
 
 class RecipesController {
   static async create (req, res) {
@@ -87,21 +88,21 @@ class RecipesController {
       } else {
         data = await Recipe.findById(req.params.id);
       }
-      console.log(data);
       const ingredients = await Recipe.getRecipeIngredients(data.id);
       const category = await Recipe.getRecipeCategorie(data.recipe_category_id);
       const author = await Recipe.getRecipeAuthor(data.user_id);
       const mealType = await Recipe.getMealTypeCategorie(data.id);
       let user_rating = null; // eslint-disable-line
+      let user_favorite = null; // eslint-disable-line
 
       if (req.currentUser) {
         user_rating = await Rating.find(data.id, req.currentUser.id); // eslint-disable-line
+        user_favorite = await Favorite.find(data.id, req.currentUser.id); // eslint-disable-line
       }
 
       res.send({
-        data: { ...data, ingredients, user_rating, category, author, mealType }
+        data: { ...data, ingredients, user_rating, user_favorite, category, author, mealType }
       });
-      console.log('test : { data }');
     } catch (err) {
       console.log(err);
       if (err.kind === 'not_found') {
