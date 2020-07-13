@@ -42,7 +42,7 @@ class ArticlesController {
         } else {
           res.status(500).send({
             errorMessage:
-                'Error retrieving Article with keyword ' + req.query.search
+              'Error retrieving Article with keyword ' + req.query.search
           });
         }
       }
@@ -110,7 +110,6 @@ class ArticlesController {
       const data = await Article.updateById(req.params.id, new Article(req.body));
       res.send({ data });
     } catch (err) {
-      console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Article with id ${req.params.id} not found.`

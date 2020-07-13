@@ -207,7 +207,7 @@ describe('Articles endpoints', () => {
     describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/article-categories').send({
+        res = await request(app).post('/articles').send({
           title: 'article de malade mental',
           slug: 'article-de-malade-mental',
           content: 'my content is crazy as fuck',

@@ -14,7 +14,6 @@ class GenericPagesController {
     }
 
     const user_id = req.currentUser.id; // eslint-disable-line
-    console.log(user_id);
     try {
       const genericPage = new GenericPage({ ...req.body, user_id: user_id });
       if (await GenericPage.nameAlreadyExists(genericPage.slug)) {
@@ -28,7 +27,7 @@ class GenericPagesController {
     } catch (err) {
       res.status(500).send({
         errorMessage:
-        err.message || 'Some error occurred while creating the genericPage.'
+          err.message || 'Some error occurred while creating the genericPage.'
       });
     }
   }
@@ -74,7 +73,6 @@ class GenericPagesController {
       );
       res.send({ data });
     } catch (err) {
-      console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `GenericPage with id ${req.params.id} not found.`
