@@ -1,7 +1,7 @@
 const GenericPage = require('../models/generic_pages.model.js');
 
 class GenericPagesController {
-  static async create (req, res) {
+  static async create(req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -12,8 +12,9 @@ class GenericPagesController {
       return res.status(400).send({ errorMessage: 'slug can not be empty!' });
     }
 
+    const user_id = req.currentUser.id; // eslint-disable-line
     try {
-      const genericPage = new GenericPage(req.body);
+      const genericPage = new GenericPage({ ...req.body, user_id: user_id });
       if (await GenericPage.nameAlreadyExists(genericPage.slug)) {
         res.status(400).send({
           errorMessage: 'An genericPage with this slug already exists !'
@@ -30,7 +31,7 @@ class GenericPagesController {
     }
   }
 
-  static async findAll (req, res) {
+  static async findAll(req, res) {
     try {
       const data = (await GenericPage.getAll())
         .map((i) => new GenericPage(i))
@@ -51,7 +52,7 @@ class GenericPagesController {
     }
   }
 
-  static async findOne (req, res) {
+  static async findOne(req, res) {
     try {
       const data = await GenericPage.findById(req.params.id);
       res.send({ data });
@@ -68,15 +69,15 @@ class GenericPagesController {
     }
   }
 
-  static async update (req, res) {
+  static async update(req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
-
+    const user_id = req.currentUser.id; // eslint-disable-line
     try {
       const data = await GenericPage.updateById(
         req.params.id,
-        new GenericPage(req.body)
+        new GenericPage({ ...req.body, user_id: user_id })
       );
       res.send({ data });
     } catch (err) {
@@ -92,7 +93,7 @@ class GenericPagesController {
     }
   }
 
-  static async delete (req, res) {
+  static async delete(req, res) {
     try {
       await GenericPage.remove(req.params.id);
       res.send({ message: 'GenericPage was deleted successfully!' });

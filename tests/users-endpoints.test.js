@@ -1,12 +1,28 @@
 const request = require('supertest');
 const app = require('../server.js');
 const User = require('../models/user.model.js');
+const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('users endpoints', () => {
+  describe('when a user is not authenticated on admin', () => {
+    let res;
+    beforeAll(async () => {
+      res = await request(app).get('/users');
+    });
+
+    it('returns 401 status', async () => {
+      expect(res.statusCode).toEqual(401);
+    });
+  });
   describe('GET /users', () => {
     describe('when there are two users in DB', () => {
       let res;
+      let token;
       beforeEach(async () => {
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
         await Promise.all([
           User.create({
             username: 'ana',
@@ -23,7 +39,9 @@ describe('users endpoints', () => {
             blocked: false
           })
         ]);
-        res = await request(app).get('/users');
+        res = await request(app)
+          .get('/users')
+          .set('Authorization', `Bearer ${token}`);
       });
 
       it('status is 200', async () => {
@@ -32,7 +50,7 @@ describe('users endpoints', () => {
 
       it('the returned data is an array containing two elements', async () => {
         expect(Array.isArray(res.body.data));
-        expect(res.body.data.length).toBe(2);
+        expect(res.body.data.length).toBe(3);
       });
     });
   });
