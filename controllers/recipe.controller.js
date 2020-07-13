@@ -3,7 +3,7 @@ const Rating = require('../models/rating.model.js');
 const Favorite = require('../models/favorite.model.js');
 
 class RecipesController {
-  static async create (req, res) {
+  static async create(req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -36,7 +36,7 @@ class RecipesController {
     }
   }
 
-  static async findAll (req, res) {
+  static async findAll(req, res) {
     if (req.query.search) {
       try {
         const data = await Recipe.findByKeyWord(req.query.search);
@@ -79,7 +79,28 @@ class RecipesController {
     }
   }
 
-  static async findOne (req, res) {
+
+
+  static async findFavoriteByUser_ID(req, res) { // eslint-disable-line
+    try {
+      const data = await Recipe.findRecipeByUser_ID(req.currentUser.id) // eslint-disable-line
+      res.send({ data });
+    } catch (err) {
+      if (err.kind === 'not_found') {
+        res.status(404).send({
+          errorMessage: `hmmm, seems like there is no favorite.`
+        });
+      } else {
+        res.status(500).send({
+          errorMessage:
+            err.message || 'Some error occurred while retrieving recipes.'
+        });
+      }
+    }
+  }
+
+
+  static async findOne(req, res) {
     try {
       const slugOrId = req.params.id;
       let data = null;
@@ -117,7 +138,7 @@ class RecipesController {
     }
   }
 
-  static async update (req, res) {
+  static async update(req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -138,7 +159,7 @@ class RecipesController {
     }
   }
 
-  static async delete (req, res) {
+  static async delete(req, res) {
     try {
       await Recipe.remove(req.params.id);
       res.send({ message: 'Recipe was deleted successfully!' });

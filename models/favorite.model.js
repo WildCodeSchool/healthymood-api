@@ -1,20 +1,20 @@
 const db = require('../db.js');
 
 class Favorite {
-  constructor(favorite) {
+  constructor (favorite) {
     this.id = favorite.id;
     this.recipe_id = favorite.recipe_id;
     this.user_id = favorite.user_id;
   }
 
-  static async create(newFavorite) {
-    return db.query('INSERT INTO Favorite SET ?', newFavorite).then((res) => {
+  static async create (newFavorite) {
+    return db.query('INSERT INTO user_favorites SET ?', newFavorite).then((res) => {
       newFavorite.id = res.insertId;
       return newFavorite;
     });
   }
 
-  static async findById(id) {
+  static async findById (id) {
     return db
       .query('SELECT * FROM user_favorites WHERE id = ?', [id])
       .then((rows) => {
@@ -48,13 +48,13 @@ class Favorite {
     return db.query('SELECT * FROM user_favorites WHERE user_id = ? ', [user_id]); // eslint-disable-line
   }
 
-  static async updateById(id, favorite) {
+  static async updateById (id, favorite) {
     return db
       .query('UPDATE user_favorites SET id = ? WHERE id = ?', [favorite.id, id])
       .then(() => this.findById(id));
   }
 
-  static async remove(id) {
+  static async remove (id) {
     return db
       .query('DELETE FROM user_favorites WHERE id = ?', id)
       .then((res) => {
@@ -68,7 +68,7 @@ class Favorite {
       });
   }
 
-  static async removeAll(result) {
+  static async removeAll (result) {
     return db.query('DELETE FROM user_favorites');
   }
 }

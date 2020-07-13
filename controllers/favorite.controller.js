@@ -13,7 +13,6 @@ class FavoritesController {
     }
     const user_id = req.currentUser.id; // eslint-disable-line
     const recipe_id = req.body.recipe_id; // eslint-disable-line
-    /* const favorite = req.body.id */
     let data = null;
     try {
       const existingFavorite = await Favorite.find(user_id, recipe_id);

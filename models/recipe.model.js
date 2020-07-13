@@ -34,6 +34,20 @@ class Recipe {
       });
   }
 
+  static async findRecipeByUser_ID(user_id) { // eslint-disable-line
+    return db
+      .query('SELECT recipes.name, recipes.content, recipes.slug, recipes.id FROM recipes LEFT JOIN user_favorites uf ON uf.recipe_id = recipes.id JOIN users ON users.id = uf.user_id WHERE users.id = ?', [user_id]) // eslint-disable-line
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(rows);
+        } else {
+          const err = new Error();
+          err.kind = 'not_found';
+          return Promise.reject(err);
+        }
+      });
+  }
+
   static async findById (id) {
     return db.query('SELECT * FROM recipes WHERE id = ?', [id]).then((rows) => {
       if (rows.length) {
