@@ -2,7 +2,7 @@ const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
 
 class RecipesController {
-  static async create(req, res) {
+  static async create (req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -34,7 +34,8 @@ class RecipesController {
       });
     }
   }
-  static async findAll(req, res) {
+
+  static async findAll (req, res) {
     if (req.query.search) {
       try {
         const data = await Recipe.findByKeyWord(req.query.search);
@@ -78,7 +79,7 @@ class RecipesController {
     }
   }
 
-  static async findOne(req, res) {
+  static async findOne (req, res) {
     try {
       const slugOrId = req.params.id;
       let data = null;
@@ -88,20 +89,19 @@ class RecipesController {
         data = await Recipe.findById(req.params.id);
       }
 
-
-      let ingredients = []
-      let category = null
-      let author = null
-      let mealType = []
+      let ingredients = [];
+      let category = null;
+      let author = null;
+      let mealType = [];
       let user_rating = null; // eslint-disable-line
 
       try {
-        ingredients = await Recipe.getRecipeIngredients(data.id)
+        ingredients = await Recipe.getRecipeIngredients(data.id);
         category = await Recipe.getRecipeCategorie(data.recipe_category_id);
         author = await Recipe.getRecipeAuthor(data.user_id);
         mealType = await Recipe.getMealTypeCategorie(data.id);
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
 
       if (req.currentUser) {
@@ -125,7 +125,7 @@ class RecipesController {
     }
   }
 
-  static async update(req, res) {
+  static async update (req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -146,7 +146,7 @@ class RecipesController {
     }
   }
 
-  static async delete(req, res) {
+  static async delete (req, res) {
     try {
       await Recipe.remove(req.params.id);
       res.send({ message: 'Recipe was deleted successfully!' });
@@ -164,7 +164,7 @@ class RecipesController {
     }
   }
 
-  static async upload(req, res) {
+  static async upload (req, res) {
     try {
       const picture = req.file ? req.file.path.replace('\\', '/') : null;
       res.status(200).send(picture);

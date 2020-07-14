@@ -5,8 +5,7 @@ const requireAuth = require('../middlewares/requireAuth.js');
 const requireAdmin = require('../middlewares/requireAdmin.js');
 const handleImageUpload = require('../middlewares/handleImageUpload.js');
 
-
-router.post('/uploads', requireAuth, requireAdmin, handleImageUpload, recipesController.upload)
+router.post('/uploads', requireAuth, requireAdmin, handleImageUpload, recipesController.upload);
 router.post('/', requireAuth, requireAdmin, recipesController.create);
 router.get('/', recipesController.findAll);
 router.get('/:id', tryUser, recipesController.findOne);
