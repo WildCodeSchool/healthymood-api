@@ -147,6 +147,17 @@ class ArticlesController {
       }
     }
   }
+
+  static async upload (req, res) {
+    try {
+      const picture = req.file ? req.file.path.replace('\\', '/') : null;
+      res.status(200).send(picture);
+    } catch (err) {
+      console.log(err);
+      console.error(err);
+      res.status(500).send(err);
+    }
+  }
 }
 
 module.exports = ArticlesController;
