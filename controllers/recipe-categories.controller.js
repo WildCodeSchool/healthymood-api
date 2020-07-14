@@ -65,6 +65,23 @@ class RecipesCategoryController {
     }
   }
 
+  static async findAllRecipes (req, res) {
+    try {
+      const data = await RecipeCategory.getAllRecipes(req.params.id);
+      res.send({ data });
+    } catch (err) {
+      if (err.kind === 'not_found') {
+        res.status(404).send({
+          errorMessage: `Recipes with category id ${req.params.id} not found.`
+        });
+      } else {
+        res.status(500).send({
+          errorMessage: 'Error retrieving Recipes with category id ' + req.params.id
+        });
+      }
+    }
+  }
+
   static async update (req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });

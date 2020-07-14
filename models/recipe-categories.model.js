@@ -46,6 +46,10 @@ class RecipeCategory {
     return db.query('SELECT * FROM recipe_categories');
   }
 
+  static async getAllRecipes (id) {
+    return db.query('SELECT * FROM recipes WHERE recipe_category_id = ?', [id]);
+  }
+
   static async updateById (id, recipeCategory) {
     return db
       .query('UPDATE recipe_categories SET name = ? WHERE id = ?', [
