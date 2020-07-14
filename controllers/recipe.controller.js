@@ -2,7 +2,7 @@ const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
 
 class RecipesController {
-  static async create (req, res) {
+  static async create(req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -34,8 +34,7 @@ class RecipesController {
       });
     }
   }
-
-  static async findAll (req, res) {
+  static async findAll(req, res) {
     if (req.query.search) {
       try {
         const data = await Recipe.findByKeyWord(req.query.search);
@@ -66,7 +65,8 @@ class RecipesController {
             budget: r.budget,
             slug: r.slug,
             published: r.published,
-            user_id: r.user_id
+            user_id: r.user_id,
+            image: r.image
           }));
         res.send({ data });
       } catch (err) {
@@ -78,7 +78,7 @@ class RecipesController {
     }
   }
 
-  static async findOne (req, res) {
+  static async findOne(req, res) {
     try {
       const slugOrId = req.params.id;
       let data = null;
@@ -87,8 +87,8 @@ class RecipesController {
       } else {
         data = await Recipe.findById(req.params.id);
       }
-      console.log(data);
-      
+
+
       let ingredients = []
       let category = null
       let author = null
@@ -125,7 +125,7 @@ class RecipesController {
     }
   }
 
-  static async update (req, res) {
+  static async update(req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -146,7 +146,7 @@ class RecipesController {
     }
   }
 
-  static async delete (req, res) {
+  static async delete(req, res) {
     try {
       await Recipe.remove(req.params.id);
       res.send({ message: 'Recipe was deleted successfully!' });
@@ -161,6 +161,16 @@ class RecipesController {
           errorMessage: 'Could not delete Recipe with id ' + req.params.id
         });
       }
+    }
+  }
+
+  static async upload(req, res) {
+    try {
+      const picture = req.file ? req.file.path.replace('\\', '/') : null;
+      res.status(200).send(picture);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send(err);
     }
   }
 }

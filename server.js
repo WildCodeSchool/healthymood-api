@@ -8,10 +8,8 @@ const YAML = require('yamljs');
 require('dotenv').config();
 
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
-
 const app = express();
-const PORT =
-  process.env.PORT || (process.env.NODE_ENV === 'test' ? 4001 : 4000);
+const PORT = process.env.PORT || (process.env.NODE_ENV === 'test' ? 4001 : 4000);
 
 process.on('unhandledRejection', (error) => {
   console.error('unhandledRejection', JSON.stringify(error), error.stack);
@@ -29,6 +27,7 @@ process.on('beforeExit', () => {
 
 // middlewares
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 app.use(cors());
 if (process.env.NODE_ENV !== 'production') {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
