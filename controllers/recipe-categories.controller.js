@@ -36,7 +36,8 @@ class RecipesCategoryController {
         .map((i) => new RecipeCategory(i))
         .map((i) => ({
           id: i.id,
-          name: i.name
+          name: i.name,
+          image: i.image
         }));
       res.send({ data });
     } catch (err) {
