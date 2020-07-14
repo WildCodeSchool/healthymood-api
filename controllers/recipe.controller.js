@@ -71,7 +71,8 @@ class RecipesController {
             published: r.published,
             user_id: r.user_id,
             image: r.image,
-            calories: r.calories
+            calories: r.calories,
+            intro: r.intro
           }));
         res.send({ data });
       } catch (err) {

@@ -14,6 +14,7 @@ class Recipe {
     this.published = recipe.published;
     this.user_id = recipe.user_id;
     this.calories = recipe.calories;
+    this.intro = recipe.intro;
   }
 
   static async create (newRecipe) {
@@ -142,7 +143,7 @@ class Recipe {
   static async updateById (id, recipe) {
     return db
       .query(
-        'UPDATE recipes SET name = ?, content = ?, image = ?, updated_at = ?, preparation_duration_seconds = ?, budget = ?, slug = ?, published = ?, user_id = ?  WHERE id = ?',
+        'UPDATE recipes SET name = ?, content = ?, image = ?, updated_at = ?, preparation_duration_seconds = ?, budget = ?, slug = ?, published = ?, user_id = ?, intro = ? WHERE id = ?',
         [
           recipe.name,
           recipe.content,
@@ -153,6 +154,7 @@ class Recipe {
           recipe.slug,
           recipe.published,
           recipe.user_id,
+          recipe.intro,
           id
         ]
       )
