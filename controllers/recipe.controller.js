@@ -107,7 +107,6 @@ class RecipesController {
         data = await Recipe.findById(req.params.id);
       }
       console.log(data);
-
       let ingredients = [];
       let category = null;
       let author = null;
