@@ -19,6 +19,9 @@ class RecipesCategoryController {
           errorMessage: 'A RecipeCategory with this name already exists !'
         });
       } else {
+        const fullUrl = req.protocol + '://' + req.get('host');
+        const imageRelativeUrl = req.body.image.replace(fullUrl, '');
+        recipeCategory.image = imageRelativeUrl;
         const data = await RecipeCategory.create(recipeCategory);
         res.status(201).send({ data });
       }
@@ -31,6 +34,7 @@ class RecipesCategoryController {
   }
 
   static async findAll (req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const data = (await RecipeCategory.getAll())
         .map((i) => new RecipeCategory(i))
@@ -39,7 +43,7 @@ class RecipesCategoryController {
           name: i.name,
           image: i.image
         }));
-      res.send({ data });
+      res.send({ data: data.map(rc => ({ ...rc, image: rc.image ? (fullUrl + rc.image) : null })) });
     } catch (err) {
       res.status(500).send({
         errorMessage:
@@ -49,9 +53,10 @@ class RecipesCategoryController {
   }
 
   static async findOne (req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const data = await RecipeCategory.findById(req.params.id);
-      res.send({ data });
+      res.send({ data: { ...data, image: fullUrl + data.image } });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
@@ -88,10 +93,11 @@ class RecipesCategoryController {
     }
 
     try {
-      const data = await RecipeCategory.updateById(
-        req.params.id,
-        new RecipeCategory(req.body)
-      );
+      const recipeCategorie = new RecipeCategory(req.body);
+      const fullUrl = req.protocol + '://' + req.get('host');
+      const imageRelativeUrl = req.body.image.replace(fullUrl, '');
+      recipeCategorie.image = imageRelativeUrl;
+      const data = await RecipeCategory.updateById(req.params.id, recipeCategorie);
       res.send({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
@@ -120,6 +126,18 @@ class RecipesCategoryController {
           errorMessage: 'Could not delete RecipeCategory with id ' + req.params.id
         });
       }
+    }
+  }
+
+  static async upload (req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
+    try {
+      const picture = req.file ? req.file.path.replace('\\', '/') : null;
+      res.status(200).send(fullUrl + '/' + picture);
+    } catch (err) {
+      console.log(err);
+      console.error(err);
+      res.status(500).send(err);
     }
   }
 }

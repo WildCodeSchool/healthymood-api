@@ -2,8 +2,9 @@ const recipesCategoryController = require('../controllers/recipe-categories.cont
 const router = require('express').Router();
 const requireAuth = require('../middlewares/requireAuth.js');
 const requireAdmin = require('../middlewares/requireAdmin.js');
+const handleImageUpload = require('../middlewares/handleImageUpload.js');
 
-router.post('/', requireAuth, requireAdmin, recipesCategoryController.create);
+router.post('/', requireAuth, requireAdmin, handleImageUpload, recipesCategoryController.create);
 router.get('/', recipesCategoryController.findAll);
 router.get('/:id', recipesCategoryController.findOne);
 router.get('/:id/recipes', recipesCategoryController.findAllRecipes);
