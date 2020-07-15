@@ -14,7 +14,7 @@ const mailOptions = {
   from: 'healthymoodtest@gmail.com', // TODO: email sender
   to: 'adama.sonko6978@gmail.com', // TODO: email receiver
   subject: 'healthymood - Test',
-  text: 'Does it works???!!'
+  text: 'Does it works???!! second test'
 };
 
 transporter.sendMail(mailOptions, (err, data) => {
