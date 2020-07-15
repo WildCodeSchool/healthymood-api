@@ -36,10 +36,13 @@ class RecipesController {
   }
 
   static async findAll (req, res) {
-    if (req.query.search) {
+    if (Object.keys(req.query).length !== 0) {
+      console.log(req.query);
       try {
-        const data = await Recipe.findByKeyWord(req.query.search);
+        console.log('rentre dans search');
+        const data = await Recipe.search(req.query);
         res.send({ data });
+        console.log(data);
       } catch (err) {
         if (err.kind === 'not_found') {
           res.status(404).send({
@@ -66,7 +69,10 @@ class RecipesController {
             budget: r.budget,
             slug: r.slug,
             published: r.published,
-            user_id: r.user_id
+            user_id: r.user_id,
+            image: r.image,
+            calories: r.calories,
+            intro: r.intro
           }));
         res.send({ data });
       } catch (err) {
@@ -88,20 +94,20 @@ class RecipesController {
         data = await Recipe.findById(req.params.id);
       }
       console.log(data);
-      
-      let ingredients = []
-      let category = null
-      let author = null
-      let mealType = []
+
+      let ingredients = [];
+      let category = null;
+      let author = null;
+      let mealType = [];
       let user_rating = null; // eslint-disable-line
 
       try {
-        ingredients = await Recipe.getRecipeIngredients(data.id)
+        ingredients = await Recipe.getRecipeIngredients(data.id);
         category = await Recipe.getRecipeCategorie(data.recipe_category_id);
         author = await Recipe.getRecipeAuthor(data.user_id);
         mealType = await Recipe.getMealTypeCategorie(data.id);
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
 
       if (req.currentUser) {

@@ -2,7 +2,7 @@ const Article = require('../models/article.model.js');
 const { tryParseInt } = require('../helpers/number');
 
 class ArticlesController {
-  static async create(req, res) {
+  static async create (req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -29,7 +29,7 @@ class ArticlesController {
     }
   }
 
-  static async findAll(req, res) {
+  static async findAll (req, res) {
     if (req.query.search) {
       try {
         const data = await Article.findByKeyWord(req.query.search);
@@ -60,7 +60,7 @@ class ArticlesController {
     res.send({ data: results });
   }
 
-  static async findOne(req, res) {
+  static async findOne (req, res) {
     try {
       const data = await Article.findById(req.params.id);
       res.send({ data });
@@ -77,7 +77,7 @@ class ArticlesController {
     }
   }
 
-  static async findLast(req, res) {
+  static async findLast (req, res) {
     try {
       const data = (await Article.getLastArticles())
         .map((a) => new Article(a))
@@ -101,7 +101,7 @@ class ArticlesController {
     }
   }
 
-  static async update(req, res) {
+  static async update (req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -122,7 +122,7 @@ class ArticlesController {
     }
   }
 
-  static async delete(req, res) {
+  static async delete (req, res) {
     try {
       await Article.remove(req.params.id);
       res.send({ message: 'Article was deleted successfully!' });
