@@ -27,6 +27,9 @@ class ArticlesController {
           errorMessage: 'An article with this slug already exists !'
         });
       } else {
+        const fullUrl = req.protocol + '://' + req.get('host');
+        const imageRelativeUrl = req.body.image.replace(fullUrl, '');
+        article.image = imageRelativeUrl;
         const data = await Article.create(article);
         res.status(201).send({ data });
       }
@@ -39,10 +42,11 @@ class ArticlesController {
   }
 
   static async findAll (req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
     if (req.query.search) {
       try {
         const data = await Article.findByKeyWord(req.query.search);
-        res.send({ data });
+        res.send({ data: data.map(a => ({ ...a, image: a.image ? (fullUrl + a.image) : null })) });
       } catch (err) {
         if (err.kind === 'not_found') {
           res.status(404).send({
@@ -66,13 +70,15 @@ class ArticlesController {
     const rangeEnd = page * perPage;
     const rangeBegin = rangeEnd - perPage + 1;
     res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
-    res.send({ data: results });
+    res.send({ data: results.map(a => ({ ...a, image: a.image ? (fullUrl + a.image) : null })) });
   }
 
   static async findOne (req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
+    console.log(fullUrl);
     try {
       const data = await Article.findById(req.params.id);
-      res.send({ data });
+      res.send({ data: { ...data, image: fullUrl + data.image } });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
@@ -116,7 +122,11 @@ class ArticlesController {
     }
 
     try {
-      const data = await Article.updateById(req.params.id, new Article(req.body));
+      const article = new Article(req.body);
+      const fullUrl = req.protocol + '://' + req.get('host');
+      const imageRelativeUrl = req.body.image.replace(fullUrl, '');
+      article.image = imageRelativeUrl;
+      const data = await Article.updateById(req.params.id, article);
       res.send({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
@@ -149,9 +159,10 @@ class ArticlesController {
   }
 
   static async upload (req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const picture = req.file ? req.file.path.replace('\\', '/') : null;
-      res.status(200).send(picture);
+      res.status(200).send(fullUrl + '/' + picture);
     } catch (err) {
       console.log(err);
       console.error(err);
