@@ -54,8 +54,13 @@ class GenericPagesController {
 
   static async findOne (req, res) {
     try {
-      const data = await GenericPage.findById(req.params.id);
-      res.send({ data });
+      if (isNaN(parseInt(req.params.id))) {
+        const data = await GenericPage.findBySlug(req.params.id);
+        res.send({ data });
+      } else {
+        const data = await GenericPage.findById(req.params.id);
+        res.send({ data });
+      }
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({

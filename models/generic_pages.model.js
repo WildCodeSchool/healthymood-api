@@ -33,6 +33,20 @@ class GenericPage {
       });
   }
 
+  static async findBySlug (slug) {
+    return db
+      .query('SELECT * FROM generic_pages WHERE slug = ?', [slug])
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(rows[0]);
+        } else {
+          const err = new Error();
+          err.kind = 'not_found';
+          return Promise.reject(err);
+        }
+      });
+  }
+
   static async nameAlreadyExists (slug) {
     return db
       .query('SELECT * FROM generic_pages WHERE slug = ?', [slug])
