@@ -52,7 +52,7 @@ describe('ingredients endpoints', () => {
           Ingredient.create({ name: 'mozza', is_allergen: false, calories: 180 }),
           Ingredient.create({ name: 'paprika', is_allergen: true, calories: 5 })
         ]);
-        res = await request(app).get('/ingredients?per_page=8&sort_by=name&sort_order=asc');
+        res = await request(app).get('/ingredients?per_page=8&page=1&sort_by=name&sort_order=asc');
       });
       it('status is 200', async () => {
         expect(res.status).toBe(200);

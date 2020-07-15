@@ -4,6 +4,7 @@ class RecipeCategory {
   constructor (recipeCategory) {
     this.id = recipeCategory.id;
     this.name = recipeCategory.name;
+    this.image = recipeCategory.image;
   }
 
   static async create (newRecipeCategory) {
@@ -61,6 +62,7 @@ class RecipeCategory {
     return db
       .query('UPDATE recipe_categories SET name = ? WHERE id = ?', [
         recipeCategory.name,
+        recipeCategory.image,
         id
       ])
       .then(() => this.findById(id));
