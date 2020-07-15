@@ -47,7 +47,7 @@ class UsersController {
     const rangeBegin = rangeEnd - perPage + 1;
     const { results, total } = await User.getSome(limit, offset);
     res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
-    res.send({ data: results });
+    res.send({ data: results, total: total });
   }
 
   static async findOne (req, res) {

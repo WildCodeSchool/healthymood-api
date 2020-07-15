@@ -70,7 +70,7 @@ class ArticlesController {
     const rangeEnd = page * perPage;
     const rangeBegin = rangeEnd - perPage + 1;
     res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
-    res.send({ data: results.map(a => ({ ...a, image: a.image ? (fullUrl + a.image) : null })) });
+    res.send({ data: results.map(a => ({ ...a, image: a.image ? (fullUrl + a.image) : null })), total: total });
   }
 
   static async findOne (req, res) {

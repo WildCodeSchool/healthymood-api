@@ -42,7 +42,6 @@ class IngredientsController {
     const rangeEnd = page * perPage;
     const rangeBegin = rangeEnd - perPage + 1;
     const { results, total } = await Ingredient.getSome(limit, offset, sortOrder, orderBy, filterIngredientByAllergen);
-    console.log(total);
     res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
     res.send({ data: results, total: total });
   }

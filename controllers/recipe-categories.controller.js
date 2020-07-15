@@ -40,7 +40,7 @@ class RecipesCategoryController {
     const rangeBegin = rangeEnd - perPage + 1;
     const { results, total } = await RecipeCategory.getSome(limit, offset);
     res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
-    res.send({ data: results });
+    res.send({ data: results, total: total });
   }
 
   static async findOne (req, res) {
