@@ -1,5 +1,6 @@
 const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
+const Favorite = require('../models/favorite.model.js');
 
 class RecipesController {
   static async create (req, res) {
@@ -84,6 +85,24 @@ class RecipesController {
     }
   }
 
+  static async findFavoriteByUser_ID(req, res) { // eslint-disable-line
+    try {
+      const data = await Recipe.findRecipeByUser_ID(req.currentUser.id) // eslint-disable-line
+      res.send({ data });
+    } catch (err) {
+      if (err.kind === 'not_found') {
+        res.status(404).send({
+          errorMessage: 'hmmm, seems like there is no favorite.'
+        });
+      } else {
+        res.status(500).send({
+          errorMessage:
+            err.message || 'Some error occurred while retrieving recipes.'
+        });
+      }
+    }
+  }
+
   static async findOne (req, res) {
     try {
       const slugOrId = req.params.id;
@@ -100,6 +119,7 @@ class RecipesController {
       let author = null;
       let mealType = [];
       let user_rating = null; // eslint-disable-line
+      let user_favorite = null; // eslint-disable-line
 
       try {
         ingredients = await Recipe.getRecipeIngredients(data.id);
@@ -112,10 +132,11 @@ class RecipesController {
 
       if (req.currentUser) {
         user_rating = await Rating.find(data.id, req.currentUser.id); // eslint-disable-line
+        user_favorite = await Favorite.find(data.id, req.currentUser.id); // eslint-disable-line
       }
 
       res.send({
-        data: { ...data, ingredients, user_rating, category, author, mealType }
+        data: { ...data, ingredients, user_rating, user_favorite, category, author, mealType }
       });
     } catch (err) {
       console.log(err);
