@@ -2,7 +2,7 @@ const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
 
 class RecipesController {
-  static async create (req, res) {
+  static async create(req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -18,13 +18,20 @@ class RecipesController {
     }
     const user_id = req.currentUser.id;// eslint-disable-line
     try {
-      const recipe = new Recipe({ ...req.body, user_id: user_id });
-      if (await Recipe.nameAlreadyExists(recipe.slug)) {
+
+      if (await Recipe.slugAlreadyExists(req.body.slug)) {
         res.status(400).send({
           errorMessage: 'An Recipe with this slug already exists !'
         });
       } else {
+        const recipe = new Recipe({ ...req.body, user_id: user_id });
         const data = await Recipe.create(recipe);
+        if (req.body.ingredients && req.body.ingredients.length > 0) {
+          for (let i = 0; i < req.body.ingredients.length; i++) {
+            const ingredient = req.body.ingredients[i];
+            await Recipe.addIngredient(ingredient.value, recipe.id)
+          }
+        }
         res.status(201).send({ data });
       }
     } catch (err) {
@@ -35,7 +42,7 @@ class RecipesController {
     }
   }
 
-  static async findAll (req, res) {
+  static async findAll(req, res) {
     if (req.query.search) {
       try {
         const data = await Recipe.findByKeyWord(req.query.search);
@@ -79,7 +86,7 @@ class RecipesController {
     }
   }
 
-  static async findOne (req, res) {
+  static async findOne(req, res) {
     try {
       const slugOrId = req.params.id;
       let data = null;
@@ -125,15 +132,24 @@ class RecipesController {
     }
   }
 
-  static async update (req, res) {
+  static async update(req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
 
     try {
       const data = await Recipe.updateById(req.params.id, new Recipe(req.body));
+      if (req.body.ingredients && req.body.ingredients.length > 0) {
+
+        await Recipe.deleteAllIngredient(data.id)
+        for (let i = 0; i < req.body.ingredients.length; i++) {
+          const ingredient = req.body.ingredients[i];
+          await Recipe.addIngredient(ingredient.value, data.id)
+        }
+      }
       res.send({ data });
     } catch (err) {
+      console.log(err)
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Recipe with id ${req.params.id} not found.`
@@ -146,7 +162,7 @@ class RecipesController {
     }
   }
 
-  static async delete (req, res) {
+  static async delete(req, res) {
     try {
       await Recipe.remove(req.params.id);
       res.send({ message: 'Recipe was deleted successfully!' });
@@ -164,7 +180,7 @@ class RecipesController {
     }
   }
 
-  static async upload (req, res) {
+  static async upload(req, res) {
     try {
       const picture = req.file ? req.file.path.replace('\\', '/') : null;
       res.status(200).send(picture);
