@@ -38,6 +38,7 @@ app.use(extractToken);
 // routes
 app.use('/ingredients', require('./routes/ingredient.routes.js'));
 app.use('/meal_types', require('./routes/meal_types.routes.js'));
+app.use('/meal_type_recipes', require('./routes/meal_type_recipes.routes.js'));
 app.use('/diet', require('./routes/diet.routes.js'));
 app.use('/dish_types', require('./routes/dish_types.routes.js'));
 app.use('/notifications', require('./routes/notification.routes.js'));
@@ -51,8 +52,10 @@ app.use('/articles', require('./routes/article.routes.js'));
 app.use('/article_categories', require('./routes/article-categories.routes.js'));
 app.use('/secret', requireAuth, require('./routes/secret.routes.js'));
 app.use('/ratings', require('./routes/rating.routes.js'));
+app.use('/favorites', require('./routes/favorite.routes.js'));
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
+    app.use('/favorites', requireAuth, require('./routes/favorite.routes.js'));
     res.status(401).send('invalid token...');
   }
 });
