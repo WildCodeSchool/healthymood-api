@@ -89,8 +89,8 @@ describe('ingredients endpoints', () => {
         res = await request(app).get('/ingredients?per_page=8&page=1');
       });
 
-      it('has 10 ressources per page', async () => {
-        expect(res.body.data.length).toBe(9);
+      it('has 8 ressources per page', async () => {
+        expect(res.body.data.length).toBe(8);
         expect(res.header['content-range']).toBe('1-8/15');
       });
     });
