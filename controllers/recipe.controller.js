@@ -24,6 +24,9 @@ class RecipesController {
           errorMessage: 'An Recipe with this slug already exists !'
         });
       } else {
+        const fullUrl = req.protocol + '://' + req.get('host');
+        const imageRelativeUrl = req.body.image.replace(fullUrl, '');
+        recipe.image = imageRelativeUrl;
         const data = await Recipe.create(recipe);
         res.status(201).send({ data });
       }
@@ -36,10 +39,11 @@ class RecipesController {
   }
 
   static async findAll (req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
     if (req.query.search) {
       try {
         const data = await Recipe.findByKeyWord(req.query.search);
-        res.send({ data });
+        res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
       } catch (err) {
         if (err.kind === 'not_found') {
           res.status(404).send({
@@ -69,7 +73,7 @@ class RecipesController {
             user_id: r.user_id,
             image: r.image
           }));
-        res.send({ data });
+        res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
       } catch (err) {
         res.status(500).send({
           errorMessage:
@@ -80,6 +84,7 @@ class RecipesController {
   }
 
   static async findOne (req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const slugOrId = req.params.id;
       let data = null;
@@ -109,7 +114,7 @@ class RecipesController {
       }
 
       res.send({
-        data: { ...data, ingredients, user_rating, category, author, mealType }
+        data: { ...data, ingredients, user_rating, category, author, mealType, image: fullUrl + data.image }
       });
     } catch (err) {
       console.log(err);
@@ -131,7 +136,11 @@ class RecipesController {
     }
 
     try {
-      const data = await Recipe.updateById(req.params.id, new Recipe(req.body));
+      const recipe = new Recipe(req.body);
+      const fullUrl = req.protocol + '://' + req.get('host');
+      const imageRelativeUrl = req.body.image.replace(fullUrl, '');
+      recipe.image = imageRelativeUrl;
+      const data = await Recipe.updateById(req.params.id, recipe);
       res.send({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
@@ -165,9 +174,10 @@ class RecipesController {
   }
 
   static async upload (req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const picture = req.file ? req.file.path.replace('\\', '/') : null;
-      res.status(200).send(picture);
+      res.status(200).send(fullUrl + '/' + picture);
     } catch (err) {
       console.error(err);
       res.status(500).send(err);
