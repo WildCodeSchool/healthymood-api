@@ -11,6 +11,7 @@ class Article {
     this.updated_at = article.updated_at;
     this.article_category_id = article.article_category_id;
     this.user_id = article.user_id;
+    this.intro = article.intro;
   }
 
   static async create (newArticle) {
@@ -79,11 +80,12 @@ class Article {
 
   static async updateById (id, article) {
     return db
-      .query('UPDATE articles SET title = ?, slug = ?, content = ?, user_id = ? WHERE id = ?', [
+      .query('UPDATE articles SET title = ?, slug = ?, content = ?, user_id = ?, intro = ? WHERE id = ?', [
         article.title,
         article.slug,
         article.content,
         article.user_id,
+        article.intro,
         id
       ])
       .then(() => this.findById(id));

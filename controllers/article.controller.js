@@ -99,7 +99,8 @@ class ArticlesController {
           updated_at: a.updated_at,
           slug: a.slug,
           article_category_id: a.article_category_id,
-          user_id: a.user_id
+          user_id: a.user_id,
+          intro: a.intro
         }));
       res.send({ data });
     } catch (err) {
