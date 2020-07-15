@@ -63,7 +63,16 @@ class ArticlesController {
   static async findOne (req, res) {
     try {
       const data = await Article.findById(req.params.id);
-      res.send({ data });
+
+      let author = null;
+
+      try {
+        author = await Article.getArticleAuthor(data.user_id);
+      } catch (err) {
+        console.error(err);
+      }
+
+      res.send({ data: { ...data, author } });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({

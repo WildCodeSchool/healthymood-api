@@ -36,6 +36,23 @@ class Article {
       });
   }
 
+  static async getArticleAuthor (user_id) { // eslint-disable-line
+    return db
+      .query(
+        'SELECT users.username FROM articles LEFT JOIN users ON users.id = articles.user_id WHERE user_id = ?', // eslint-disable-next-line
+        [user_id]
+      )
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(rows[0]);
+        } else {
+          const err = new Error();
+          err.kind = 'not_found';
+          return Promise.reject(err);
+        }
+      });
+  }
+
   static async findByKeyWord (keyword) {
     const sqlValues = `%${keyword}%`;
     return db.query(
