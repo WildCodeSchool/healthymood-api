@@ -23,6 +23,18 @@ class Article {
       });
   }
 
+  static async nameAlreadyExists (slug) {
+    return db
+      .query('SELECT * FROM articles WHERE slug = ?', [slug])
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(true);
+        } else {
+          return Promise.resolve(false);
+        }
+      });
+  }
+
   static async findById (id) {
     return db
       .query('SELECT * FROM articles WHERE id = ?', [id])
@@ -80,10 +92,11 @@ class Article {
 
   static async updateById (id, article) {
     return db
-      .query('UPDATE articles SET title = ?, slug = ?, content = ?, user_id = ?, intro = ? WHERE id = ?', [
+      .query('UPDATE articles SET title = ?, slug = ?, content = ?, image = ?, user_id = ?, intro = ? WHERE id = ?', [
         article.title,
         article.slug,
         article.content,
+        article.image,
         article.user_id,
         article.intro,
         id
