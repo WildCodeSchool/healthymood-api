@@ -1,6 +1,7 @@
 const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
 const Favorite = require('../models/favorite.model.js');
+const { tryParseInt } = require('../helpers/number');
 
 class RecipesController {
   static async create (req, res) {
@@ -30,52 +31,70 @@ class RecipesController {
     }
   }
 
+  // static async findAll (req, res) {
+  //   if (Object.keys(req.query).length !== 0) {
+  //     console.log(req.query);
+  //     try {
+  //       const data = await Recipe.search(req.query);
+  //       res.send({ data });
+  //     } catch (err) {
+  //       if (err.kind === 'not_found') {
+  //         res.status(404).send({
+  //           errorMessage: `Recipe with keyword ${req.query.search} not found.`
+  //         });
+  //       } else {
+  //         res.status(500).send({
+  //           errorMessage:
+  //             'Error retrieving Recipe with keyword ' + req.query.search
+  //         });
+  //       }
+  //     }
+  //   } else {
+  //     try {
+  //       const data = (await Recipe.getAll())
+  //         .map((r) => new Recipe(r))
+  //         .map((r) => ({
+  //           id: r.id,
+  //           name: r.name,
+  //           content: r.content,
+  //           created_at: r.created_at,
+  //           updated_at: r.updated_at,
+  //           preparation_duration_seconds: r.preparation_duration_seconds,
+  //           budget: r.budget,
+  //           slug: r.slug,
+  //           published: r.published,
+  //           user_id: r.user_id,
+  //           image: r.image,
+  //           calories: r.calories,
+  //           intro: r.intro
+  //         }));
+  //       res.send({ data });
+  //     } catch (err) {
+  //       res.status(500).send({
+  //         errorMessage:
+  //           err.message || 'Some error occurred while retrieving recipes.'
+  //       });
+  //     }
+  //   }
+  // }
+
   static async findAll (req, res) {
-    if (Object.keys(req.query).length !== 0) {
-      console.log(req.query);
-      try {
-        console.log('rentre dans search');
-        const data = await Recipe.search(req.query);
-        res.send({ data });
-        console.log(data);
-      } catch (err) {
-        if (err.kind === 'not_found') {
-          res.status(404).send({
-            errorMessage: `Recipe with keyword ${req.query.search} not found.`
-          });
-        } else {
-          res.status(500).send({
-            errorMessage:
-              'Error retrieving Recipe with keyword ' + req.query.search
-          });
-        }
-      }
-    } else {
-      try {
-        const data = (await Recipe.getAll())
-          .map((r) => new Recipe(r))
-          .map((r) => ({
-            id: r.id,
-            name: r.name,
-            content: r.content,
-            created_at: r.created_at,
-            updated_at: r.updated_at,
-            preparation_duration_seconds: r.preparation_duration_seconds,
-            budget: r.budget,
-            slug: r.slug,
-            published: r.published,
-            user_id: r.user_id,
-            image: r.image,
-            calories: r.calories,
-            intro: r.intro
-          }));
-        res.send({ data });
-      } catch (err) {
-        res.status(500).send({
-          errorMessage:
-            err.message || 'Some error occurred while retrieving recipes.'
-        });
-      }
+    try {
+      const page = tryParseInt(req.query.page, 1);
+      const perPage = tryParseInt(req.query.per_page, 8);
+      const limit = perPage;
+      const offset = (page - 1) * limit;
+      const { results, total } = await Recipe.getSome(limit, offset, req.query.search);
+      const rangeEnd = page * perPage;
+      const rangeBegin = rangeEnd - perPage + 1;
+      res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+      res.send({ data: results, total: total });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({
+        errorMessage:
+        'Error retrieving Recipe with keyword ' + req.query.search
+      });
     }
   }
 
