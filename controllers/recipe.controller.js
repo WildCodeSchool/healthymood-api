@@ -1,5 +1,6 @@
 const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
+const Favorite = require('../models/favorite.model.js');
 
 class RecipesController {
   static async create (req, res) {
@@ -9,18 +10,24 @@ class RecipesController {
         .send({ errorMessage: 'Content can not be empty!' });
     }
 
-    if (!req.body.name) {
-      return res.status(400).send({ errorMessage: 'Name can not be empty!' });
+    if (!req.body.slug) {
+      return res.status(400).send({ errorMessage: 'slug can not be empty!' });
     } else if (!req.body.content) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
-
+    const user_id = req.currentUser.id;// eslint-disable-line
     try {
-      const recipe = new Recipe(req.body);
-      const data = await Recipe.create(recipe);
-      res.status(201).send({ data });
+      const recipe = new Recipe({ ...req.body, user_id: user_id });
+      if (await Recipe.nameAlreadyExists(recipe.slug)) {
+        res.status(400).send({
+          errorMessage: 'An Recipe with this slug already exists !'
+        });
+      } else {
+        const data = await Recipe.create(recipe);
+        res.status(201).send({ data });
+      }
     } catch (err) {
       res.status(500).send({
         errorMessage:
@@ -30,10 +37,13 @@ class RecipesController {
   }
 
   static async findAll (req, res) {
-    if (req.query.search) {
+    if (Object.keys(req.query).length !== 0) {
+      console.log(req.query);
       try {
-        const data = await Recipe.findByKeyWord(req.query.search);
+        console.log('rentre dans search');
+        const data = await Recipe.search(req.query);
         res.send({ data });
+        console.log(data);
       } catch (err) {
         if (err.kind === 'not_found') {
           res.status(404).send({
@@ -60,10 +70,31 @@ class RecipesController {
             budget: r.budget,
             slug: r.slug,
             published: r.published,
-            user_id: r.user_id
+            user_id: r.user_id,
+            image: r.image,
+            calories: r.calories,
+            intro: r.intro
           }));
         res.send({ data });
       } catch (err) {
+        res.status(500).send({
+          errorMessage:
+            err.message || 'Some error occurred while retrieving recipes.'
+        });
+      }
+    }
+  }
+
+  static async findFavoriteByUser_ID(req, res) { // eslint-disable-line
+    try {
+      const data = await Recipe.findRecipeByUser_ID(req.currentUser.id) // eslint-disable-line
+      res.send({ data });
+    } catch (err) {
+      if (err.kind === 'not_found') {
+        res.status(404).send({
+          errorMessage: 'hmmm, seems like there is no favorite.'
+        });
+      } else {
         res.status(500).send({
           errorMessage:
             err.message || 'Some error occurred while retrieving recipes.'
@@ -81,14 +112,33 @@ class RecipesController {
       } else {
         data = await Recipe.findById(req.params.id);
       }
-      const ingredients = await Recipe.getRecipeIngredients(data.id);
+      console.log(data);
+      let ingredients = [];
+      let category = null;
+      let author = null;
+      let mealType = [];
       let user_rating = null; // eslint-disable-line
-      console.log(req.currentUser);
+      let user_favorite = null; // eslint-disable-line
+
+      try {
+        ingredients = await Recipe.getRecipeIngredients(data.id);
+        category = await Recipe.getRecipeCategorie(data.recipe_category_id);
+        author = await Recipe.getRecipeAuthor(data.user_id);
+        mealType = await Recipe.getMealTypeCategorie(data.id);
+      } catch (err) {
+        console.error(err);
+      }
+
       if (req.currentUser) {
         user_rating = await Rating.find(data.id, req.currentUser.id); // eslint-disable-line
+        user_favorite = await Favorite.find(data.id, req.currentUser.id); // eslint-disable-line
       }
-      res.send({ data: { ...data, ingredients, user_rating } });
+
+      res.send({
+        data: { ...data, ingredients, user_rating, user_favorite, category, author, mealType }
+      });
     } catch (err) {
+      console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Recipe with id ${req.params.id} not found.`

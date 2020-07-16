@@ -1,2 +1,2 @@
-ALTER TABLE `recipes`
-DROP COLUMN `calories`;
+/* ALTER TABLE `recipes`
+DROP COLUMN `calories`; */
