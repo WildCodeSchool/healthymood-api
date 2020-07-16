@@ -43,41 +43,53 @@ class ArticlesController {
 
   static async findAll (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
-    if (req.query.search) {
-      try {
-        const data = await Article.findByKeyWord(req.query.search);
-        res.send({ data: data.map(a => ({ ...a, image: a.image ? (fullUrl + a.image) : null })) });
-      } catch (err) {
-        if (err.kind === 'not_found') {
-          res.status(404).send({
-            errorMessage: `Article with keyword ${req.query.search} not found.`
-          });
-        } else {
-          res.status(500).send({
-            errorMessage:
-              'Error retrieving Article with keyword ' + req.query.search
-          });
-        }
-      }
+
+    try {
+      const page = tryParseInt(req.query.page, 1);
+      const perPage = tryParseInt(req.query.per_page, 10);
+      const orderBy = req.query.sort_by;
+      const sortOrder = req.query.sort_order;
+      const limit = perPage;
+      const offset = (page - 1) * limit;
+      const { results, total } = await Article.getSome(
+        limit,
+        offset,
+        sortOrder,
+        orderBy,
+        req.query.search
+      );
+      const rangeEnd = page * perPage;
+      const rangeBegin = rangeEnd - perPage + 1;
+      res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+      res.send({
+        data: results.map((a) => ({
+          ...a,
+          image: a.image ? fullUrl + a.image : null
+        }))
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({
+        errorMessage:
+          'Error retrieving Article with keyword ' + req.query.search
+      });
     }
-    const page = tryParseInt(req.query.page, 1);
-    const perPage = tryParseInt(req.query.per_page, 10);
-    const orderBy = req.query.sort_by;
-    const sortOrder = req.query.sort_order;
-    const limit = perPage;
-    const offset = (page - 1) * limit;
-    const { results, total } = await Article.getSome(limit, offset, sortOrder, orderBy);
-    const rangeEnd = page * perPage;
-    const rangeBegin = rangeEnd - perPage + 1;
-    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
-    res.send({ data: results.map(a => ({ ...a, image: a.image ? (fullUrl + a.image) : null })) });
   }
 
   static async findOne (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const data = await Article.findById(req.params.id);
-      res.send({ data: { ...data, image: fullUrl + data.image } });
+
+      let author = null;
+
+      try {
+        author = await Article.getArticleAuthor(data.user_id);
+      } catch (err) {
+        console.error(err);
+      }
+
+      res.send({ data: { ...data, author, image: fullUrl + data.image } });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
@@ -104,7 +116,8 @@ class ArticlesController {
           updated_at: a.updated_at,
           slug: a.slug,
           article_category_id: a.article_category_id,
-          user_id: a.user_id
+          user_id: a.user_id,
+          intro: a.intro
         }));
       res.send({ data });
     } catch (err) {
