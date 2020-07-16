@@ -41,7 +41,8 @@ class GenericPagesController {
           slug: i.slug,
           published: i.published,
           content: i.content,
-          user_id: i.user_id
+          user_id: i.user_id,
+          display_in_footer: i.display_in_footer
         }));
       res.send({ data });
     } catch (err) {
