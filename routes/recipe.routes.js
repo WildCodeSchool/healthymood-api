@@ -3,7 +3,9 @@ const tryUser = require('../middlewares/tryUser.js');
 const router = require('express').Router();
 const requireAuth = require('../middlewares/requireAuth.js');
 const requireAdmin = require('../middlewares/requireAdmin.js');
+const handleImageUpload = require('../middlewares/handleImageUpload.js');
 
+router.post('/uploads', requireAuth, requireAdmin, handleImageUpload, recipesController.upload);
 router.post('/', requireAuth, requireAdmin, recipesController.create);
 router.get('/', recipesController.findAll);
 router.get('/get-favorite', tryUser, recipesController.findFavoriteByUser_ID);
