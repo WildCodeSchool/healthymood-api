@@ -34,16 +34,27 @@ class RecipesController {
             const ingredient = req.body.ingredients[i];
             await Recipe.addIngredient(ingredient.value, recipe.id);
           }
-        } else if (req.body.dish_types && req.body.dish_types.length > 0) {
+        }
+        if (req.body.dish_types && req.body.dish_types.length > 0) {
           for (let i = 0; i < req.body.dish_types.length; i++) {
             const dish_type = req.body.dish_types[i];
             await Recipe.addDish(dish_type.value, data.id);
           }
-        } else if (req.body.meal_types && req.body.meal_types.length > 0) {
+        }
+        if (req.body.meal_types && req.body.meal_types.length > 0) {
           for (let i = 0; i < req.body.meal_types.length; i++) {
             const meal_type = req.body.meal_types[i];
             await Recipe.addMeal(meal_type.value, data.id);
           }
+        }
+        if (req.body.diets && req.body.diets.length > 0) {
+          for (let i = 0; i < req.body.diets.length; i++) {
+            const diet = req.body.diets[i];
+            await Recipe.addDiet(diet.value, data.id);
+          }
+        }
+        if (req.body.recipe_category) {
+          await Recipe.setCategory(data.id, req.body.recipe_category.value)
         }
         res.status(201).send({ data });
       }
@@ -62,7 +73,6 @@ class RecipesController {
         const data = await Recipe.findByKeyWord(req.query.search);
         res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
       } catch (err) {
-
         if (err.kind === 'not_found') {
           res.status(404).send({
             errorMessage: `Recipe with keyword ${req.query.search} not found.`
@@ -116,15 +126,17 @@ class RecipesController {
       let category = null;
       let author = null;
       let dish_types = [];
+      let diets = [];
       let mealType = [];
       let user_rating = null; // eslint-disable-line
 
       try {
         ingredients = await Recipe.getRecipeIngredients(data.id);
         dish_types = await Recipe.getRecipeDishTypes(data.id);
-        category = await Recipe.getRecipeCategorie(data.recipe_category_id);
+        category = await Recipe.getRecipeCategory(data.id);
         author = await Recipe.getRecipeAuthor(data.user_id);
         mealType = await Recipe.getMealTypeCategorie(data.id);
+        diets = await Recipe.getDiets(data.id);
       } catch (err) {
         console.error(err);
       }
@@ -134,7 +146,7 @@ class RecipesController {
       }
 
       res.send({
-        data: { ...data, ingredients, user_rating, category, author, mealType, image: fullUrl + data.image }
+        data: { ...data, ingredients, user_rating, diets, category, dish_types, author, mealType, image: fullUrl + data.image }
       });
     } catch (err) {
       console.log(err);
@@ -159,6 +171,7 @@ class RecipesController {
       const fullUrl = req.protocol + '://' + req.get('host');
       const imageRelativeUrl = req.body.image.replace(fullUrl, '');
       recipe.image = imageRelativeUrl;
+
       const data = await Recipe.updateById(req.params.id, recipe);
       if (req.body.ingredients && req.body.ingredients.length > 0) {
         await Recipe.deleteAllIngredient(data.id);
@@ -166,26 +179,34 @@ class RecipesController {
           const ingredient = req.body.ingredients[i];
           await Recipe.addIngredient(ingredient.value, data.id);
         }
-      } else if (req.body.dish_types && req.body.dish_types.length > 0) {
+      }
+      if (req.body.dish_types && req.body.dish_types.length > 0) {
         await Recipe.deleteAllDish(data.id);
         for (let i = 0; i < req.body.dish_types.length; i++) {
           const dish_type = req.body.dish_types[i];
           await Recipe.addDish(dish_type.value, data.id);
         }
-      } else if (req.body.meal_types && req.body.meal_types.length > 0) {
-        await Recipe.deleteAllDish(data.id);
+      }
+      if (req.body.meal_types && req.body.meal_types.length > 0) {
+        await Recipe.deleteAllMeal(data.id);
         for (let i = 0; i < req.body.meal_types.length; i++) {
           const meal_type = req.body.meal_types[i];
           await Recipe.addMeal(meal_type.value, data.id);
         }
+      } if (req.body.diets && req.body.diets.length > 0) {
+        await Recipe.deleteAllDiet(data.id);
+        for (let i = 0; i < req.body.diets.length; i++) {
+          const diet = req.body.diets[i];
+          await Recipe.addDiet(diet.value, data.id);
+        }
+      } if (req.body.recipe_category) {
+        await Recipe.setCategory(data.id, req.body.recipe_category.value)
       }
-
 
       res.send({ data });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       if (err.kind === 'not_found') {
-
         res.status(404).send({
           errorMessage: `Recipe with id ${req.params.id} not found.`
         });

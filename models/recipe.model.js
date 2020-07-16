@@ -66,48 +66,28 @@ class Recipe {
     return db.query(
       'SELECT i.id,i.name FROM recipes LEFT JOIN recipe_ingredient_quantities riq ON recipes.id = riq.recipe_id JOIN ingredients  AS i ON i.id = riq.ingredient_id WHERE recipe_id = ?',
       [recipe_id] // eslint-disable-line
-    )
-      .then((rows) => {
-        if (rows.length) {
-          return Promise.resolve(rows[0]);
-        } else {
-          const err = new Error();
-          err.kind = 'not_found ';
-          return Promise.reject(err);
-        }
-      });
+    );
   }
   // eslint-disable-next-line
   static async getRecipeDishTypes(recipe_id) {
     return db.query(
       'SELECT d.id,d.name FROM recipes LEFT JOIN dish_type_recipes dtr ON recipes.id = dtr.recipe_id JOIN dish_types AS d ON d.id = dtr.dish_type_id WHERE recipe_id = ?',
       [recipe_id] // eslint-disable-line
-    )
-      .then((rows) => {
-        if (rows.length) {
-          return Promise.resolve(rows[0]);
-        } else {
-          const err = new Error();
-          err.kind = 'not_found ';
-          return Promise.reject(err);
-        }
-      });
+    );
   }
 
   // eslint-disable-next-line
-  static async getRecipeCategorie(recipe_categories) {
+  static async getRecipeCategory(recipe_id) {
     return db
       .query(
-        'SELECT recipe_categories.name FROM recipes LEFT JOIN recipe_categories ON recipe_categories.id = recipes.recipe_category_id WHERE recipe_categories.id = ?',
-        [recipe_categories] // eslint-disable-line
+        'SELECT rc.name,rc.id FROM recipe_categories rc JOIN recipes ON rc.id = recipes.recipe_category_id WHERE recipes.id = ?',
+        [recipe_id] // eslint-disable-line
       )
       .then((rows) => {
         if (rows.length) {
           return Promise.resolve(rows[0]);
         } else {
-          const err = new Error();
-          err.kind = 'not_found ';
-          return Promise.reject(err);
+          return Promise.resolve(null);
         }
       });
   }
@@ -116,18 +96,16 @@ class Recipe {
   static async getMealTypeCategorie(recipe_id) {
     return db
       .query(
-        'SELECT meal_types.name FROM recipes LEFT JOIN meal_type_recipes mtr ON recipes.id = mtr.recipe_id JOIN meal_types ON meal_types.id = mtr.recipe_id WHERE recipe_id = ?',
+        'SELECT mt.name,mt.id FROM meal_type_recipes mtr JOIN meal_types mt ON mtr.meal_type_id = mt.id WHERE mtr.recipe_id = ?',
         [recipe_id] // eslint-disable-line
-      )
-      .then((rows) => {
-        if (rows.length) {
-          return Promise.resolve(rows[0]);
-        } else {
-          const err = new Error();
-          err.kind = 'not_found';
-          return Promise.reject(err);
-        }
-      });
+      );
+  }
+  static async getDiets(recipe_id) {
+    return db
+      .query(
+        'SELECT d.name,d.id FROM diet_recipes dr JOIN diets d ON diet_id = d.id WHERE dr.recipe_id = ?',
+        [recipe_id] // eslint-disable-line
+      );
   }
 
   // eslint-disable-next-line
@@ -154,6 +132,13 @@ class Recipe {
       'SELECT * FROM recipes WHERE name LIKE ? OR content LIKE ?',
       [sqlValues, sqlValues]
     );
+  }
+
+  static async setCategory(recipe_id, category_id) {
+    console.log(recipe_id)
+    console.log(category_id)
+    return db.query('UPDATE recipes SET recipe_category_id = ? WHERE id = ? ', [category_id, recipe_id])
+    console.log(recipe_id)
   }
 
   static async getAll(result) {
@@ -216,6 +201,13 @@ class Recipe {
 
   static async deleteAllMeal(recipe_id) {// eslint-disable-line
     return db.query('DELETE FROM meal_type_recipes  WHERE recipe_id = ? ', [recipe_id]); // eslint-disable-line
+  }
+  static async addDiet(diet_id, recipe_id) {// eslint-disable-line
+    return db.query('INSERT INTO diet_recipes  (diet_id , recipe_id ) values (?,?)', [diet_id, recipe_id]); // eslint-disable-line
+  }
+
+  static async deleteAllDiet(recipe_id) {// eslint-disable-line
+    return db.query('DELETE FROM diet_recipes  WHERE recipe_id = ? ', [recipe_id]); // eslint-disable-line
   }
 }
 
