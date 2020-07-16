@@ -55,8 +55,17 @@ class GenericPagesController {
   static async findOne (req, res) {
     try {
       let data;
+      const notPublished = {
+        title: "Il n'y a rien ici :-(",
+        content:
+          '<h3 style="width: 100%; text-align: center;">Cette page est sûrement en cours de construction ...</h3>'
+      };
       if (isNaN(parseInt(req.params.id))) {
+        // non connecté
         data = await GenericPage.findBySlug(req.params.id);
+        !data.published && !req.currentUser && (data = notPublished);
+        console.log(req.currentUser);
+        !data.published && !req.currentUser.is_admin && (data = notPublished);
         res.send({ data });
       } else {
         data = await GenericPage.findById(req.params.id);
