@@ -66,17 +66,25 @@ class Article {
       });
   }
 
-  static async findByKeyWord (keyword) {
+/*   static async findByKeyWord (keyword) {
     const sqlValues = `%${keyword}%`;
     return db.query(
       'SELECT * FROM articles WHERE title LIKE ? OR content LIKE ?',
       [sqlValues, sqlValues]
     );
   }
-
-  static async getSome (limit, offset, sortOrder = 'asc', orderBy) {
-    const total = await db.query('select count(id) as count from articles').then(rows => rows[0].count);
+ */
+  static async getSome (limit, offset, sortOrder = 'asc', orderBy, keyword) {
+    const sqlValues = `%${keyword}%`;
+    let sqltotal = 'select count(id) as count from articles'; 
+    let total = 0;
     let sql = 'select * from articles';
+    if (keyword) {
+      total =  await db.query('select count(id) as count from articles  WHERE title LIKE ? OR content LIKE ?', [sqlValues, sqlValues]).then(rows => rows[0].count);
+      sql += ` WHERE title LIKE ? OR content LIKE ?`
+    } else {
+      total = await db.query(sqltotal).then(rows => rows[0].count);
+    }
     if (orderBy) {
       sortOrder = (typeof sortOrder === 'string' && sortOrder.toLowerCase()) === 'desc' ? 'DESC' : 'ASC';
       sql += ` ORDER BY ${db.escapeId(orderBy)} ${sortOrder}`;
@@ -84,7 +92,7 @@ class Article {
     if (limit !== undefined && offset !== undefined) {
       sql += ` limit ${limit} offset ${offset}`;
     }
-    return db.query(sql).then(rows => ({
+    return db.query(sql, keyword ? [sqlValues, sqlValues] : []).then(rows => ({
       results: rows.map(a => new Article(a)),
       total
     }));
