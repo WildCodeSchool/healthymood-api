@@ -65,7 +65,6 @@ class GenericPagesController {
         // non connecté
         data = await GenericPage.findBySlug(req.params.id);
         !data.published && !req.currentUser && (data = notPublished);
-        console.log(req.currentUser);
         !data.published && !req.currentUser.is_admin && (data = notPublished);
         res.send({ data });
       } else {
