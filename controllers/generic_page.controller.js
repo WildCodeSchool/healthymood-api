@@ -11,7 +11,6 @@ class GenericPagesController {
     if (!req.body.slug) {
       return res.status(400).send({ errorMessage: 'slug can not be empty!' });
     }
-
     const user_id = req.currentUser.id; // eslint-disable-line
     try {
       const genericPage = new GenericPage({ ...req.body, user_id: user_id });

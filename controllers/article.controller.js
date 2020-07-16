@@ -75,7 +75,6 @@ class ArticlesController {
 
   static async findOne (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
-    console.log(fullUrl);
     try {
       const data = await Article.findById(req.params.id);
       res.send({ data: { ...data, image: fullUrl + data.image } });
