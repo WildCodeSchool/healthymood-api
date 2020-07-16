@@ -10,12 +10,10 @@ class formController {
     }
 
     try {
-      const mail = await Mailer.sendMail(sendRecipePayload);
-      if (mail) {
-        res.status(201).send(sendRecipePayload);
-        console.log(req.body);
-      }
+      await Mailer.sendMail(sendRecipePayload);
+      res.status(201).send(sendRecipePayload);
     } catch (err) {
+      console.error(err)
       res.status(500).send({
         errorMessage:
           err.message || 'Some error occurred while creating the mail.'

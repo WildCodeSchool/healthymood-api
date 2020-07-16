@@ -69,21 +69,18 @@ class RecipesController {
 
   static async findAll (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
-    if (req.query.search) {
+    if (Object.keys(req.query).length !== 0) {
+      console.log(req.query);
       try {
-        const data = await Recipe.findByKeyWord(req.query.search);
+        console.log('rentre dans search');
+        const data = await Recipe.search(req.query);
         res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
       } catch (err) {
-        if (err.kind === 'not_found') {
-          res.status(404).send({
-            errorMessage: `Recipe with keyword ${req.query.search} not found.`
-          });
-        } else {
-          res.status(500).send({
-            errorMessage:
-              'Error retrieving Recipe with keyword ' + req.query.search
-          });
-        }
+        console.error(err)
+        res.status(500).send({
+          errorMessage:
+            'Error retrieving Recipe with keyword ' + req.query.search
+        });
       }
     } else {
       try {
@@ -104,8 +101,8 @@ class RecipesController {
             calories: r.calories,
             intro: r.intro
           }));
-        res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
-      } catch (err) {
+          res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
+        } catch (err) {
         res.status(500).send({
           errorMessage:
             err.message || 'Some error occurred while retrieving recipes.'
@@ -115,21 +112,11 @@ class RecipesController {
   }
 
   static async findFavoriteByUser_ID(req, res) { // eslint-disable-line
+    const fullUrl = req.protocol + '://' + req.get('host');
+
     try {
-      const slugOrId = req.params.id;
-      let data = null;
-      if (isNaN(parseInt(slugOrId))) {
-        data = await Recipe.findBySlug(slugOrId);
-      } else {
-        data = await Recipe.findById(req.params.id);
-      }
-      const ingredients = await Recipe.getRecipeIngredients(data.id);
-      let user_rating = null; // eslint-disable-line
-      console.log(req.currentUser);
-      if (req.currentUser) {
-        user_rating = await Rating.find(data.id, req.currentUser.id); // eslint-disable-line
-      }
-      res.send({ data: { ...data, ingredients, user_rating } });
+      const data = await Recipe.findRecipeByUser_ID(req.currentUser.id) // eslint-disable-line
+      res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
