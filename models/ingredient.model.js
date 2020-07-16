@@ -5,6 +5,7 @@ class Ingredient {
     this.id = ingredient.id;
     this.name = ingredient.name;
     this.is_allergen = ingredient.is_allergen;
+    this.calories = ingredient.calories;
   }
 
   static async create (newIngredient) {
@@ -46,11 +47,31 @@ class Ingredient {
     return db.query('SELECT * FROM ingredients');
   }
 
+  static async getSome (limit, offset, sortOrder = 'asc', orderBy, isAllergen) {
+    const total = await db.query('select count(id) as count from ingredients').then(rows => rows[0].count);
+    let sql = 'select * from ingredients';
+    if (orderBy) {
+      sortOrder = (typeof sortOrder === 'string' && sortOrder.toLowerCase()) === 'asc' ? 'ASC' : 'DESC';
+      sql += ` ORDER BY ${db.escapeId(orderBy)} ${sortOrder}`;
+    }
+    if (isAllergen) {
+      sql += ` WHERE is_allergen = ${isAllergen}`;
+    }
+    if (limit !== undefined && offset !== undefined) {
+      sql += ` limit ${limit} offset ${offset}`;
+    }
+    return db.query(sql).then(rows => ({
+      results: rows.map(i => new Ingredient(i)),
+      total
+    }));
+  }
+
   static async updateById (id, ingredient) {
     return db
-      .query('UPDATE ingredients SET name = ?, is_allergen = ? WHERE id = ?', [
+      .query('UPDATE ingredients SET name = ?, is_allergen = ? , calories = ? WHERE id = ?', [
         ingredient.name,
         ingredient.is_allergen,
+        ingredient.calories,
         id
       ])
       .then(() => this.findById(id));

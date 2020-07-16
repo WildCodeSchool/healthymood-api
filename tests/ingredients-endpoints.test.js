@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../server.js');
 const Ingredient = require('../models/ingredient.model.js');
+const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('ingredients endpoints', () => {
   describe('GET /ingredients', () => {
@@ -8,8 +9,16 @@ describe('ingredients endpoints', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          Ingredient.create({ name: 'patates', is_allergen: false }),
-          Ingredient.create({ name: 'carottes', is_allergen: true })
+          Ingredient.create({
+            name: 'patates',
+            is_allergen: false,
+            calories: 100
+          }),
+          Ingredient.create({
+            name: 'carottes',
+            is_allergen: true,
+            calories: 200
+          })
         ]);
         res = await request(app).get('/ingredients');
       });
@@ -23,10 +32,104 @@ describe('ingredients endpoints', () => {
         expect(res.body.data.length).toBe(2);
       });
     });
+
+    describe('Ingredient sorted by name', () => {
+      let res;
+      beforeEach(async () => {
+        await Promise.all([
+          Ingredient.create({ name: 'céleri', is_allergen: false, calories: 100 }),
+          Ingredient.create({ name: 'crevette', is_allergen: true, calories: 50 }),
+          Ingredient.create({ name: 'basilic', is_allergen: false, calories: 10 }),
+          Ingredient.create({ name: 'parmesan', is_allergen: true, calories: 200 }),
+          Ingredient.create({ name: 'courgette', is_allergen: false, calories: 60 }),
+          Ingredient.create({ name: 'tomate', is_allergen: false, calories: 30 }),
+          Ingredient.create({ name: 'carotte', is_allergen: true, calories: 35 }),
+          Ingredient.create({ name: 'ail', is_allergen: false, calories: 25 }),
+          Ingredient.create({ name: 'aubergine', is_allergen: true, calories: 55 }),
+          Ingredient.create({ name: 'chou', is_allergen: false, calories: 46 }),
+          Ingredient.create({ name: 'patate', is_allergen: false, calories: 72 }),
+          Ingredient.create({ name: 'ciboulette', is_allergen: true, calories: 7 }),
+          Ingredient.create({ name: 'mozza', is_allergen: false, calories: 180 }),
+          Ingredient.create({ name: 'paprika', is_allergen: true, calories: 5 })
+        ]);
+        res = await request(app).get('/ingredients?per_page=10&sort_by=name&sort_order=asc');
+      });
+      it('status is 200', async () => {
+        expect(res.status).toBe(200);
+      });
+
+      it('the returned data is an array containing ten elements', async () => {
+        expect(Array.isArray(res.body.data));
+        expect(res.body.data.length).toBe(10);
+        expect(res.body.data[0].name).toBe('ail');
+        expect(res.body.data[1].name).toBe('aubergine');
+      });
+    });
+
+    describe('Paginated ingredients', () => {
+      let res;
+      beforeEach(async () => {
+        await Promise.all([
+          Ingredient.create({ name: 'céleri', is_allergen: false, calories: 100 }),
+          Ingredient.create({ name: 'crevette', is_allergen: true, calories: 50 }),
+          Ingredient.create({ name: 'basilic', is_allergen: false, calories: 10 }),
+          Ingredient.create({ name: 'parmesan', is_allergen: true, calories: 200 }),
+          Ingredient.create({ name: 'courgette', is_allergen: false, calories: 60 }),
+          Ingredient.create({ name: 'tomate', is_allergen: false, calories: 30 }),
+          Ingredient.create({ name: 'carotte', is_allergen: true, calories: 35 }),
+          Ingredient.create({ name: 'ail', is_allergen: true, calories: 25 }),
+          Ingredient.create({ name: 'aubergine', is_allergen: true, calories: 55 }),
+          Ingredient.create({ name: 'chou', is_allergen: false, calories: 46 }),
+          Ingredient.create({ name: 'patate', is_allergen: false, calories: 72 }),
+          Ingredient.create({ name: 'ciboulette', is_allergen: true, calories: 7 }),
+          Ingredient.create({ name: 'mozza', is_allergen: false, calories: 180 }),
+          Ingredient.create({ name: 'paprika', is_allergen: true, calories: 5 }),
+          Ingredient.create({ name: 'thym', is_allergen: false, calories: 3 })
+        ]);
+        res = await request(app).get('/ingredients?per_page=10&page=1');
+      });
+
+      it('has 10 ressources per page', async () => {
+        expect(res.body.data.length).toBe(10);
+        expect(res.header['content-range']).toBe('1-10/15');
+      });
+    });
+
+    describe('Filtered ingredients', () => {
+      let res;
+      beforeEach(async () => {
+        await Promise.all([
+          Ingredient.create({ name: 'céleri', is_allergen: false, calories: 100 }),
+          Ingredient.create({ name: 'crevette', is_allergen: true, calories: 50 }),
+          Ingredient.create({ name: 'basilic', is_allergen: false, calories: 10 }),
+          Ingredient.create({ name: 'parmesan', is_allergen: true, calories: 200 }),
+          Ingredient.create({ name: 'courgette', is_allergen: false, calories: 60 }),
+          Ingredient.create({ name: 'tomate', is_allergen: false, calories: 30 }),
+          Ingredient.create({ name: 'carotte', is_allergen: true, calories: 35 }),
+          Ingredient.create({ name: 'ail', is_allergen: true, calories: 25 }),
+          Ingredient.create({ name: 'aubergine', is_allergen: true, calories: 55 }),
+          Ingredient.create({ name: 'chou', is_allergen: false, calories: 46 }),
+          Ingredient.create({ name: 'patate', is_allergen: false, calories: 72 }),
+          Ingredient.create({ name: 'ciboulette', is_allergen: true, calories: 7 }),
+          Ingredient.create({ name: 'mozza', is_allergen: false, calories: 180 }),
+          Ingredient.create({ name: 'paprika', is_allergen: true, calories: 5 }),
+          Ingredient.create({ name: 'thym', is_allergen: false, calories: 3 })
+        ]);
+        res = await request(app).get('/ingredients?is_allergen=1');
+      });
+
+      it('filters ingredients by is_allergen value', async () => {
+        expect(Array.isArray(res.body.data));
+        expect(res.body.data[0]).toHaveProperty('is_allergen', 1);
+        expect(res.body.data[1]).toHaveProperty('is_allergen', 1);
+        expect(res.body.data[2]).toHaveProperty('is_allergen', 1);
+        expect(res.body.data[3]).toHaveProperty('is_allergen', 1);
+      });
+    });
   });
 
   describe('POST /ingredients', () => {
-    describe('when a valid payload is sent', () => {
+    describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
         res = await request(app).post('/ingredients').send({
@@ -35,26 +138,66 @@ describe('ingredients endpoints', () => {
         });
       });
 
-      it('returns 201 status', async () => {
-        expect(res.statusCode).toEqual(201);
+      it('returns 401 status', async () => {
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+    describe('when a valid payload is sent', () => {
+      let res;
+      let token;
+      beforeAll(async () => {
+        res = await request(app).post('/ingredients').send({
+          name: 'navet',
+          is_allergen: false,
+          calories: 100
+        });
+        token = (await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        }));
       });
 
-      it('returns the id of the created ingredient', async () => {
-        expect(res.body.data).toHaveProperty('id');
+      describe('when a valid payload is sent', () => {
+        beforeAll(async () => {
+          res = await request(app)
+            .post('/ingredients')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+              name: 'navet',
+              is_allergen: false
+            });
+        });
+
+        it('returns 201 status', async () => {
+          expect(res.statusCode).toEqual(201);
+        });
+
+        it('returns the id of the created ingredient', async () => {
+          expect(res.body.data).toHaveProperty('id');
+        });
       });
     });
 
-    describe('when an ingredient with the same name already exists in DB', () => {
+    describe('when an ingredient with the same name already exists in DB and user is authenticated has an admin', () => {
       let res;
+      let token;
       beforeAll(async () => {
-        await Ingredient.create({
-          name: 'poireau',
-          is_allergen: true
-        });
-        res = await request(app).post('/ingredients').send({
-          name: 'poireau',
-          is_allergen: true
-        });
+        Ingredient.create(
+          {
+            name: 'poireau',
+            is_allergen: true,
+            calories: 90
+          },
+          token = (await authenticateHelper({ blocked: false, isAdmin: true }))
+        );
+        res = await request(app)
+          .post('/ingredients')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            name: 'poireau',
+            is_allergen: true,
+            calories: 90
+          });
       });
 
       it('returns a 400 status', async () => {

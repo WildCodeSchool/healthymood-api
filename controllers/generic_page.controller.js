@@ -11,9 +11,9 @@ class GenericPagesController {
     if (!req.body.slug) {
       return res.status(400).send({ errorMessage: 'slug can not be empty!' });
     }
-
+    const user_id = req.currentUser.id; // eslint-disable-line
     try {
-      const genericPage = new GenericPage(req.body);
+      const genericPage = new GenericPage({ ...req.body, user_id: user_id });
       if (await GenericPage.nameAlreadyExists(genericPage.slug)) {
         res.status(400).send({
           errorMessage: 'An genericPage with this slug already exists !'
@@ -40,7 +40,8 @@ class GenericPagesController {
           slug: i.slug,
           published: i.published,
           content: i.content,
-          user_id: i.user_id
+          user_id: i.user_id,
+          display_in_footer: i.display_in_footer
         }));
       res.send({ data });
     } catch (err) {
@@ -53,8 +54,22 @@ class GenericPagesController {
 
   static async findOne (req, res) {
     try {
-      const data = await GenericPage.findById(req.params.id);
-      res.send({ data });
+      let data;
+      const notPublished = {
+        title: "Il n'y a rien ici :-(",
+        content:
+          '<h3 style="width: 100%; text-align: center;">Cette page est sûrement en cours de construction ...</h3>'
+      };
+      if (isNaN(parseInt(req.params.id))) {
+        // non connecté
+        data = await GenericPage.findBySlug(req.params.id);
+        (!data.published && !req.currentUser && (data = notPublished)) ||
+        (!data.published && !req.currentUser.is_admin && (data = notPublished));
+        res.send({ data });
+      } else {
+        data = await GenericPage.findById(req.params.id);
+        res.send({ data });
+      }
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
@@ -72,11 +87,11 @@ class GenericPagesController {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
-
+    const user_id = req.currentUser.id; // eslint-disable-line
     try {
       const data = await GenericPage.updateById(
         req.params.id,
-        new GenericPage(req.body)
+        new GenericPage({ ...req.body, user_id: user_id })
       );
       res.send({ data });
     } catch (err) {
