@@ -1,7 +1,7 @@
 const db = require('../db.js');
 
 class Recipe {
-  constructor(recipe) {
+  constructor (recipe) {
     this.id = recipe.id;
     this.name = recipe.name;
     this.image = recipe.image;
@@ -15,14 +15,14 @@ class Recipe {
     this.user_id = recipe.user_id;
   }
 
-  static async create(newRecipe) {
+  static async create (newRecipe) {
     return db.query('INSERT INTO recipes SET ?', newRecipe).then((res) => {
       newRecipe.id = res.insertId;
       return newRecipe;
     });
   }
 
-  static async slugAlreadyExists(slug) {
+  static async slugAlreadyExists (slug) {
     return db
       .query('SELECT * FROM recipes WHERE slug = ?', [slug])
       .then((rows) => {
@@ -34,7 +34,7 @@ class Recipe {
       });
   }
 
-  static async findById(id) {
+  static async findById (id) {
     return db.query('SELECT * FROM recipes WHERE id = ?', [id])
       .then((rows) => {
         if (rows.length) {
@@ -47,7 +47,7 @@ class Recipe {
       });
   }
 
-  static async findBySlug(slug) {
+  static async findBySlug (slug) {
     return db
       .query('SELECT * FROM recipes WHERE slug = ?', [slug])
       .then((rows) => {
@@ -100,7 +100,8 @@ class Recipe {
         [recipe_id] // eslint-disable-line
       );
   }
-  static async getDiets(recipe_id) {
+
+  static async getDiets(recipe_id) {// eslint-disable-line
     return db
       .query(
         'SELECT d.name,d.id FROM diet_recipes dr JOIN diets d ON diet_id = d.id WHERE dr.recipe_id = ?',
@@ -126,7 +127,7 @@ class Recipe {
       });
   }
 
-  static async findByKeyWord(keyword) {
+  static async findByKeyWord (keyword) {
     const sqlValues = `%${keyword}%`;
     return db.query(
       'SELECT * FROM recipes WHERE name LIKE ? OR content LIKE ?',
@@ -134,18 +135,15 @@ class Recipe {
     );
   }
 
-  static async setCategory(recipe_id, category_id) {
-    console.log(recipe_id)
-    console.log(category_id)
-    return db.query('UPDATE recipes SET recipe_category_id = ? WHERE id = ? ', [category_id, recipe_id])
-    console.log(recipe_id)
+  static async setCategory(recipe_id, category_id) {// eslint-disable-line
+    return db.query('UPDATE recipes SET recipe_category_id = ? WHERE id = ? ', [category_id, recipe_id]);// eslint-disable-line
   }
 
-  static async getAll(result) {
+  static async getAll(result) {// eslint-disable-line
     return db.query('SELECT * FROM recipes');
   }
 
-  static async updateById(id, recipe) {
+  static async updateById (id, recipe) {
     return db
       .query(
         'UPDATE recipes SET name = ?, content = ?, image = ?, updated_at = ?, preparation_duration_seconds = ?, budget = ?, slug = ?, published = ?, user_id = ?  WHERE id = ?',
@@ -165,7 +163,7 @@ class Recipe {
       .then(() => this.findById(id));
   }
 
-  static async remove(id) {
+  static async remove (id) {
     return db.query('DELETE FROM recipes WHERE id = ?', id).then((res) => {
       if (res.affectedRows !== 0) {
         return Promise.resolve();

@@ -2,7 +2,7 @@ const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
 
 class RecipesController {
-  static async create(req, res) {
+  static async create (req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -37,13 +37,13 @@ class RecipesController {
         }
         if (req.body.dish_types && req.body.dish_types.length > 0) {
           for (let i = 0; i < req.body.dish_types.length; i++) {
-            const dish_type = req.body.dish_types[i];
+            const dish_type = req.body.dish_types[i];// eslint-disable-line
             await Recipe.addDish(dish_type.value, data.id);
           }
         }
         if (req.body.meal_types && req.body.meal_types.length > 0) {
           for (let i = 0; i < req.body.meal_types.length; i++) {
-            const meal_type = req.body.meal_types[i];
+            const meal_type = req.body.meal_types[i];// eslint-disable-line
             await Recipe.addMeal(meal_type.value, data.id);
           }
         }
@@ -54,7 +54,7 @@ class RecipesController {
           }
         }
         if (req.body.recipe_category) {
-          await Recipe.setCategory(data.id, req.body.recipe_category.value)
+          await Recipe.setCategory(data.id, req.body.recipe_category.value);
         }
         res.status(201).send({ data });
       }
@@ -66,7 +66,7 @@ class RecipesController {
     }
   }
 
-  static async findAll(req, res) {
+  static async findAll (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
     if (req.query.search) {
       try {
@@ -111,7 +111,7 @@ class RecipesController {
     }
   }
 
-  static async findOne(req, res) {
+  static async findOne (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const slugOrId = req.params.id;
@@ -125,14 +125,14 @@ class RecipesController {
       let ingredients = [];
       let category = null;
       let author = null;
-      let dish_types = [];
+      let dish_types = [];// eslint-disable-line
       let diets = [];
       let mealType = [];
       let user_rating = null; // eslint-disable-line
 
       try {
         ingredients = await Recipe.getRecipeIngredients(data.id);
-        dish_types = await Recipe.getRecipeDishTypes(data.id);
+        dish_types = await Recipe.getRecipeDishTypes(data.id);// eslint-disable-line
         category = await Recipe.getRecipeCategory(data.id);
         author = await Recipe.getRecipeAuthor(data.user_id);
         mealType = await Recipe.getMealTypeCategorie(data.id);
@@ -162,7 +162,7 @@ class RecipesController {
     }
   }
 
-  static async update(req, res) {
+  static async update (req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -183,14 +183,14 @@ class RecipesController {
       if (req.body.dish_types && req.body.dish_types.length > 0) {
         await Recipe.deleteAllDish(data.id);
         for (let i = 0; i < req.body.dish_types.length; i++) {
-          const dish_type = req.body.dish_types[i];
+          const dish_type = req.body.dish_types[i];// eslint-disable-line
           await Recipe.addDish(dish_type.value, data.id);
         }
       }
       if (req.body.meal_types && req.body.meal_types.length > 0) {
         await Recipe.deleteAllMeal(data.id);
         for (let i = 0; i < req.body.meal_types.length; i++) {
-          const meal_type = req.body.meal_types[i];
+          const meal_type = req.body.meal_types[i];// eslint-disable-line
           await Recipe.addMeal(meal_type.value, data.id);
         }
       } if (req.body.diets && req.body.diets.length > 0) {
@@ -200,7 +200,7 @@ class RecipesController {
           await Recipe.addDiet(diet.value, data.id);
         }
       } if (req.body.recipe_category) {
-        await Recipe.setCategory(data.id, req.body.recipe_category.value)
+        await Recipe.setCategory(data.id, req.body.recipe_category.value);
       }
 
       res.send({ data });
@@ -218,7 +218,7 @@ class RecipesController {
     }
   }
 
-  static async delete(req, res) {
+  static async delete (req, res) {
     try {
       await Recipe.remove(req.params.id);
       res.send({ message: 'Recipe was deleted successfully!' });
@@ -236,7 +236,7 @@ class RecipesController {
     }
   }
 
-  static async upload(req, res) {
+  static async upload (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const picture = req.file ? req.file.path.replace('\\', '/') : null;
