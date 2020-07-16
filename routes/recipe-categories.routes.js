@@ -6,6 +6,7 @@ const requireAdmin = require('../middlewares/requireAdmin.js');
 router.post('/', requireAuth, requireAdmin, recipesCategoryController.create);
 router.get('/', recipesCategoryController.findAll);
 router.get('/:id', recipesCategoryController.findOne);
+router.get('/:id/recipes', recipesCategoryController.findAllRecipes);
 router.patch(
   '/:id',
   requireAuth,

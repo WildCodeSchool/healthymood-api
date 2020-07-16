@@ -2,25 +2,37 @@ const Article = require('../models/article.model.js');
 const { tryParseInt } = require('../helpers/number');
 
 class ArticlesController {
-  static async create (req, res) {
+  static async create(req, res) {
     if (!req.body) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
 
-    if (!req.body.title) {
-      return res.status(400).send({ errorMessage: 'Title can not be empty!' });
+    if (!req.body.slug) {
+      return res.status(400).send({ errorMessage: 'Slug can not be empty!' });
     } else if (!req.body.content) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
 
+    const user_id = req.currentUser.id; // eslint-disable-line
+
     try {
-      const article = new Article(req.body);
-      const data = await Article.create(article);
-      res.status(201).send({ data });
+      const article = new Article({ ...req.body, user_id: user_id });
+
+      if (await Article.nameAlreadyExists(article.slug)) {
+        res.status(400).send({
+          errorMessage: 'An article with this slug already exists !'
+        });
+      } else {
+        const fullUrl = req.protocol + '://' + req.get('host');
+        const imageRelativeUrl = req.body.image.replace(fullUrl, '');
+        article.image = imageRelativeUrl;
+        const data = await Article.create(article);
+        res.status(201).send({ data });
+      }
     } catch (err) {
       res.status(500).send({
         errorMessage:
@@ -29,11 +41,12 @@ class ArticlesController {
     }
   }
 
-  static async findAll (req, res) {
+  static async findAll(req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
     if (req.query.search) {
       try {
         const data = await Article.findByKeyWord(req.query.search);
-        res.send({ data });
+        res.send({ data: data.map(a => ({ ...a, image: a.image ? (fullUrl + a.image) : null })) });
       } catch (err) {
         if (err.kind === 'not_found') {
           res.status(404).send({
@@ -57,13 +70,14 @@ class ArticlesController {
     const rangeEnd = page * perPage;
     const rangeBegin = rangeEnd - perPage + 1;
     res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
-    res.send({ data: results });
+    res.send({ data: results.map(a => ({ ...a, image: a.image ? (fullUrl + a.image) : null })) });
   }
 
-  static async findOne (req, res) {
+  static async findOne(req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const data = await Article.findById(req.params.id);
-      res.send({ data });
+      res.send({ data: { ...data, image: fullUrl + data.image } });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
@@ -77,7 +91,7 @@ class ArticlesController {
     }
   }
 
-  static async findLast (req, res) {
+  static async findLast(req, res) {
     try {
       const data = (await Article.getLastArticles())
         .map((a) => new Article(a))
@@ -101,13 +115,17 @@ class ArticlesController {
     }
   }
 
-  static async update (req, res) {
+  static async update(req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
 
     try {
-      const data = await Article.updateById(req.params.id, new Article(req.body));
+      const article = new Article(req.body);
+      const fullUrl = req.protocol + '://' + req.get('host');
+      const imageRelativeUrl = req.body.image.replace(fullUrl, '');
+      article.image = imageRelativeUrl;
+      const data = await Article.updateById(req.params.id, article);
       res.send({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
@@ -122,7 +140,7 @@ class ArticlesController {
     }
   }
 
-  static async delete (req, res) {
+  static async delete(req, res) {
     try {
       await Article.remove(req.params.id);
       res.send({ message: 'Article was deleted successfully!' });
@@ -136,6 +154,18 @@ class ArticlesController {
           errorMessage: 'Could not delete Article with id ' + req.params.id
         });
       }
+    }
+  }
+
+  static async upload(req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
+    try {
+      const picture = req.file ? req.file.path.replace('\\', '/') : null;
+      res.status(200).send(fullUrl + '/' + picture);
+    } catch (err) {
+      console.log(err);
+      console.error(err);
+      res.status(500).send(err);
     }
   }
 }
