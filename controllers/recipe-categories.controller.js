@@ -36,7 +36,8 @@ class RecipesCategoryController {
         .map((i) => new RecipeCategory(i))
         .map((i) => ({
           id: i.id,
-          name: i.name
+          name: i.name,
+          image: i.image
         }));
       res.send({ data });
     } catch (err) {
@@ -59,6 +60,23 @@ class RecipesCategoryController {
       } else {
         res.status(500).send({
           errorMessage: 'Error retrieving RecipeCategory with id ' + req.params.id
+        });
+      }
+    }
+  }
+
+  static async findAllRecipes (req, res) {
+    try {
+      const data = await RecipeCategory.getAllRecipes(req.params.id);
+      res.send({ data });
+    } catch (err) {
+      if (err.kind === 'not_found') {
+        res.status(404).send({
+          errorMessage: `Recipes with category id ${req.params.id} not found.`
+        });
+      } else {
+        res.status(500).send({
+          errorMessage: 'Error retrieving Recipes with category id ' + req.params.id
         });
       }
     }

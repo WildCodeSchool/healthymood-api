@@ -11,9 +11,9 @@ class GenericPagesController {
     if (!req.body.slug) {
       return res.status(400).send({ errorMessage: 'slug can not be empty!' });
     }
-
+    const user_id = req.currentUser.id; // eslint-disable-line
     try {
-      const genericPage = new GenericPage(req.body);
+      const genericPage = new GenericPage({ ...req.body, user_id: user_id });
       if (await GenericPage.nameAlreadyExists(genericPage.slug)) {
         res.status(400).send({
           errorMessage: 'An genericPage with this slug already exists !'
@@ -72,11 +72,11 @@ class GenericPagesController {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
-
+    const user_id = req.currentUser.id; // eslint-disable-line
     try {
       const data = await GenericPage.updateById(
         req.params.id,
-        new GenericPage(req.body)
+        new GenericPage({ ...req.body, user_id: user_id })
       );
       res.send({ data });
     } catch (err) {

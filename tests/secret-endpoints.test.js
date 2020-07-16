@@ -5,12 +5,18 @@ const User = require('../models/user.model.js');
 describe('secret endpoints', () => {
   describe('GET /secret', () => {
     it('should get secret with valid token', async () => {
-      await User.create({ username: 'john doe', email: 'john.doe@gmail.com', password: 'admin123' });
+      await User.create({
+        username: 'john doe',
+        email: 'john.doe@gmail.com',
+        password: 'admin123',
+        blocked: false
+      });
       const { token } = await User.login('john.doe@gmail.com', 'admin123');
-      await request(app).get('/secret')
+      await request(app)
+        .get('/secret')
         .set('Authorization', `Bearer ${token}`)
         .expect(200)
-        .then(res => {
+        .then((res) => {
           expect(res.body).toHaveProperty('secret');
         });
     });
@@ -20,7 +26,20 @@ describe('secret endpoints', () => {
     });
 
     it('should get a 401 with invalid token', async () => {
-      await request(app).get('/secret').set('Authorization', 'Bearer notvalid').expect(401);
+      await request(app)
+        .get('/secret')
+        .set('Authorization', 'Bearer notvalid')
+        .expect(401);
+    });
+
+    it('should get secret with valid token but user is blocked', async () => {
+      await User.create({
+        username: 'john doe',
+        email: 'john.doe@gmail.com',
+        password: 'admin123',
+        blocked: true
+      });
+      await request(app).get('/secret').expect(401);
     });
   });
 });
