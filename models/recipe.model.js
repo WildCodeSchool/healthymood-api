@@ -66,7 +66,32 @@ class Recipe {
     return db.query(
       'SELECT i.id,i.name FROM recipes LEFT JOIN recipe_ingredient_quantities riq ON recipes.id = riq.recipe_id JOIN ingredients  AS i ON i.id = riq.ingredient_id WHERE recipe_id = ?',
       [recipe_id] // eslint-disable-line
-    );
+    )
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(rows[0]);
+        } else {
+          const err = new Error();
+          err.kind = 'not_found ';
+          return Promise.reject(err);
+        }
+      });
+  }
+  // eslint-disable-next-line
+  static async getRecipeDishTypes(recipe_id) {
+    return db.query(
+      'SELECT d.id,d.name FROM recipes LEFT JOIN dish_type_recipes dtr ON recipes.id = dtr.recipe_id JOIN dish_types AS d ON d.id = dtr.dish_type_id WHERE recipe_id = ?',
+      [recipe_id] // eslint-disable-line
+    )
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(rows[0]);
+        } else {
+          const err = new Error();
+          err.kind = 'not_found ';
+          return Promise.reject(err);
+        }
+      });
   }
 
   // eslint-disable-next-line
@@ -81,7 +106,7 @@ class Recipe {
           return Promise.resolve(rows[0]);
         } else {
           const err = new Error();
-          err.kind = 'not_found';
+          err.kind = 'not_found ';
           return Promise.reject(err);
         }
       });
@@ -177,6 +202,20 @@ class Recipe {
 
   static async deleteAllIngredient(recipe_id) {// eslint-disable-line
     return db.query('DELETE FROM recipe_ingredient_quantities  WHERE recipe_id = ? ', [recipe_id]); // eslint-disable-line
+  }
+  static async addDish(dish_type_id, recipe_id) {// eslint-disable-line
+    return db.query('INSERT INTO dish_type_recipes  (dish_type_id , recipe_id ) values (?,?)', [dish_type_id, recipe_id]); // eslint-disable-line
+  }
+
+  static async deleteAllDish(recipe_id) {// eslint-disable-line
+    return db.query('DELETE FROM dish_type_recipes  WHERE recipe_id = ? ', [recipe_id]); // eslint-disable-line
+  }
+  static async addMeal(meal_type_id, recipe_id) {// eslint-disable-line
+    return db.query('INSERT INTO meal_type_recipes  (meal_type_id , recipe_id ) values (?,?)', [meal_type_id, recipe_id]); // eslint-disable-line
+  }
+
+  static async deleteAllMeal(recipe_id) {// eslint-disable-line
+    return db.query('DELETE FROM meal_type_recipes  WHERE recipe_id = ? ', [recipe_id]); // eslint-disable-line
   }
 }
 

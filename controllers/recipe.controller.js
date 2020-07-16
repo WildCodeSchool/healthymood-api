@@ -34,6 +34,16 @@ class RecipesController {
             const ingredient = req.body.ingredients[i];
             await Recipe.addIngredient(ingredient.value, recipe.id);
           }
+        } else if (req.body.dish_types && req.body.dish_types.length > 0) {
+          for (let i = 0; i < req.body.dish_types.length; i++) {
+            const dish_type = req.body.dish_types[i];
+            await Recipe.addDish(dish_type.value, data.id);
+          }
+        } else if (req.body.meal_types && req.body.meal_types.length > 0) {
+          for (let i = 0; i < req.body.meal_types.length; i++) {
+            const meal_type = req.body.meal_types[i];
+            await Recipe.addMeal(meal_type.value, data.id);
+          }
         }
         res.status(201).send({ data });
       }
@@ -52,6 +62,7 @@ class RecipesController {
         const data = await Recipe.findByKeyWord(req.query.search);
         res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
       } catch (err) {
+
         if (err.kind === 'not_found') {
           res.status(404).send({
             errorMessage: `Recipe with keyword ${req.query.search} not found.`
@@ -104,11 +115,13 @@ class RecipesController {
       let ingredients = [];
       let category = null;
       let author = null;
+      let dish_types = [];
       let mealType = [];
       let user_rating = null; // eslint-disable-line
 
       try {
         ingredients = await Recipe.getRecipeIngredients(data.id);
+        dish_types = await Recipe.getRecipeDishTypes(data.id);
         category = await Recipe.getRecipeCategorie(data.recipe_category_id);
         author = await Recipe.getRecipeAuthor(data.user_id);
         mealType = await Recipe.getMealTypeCategorie(data.id);
@@ -153,13 +166,26 @@ class RecipesController {
           const ingredient = req.body.ingredients[i];
           await Recipe.addIngredient(ingredient.value, data.id);
         }
+      } else if (req.body.dish_types && req.body.dish_types.length > 0) {
+        await Recipe.deleteAllDish(data.id);
+        for (let i = 0; i < req.body.dish_types.length; i++) {
+          const dish_type = req.body.dish_types[i];
+          await Recipe.addDish(dish_type.value, data.id);
+        }
+      } else if (req.body.meal_types && req.body.meal_types.length > 0) {
+        await Recipe.deleteAllDish(data.id);
+        for (let i = 0; i < req.body.meal_types.length; i++) {
+          const meal_type = req.body.meal_types[i];
+          await Recipe.addMeal(meal_type.value, data.id);
+        }
       }
+
+
       res.send({ data });
     } catch (err) {
-
-
-      console.log(err);
+      console.log(err)
       if (err.kind === 'not_found') {
+
         res.status(404).send({
           errorMessage: `Recipe with id ${req.params.id} not found.`
         });
