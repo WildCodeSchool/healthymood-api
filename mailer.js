@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 
 // mail send
 class mailer {
-  static async sendMail () {
+  static async sendMail (sendRecipePayload) {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -13,10 +13,10 @@ class mailer {
     });
 
     const mailOptions = {
-      from: 'healthymoodtest@gmail.com', // TODO: email sender
-      to: 'adama.sonko6978@gmail.com', // TODO: email receiver
+      from: sendRecipePayload.email, // TODO: email sender
+      to: process.env.EMAIL, // TODO: email receiver
       subject: 'healthymood - Test',
-      text: 'Does it works???!! second test'
+      text: sendRecipePayload.text
     };
 
     transporter.sendMail(mailOptions, (err, data) => {
