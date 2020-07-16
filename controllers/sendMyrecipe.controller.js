@@ -13,7 +13,7 @@ class formController {
       await Mailer.sendMail(sendRecipePayload);
       res.status(201).send(sendRecipePayload);
     } catch (err) {
-      console.error(err)
+      console.error(err);
       res.status(500).send({
         errorMessage:
           err.message || 'Some error occurred while creating the mail.'

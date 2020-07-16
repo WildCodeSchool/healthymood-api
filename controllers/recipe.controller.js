@@ -76,7 +76,7 @@ class RecipesController {
         const data = await Recipe.search(req.query);
         res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
       } catch (err) {
-        console.error(err)
+        console.error(err);
         res.status(500).send({
           errorMessage:
             'Error retrieving Recipe with keyword ' + req.query.search
@@ -101,8 +101,8 @@ class RecipesController {
             calories: r.calories,
             intro: r.intro
           }));
-          res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
-        } catch (err) {
+        res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
+      } catch (err) {
         res.status(500).send({
           errorMessage:
             err.message || 'Some error occurred while retrieving recipes.'
