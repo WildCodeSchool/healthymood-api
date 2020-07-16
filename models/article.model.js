@@ -66,7 +66,7 @@ class Article {
       });
   }
 
-/*   static async findByKeyWord (keyword) {
+  /*   static async findByKeyWord (keyword) {
     const sqlValues = `%${keyword}%`;
     return db.query(
       'SELECT * FROM articles WHERE title LIKE ? OR content LIKE ?',
@@ -76,12 +76,12 @@ class Article {
  */
   static async getSome (limit, offset, sortOrder = 'asc', orderBy, keyword) {
     const sqlValues = `%${keyword}%`;
-    let sqltotal = 'select count(id) as count from articles'; 
+    const sqltotal = 'select count(id) as count from articles';
     let total = 0;
     let sql = 'select * from articles';
     if (keyword) {
-      total =  await db.query('select count(id) as count from articles  WHERE title LIKE ? OR content LIKE ?', [sqlValues, sqlValues]).then(rows => rows[0].count);
-      sql += ` WHERE title LIKE ? OR content LIKE ?`
+      total = await db.query('select count(id) as count from articles  WHERE title LIKE ? OR content LIKE ?', [sqlValues, sqlValues]).then(rows => rows[0].count);
+      sql += ' WHERE title LIKE ? OR content LIKE ?';
     } else {
       total = await db.query(sqltotal).then(rows => rows[0].count);
     }
