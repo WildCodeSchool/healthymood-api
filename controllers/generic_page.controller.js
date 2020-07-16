@@ -54,11 +54,12 @@ class GenericPagesController {
 
   static async findOne (req, res) {
     try {
+      let data;
       if (isNaN(parseInt(req.params.id))) {
-        const data = await GenericPage.findBySlug(req.params.id);
+        data = await GenericPage.findBySlug(req.params.id);
         res.send({ data });
       } else {
-        const data = await GenericPage.findById(req.params.id);
+        data = await GenericPage.findById(req.params.id);
         res.send({ data });
       }
     } catch (err) {
