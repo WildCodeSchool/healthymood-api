@@ -63,8 +63,8 @@ class GenericPagesController {
       if (isNaN(parseInt(req.params.id))) {
         // non connecté
         data = await GenericPage.findBySlug(req.params.id);
-        !data.published && !req.currentUser && (data = notPublished);
-        !data.published && !req.currentUser.is_admin && (data = notPublished);
+        (!data.published && !req.currentUser && (data = notPublished)) ||
+        (!data.published && !req.currentUser.is_admin && (data = notPublished));
         res.send({ data });
       } else {
         data = await GenericPage.findById(req.params.id);
