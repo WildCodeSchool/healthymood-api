@@ -72,7 +72,7 @@ class RecipesCategoryController {
       const data = await RecipeCategory.getAllRecipes(req.params.id);
       res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
     } catch (err) {
-      console.error(err)
+      console.error(err);
       res.status(500).send({
         errorMessage: 'Error retrieving Recipes with category id ' + req.params.id
       });
