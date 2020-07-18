@@ -9,10 +9,12 @@ class RecipesController {
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
-
     if (!req.body.slug) {
-      return res.status(400).send({ errorMessage: 'slug can not be empty!' });
-    } else if (!req.body.content) {
+      return res
+        .status(400)
+        .send({ errorMessage: 'slug can not be empty!' });
+    }
+    if (!req.body.content) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
@@ -54,6 +56,7 @@ class RecipesController {
             await Recipe.addDiet(diet.value, data.id);
           }
         }
+
         if (req.body.recipe_category) {
           await Recipe.setCategory(data.id, req.body.recipe_category.value);
         }
@@ -125,7 +128,6 @@ class RecipesController {
       }
       const ingredients = await Recipe.getRecipeIngredients(data.id);
       let user_rating = null; // eslint-disable-line
-      console.log(req.currentUser);
       if (req.currentUser) {
         user_rating = await Rating.find(data.id, req.currentUser.id); // eslint-disable-line
       }
@@ -184,7 +186,6 @@ class RecipesController {
         data: { ...data, ingredients, user_rating, diets, category, dish_types, author, mealType, image: fullUrl + data.image }
       });
     } catch (err) {
-      console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Recipe with id ${req.params.id} not found.`
@@ -258,7 +259,6 @@ class RecipesController {
       await Recipe.remove(req.params.id);
       res.send({ message: 'Recipe was deleted successfully!' });
     } catch (err) {
-      console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Not found Recipe with id ${req.params.id}.`

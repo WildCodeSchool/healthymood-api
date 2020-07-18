@@ -68,7 +68,6 @@ class ArticlesCategoryController {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
-
     try {
       const data = await ArticleCategory.updateById(
         req.params.id,
@@ -82,7 +81,7 @@ class ArticlesCategoryController {
         });
       } else {
         res.status(500).send({
-          errorMessage: 'Error updating ArticleCategory with id ' + req.params.id
+          errorMessage: 'Error updating ArticleCategory okkk with id ' + req.params.id
         });
       }
     }

@@ -144,7 +144,6 @@ class Recipe {
   }
 
   static async search (query) {
-    console.log(query);
     const mealTypesID = query.meal_types ? query.meal_types.map(mealtype => parseInt(mealtype)) : null;
     const keyword = query.search ? `%${query.search}%` : null;
     const ingredientsID = query.ingredients ? query.ingredients.map(ingredient => parseInt(ingredient)) : null;

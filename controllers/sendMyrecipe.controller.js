@@ -13,7 +13,6 @@ class formController {
       const mail = await Mailer.sendMail(sendRecipePayload);
       if (mail) {
         res.status(201).send(sendRecipePayload);
-        console.log(req.body);
       }
     } catch (err) {
       res.status(500).send({
