@@ -8,7 +8,7 @@ class Favorite {
   }
 
   static async create (newFavorite) {
-    return db.query('INSERT INTO user_favorites SET ?', newFavorite).then((res) => {
+    return db.query('INSERT INTO Favorite SET ?', newFavorite).then((res) => {
       newFavorite.id = res.insertId;
       return newFavorite;
     });
@@ -28,24 +28,8 @@ class Favorite {
       });
   }
 
-  static async find(user_id, recipe_id) { // eslint-disable-line
-    return db
-      .query('SELECT * FROM user_favorites WHERE user_id = ? and recipe_id = ?', [
-        user_id,  // eslint-disable-line
-        recipe_id, // eslint-disable-line
-      ])
-      .then((rows) => {
-        console.log(rows);
-        if (rows.length) {
-          return Promise.resolve(rows[0]);
-        } else {
-          return null;
-        }
-      });
-  }
-
-  static async getAll(user_id) { // eslint-disable-line
-    return db.query('SELECT * FROM user_favorites WHERE user_id = ? ', [user_id]); // eslint-disable-line
+  static async getAll (result) {
+    return db.query('SELECT * FROM user_favorites');
   }
 
   static async updateById (id, favorite) {

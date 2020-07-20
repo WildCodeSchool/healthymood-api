@@ -14,16 +14,14 @@ describe('genericPage endpoints', () => {
             slug: 'sauce-tartare-healthy',
             published: true,
             content: 'azpjerâzj',
-            user_id: 1,
-            display_in_footer: false
+            user_id: 1
           }),
           GenericPage.create({
             title: 'Sauce bbq',
             slug: 'sauce-bbq-healthy',
             published: true,
             content: 'azdfdazd',
-            user_id: 2,
-            display_in_footer: false
+            user_id: 2
           })
         ]);
         res = await request(app).get('/generic_pages');
@@ -49,8 +47,7 @@ describe('genericPage endpoints', () => {
           slug: 'sauce-ketchup-healthy',
           published: true,
           content: 'gqes',
-          user_id: 3,
-          display_in_footer: false
+          user_id: 3
         });
       });
 
@@ -74,8 +71,7 @@ describe('genericPage endpoints', () => {
             slug: 'sauce-ketchup-healthy',
             published: true,
             content: 'gqes',
-            user_id: 3,
-            display_in_footer: false
+            user_id: 3
           });
       });
 
@@ -101,8 +97,7 @@ describe('genericPage endpoints', () => {
           slug: 'sauce-ketchup-healthy',
           published: true,
           content: 'gqes',
-          user_id: 3,
-          display_in_footer: false
+          user_id: 3
         });
         res = await request(app)
           .post('/generic_pages')
@@ -112,8 +107,7 @@ describe('genericPage endpoints', () => {
             slug: 'sauce-ketchup-healthy',
             published: true,
             content: 'gqes',
-            user_id: 3,
-            display_in_footer: false
+            user_id: 3
           });
       });
 

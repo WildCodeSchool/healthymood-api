@@ -1,20 +1,17 @@
 const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
-const Favorite = require('../models/favorite.model.js');
 
 class RecipesController {
-  static async create (req, res) {
+  static async create(req, res) {
     if (!req.body) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
+
     if (!req.body.slug) {
-      return res
-        .status(400)
-        .send({ errorMessage: 'slug can not be empty!' });
-    }
-    if (!req.body.content) {
+      return res.status(400).send({ errorMessage: 'slug can not be empty!' });
+    } else if (!req.body.content) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
@@ -30,35 +27,12 @@ class RecipesController {
         const fullUrl = req.protocol + '://' + req.get('host');
         const imageRelativeUrl = req.body.image.replace(fullUrl, '');
         recipe.image = imageRelativeUrl;
-
         const data = await Recipe.create(recipe);
         if (req.body.ingredients && req.body.ingredients.length > 0) {
           for (let i = 0; i < req.body.ingredients.length; i++) {
             const ingredient = req.body.ingredients[i];
             await Recipe.addIngredient(ingredient.value, recipe.id);
           }
-        }
-        if (req.body.dish_types && req.body.dish_types.length > 0) {
-          for (let i = 0; i < req.body.dish_types.length; i++) {
-            const dish_type = req.body.dish_types[i];// eslint-disable-line
-            await Recipe.addDish(dish_type.value, data.id);
-          }
-        }
-        if (req.body.meal_types && req.body.meal_types.length > 0) {
-          for (let i = 0; i < req.body.meal_types.length; i++) {
-            const meal_type = req.body.meal_types[i];// eslint-disable-line
-            await Recipe.addMeal(meal_type.value, data.id);
-          }
-        }
-        if (req.body.diets && req.body.diets.length > 0) {
-          for (let i = 0; i < req.body.diets.length; i++) {
-            const diet = req.body.diets[i];
-            await Recipe.addDiet(diet.value, data.id);
-          }
-        }
-
-        if (req.body.recipe_category) {
-          await Recipe.setCategory(data.id, req.body.recipe_category.value);
         }
         res.status(201).send({ data });
       }
@@ -70,7 +44,7 @@ class RecipesController {
     }
   }
 
-  static async findAll (req, res) {
+  static async findAll(req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
     if (req.query.search) {
       try {
@@ -103,9 +77,7 @@ class RecipesController {
             slug: r.slug,
             published: r.published,
             user_id: r.user_id,
-            image: r.image,
-            calories: r.calories,
-            intro: r.intro
+            image: r.image
           }));
         res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
       } catch (err) {
@@ -117,36 +89,7 @@ class RecipesController {
     }
   }
 
-  static async findFavoriteByUser_ID(req, res) { // eslint-disable-line
-    try {
-      const slugOrId = req.params.id;
-      let data = null;
-      if (isNaN(parseInt(slugOrId))) {
-        data = await Recipe.findBySlug(slugOrId);
-      } else {
-        data = await Recipe.findById(req.params.id);
-      }
-      const ingredients = await Recipe.getRecipeIngredients(data.id);
-      let user_rating = null; // eslint-disable-line
-      if (req.currentUser) {
-        user_rating = await Rating.find(data.id, req.currentUser.id); // eslint-disable-line
-      }
-      res.send({ data: { ...data, ingredients, user_rating } });
-    } catch (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          errorMessage: 'hmmm, seems like there is no favorite.'
-        });
-      } else {
-        res.status(500).send({
-          errorMessage:
-            err.message || 'Some error occurred while retrieving recipes.'
-        });
-      }
-    }
-  }
-
-  static async findOne (req, res) {
+  static async findOne(req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const slugOrId = req.params.id;
@@ -160,32 +103,27 @@ class RecipesController {
       let ingredients = [];
       let category = null;
       let author = null;
-      let dish_types = [];// eslint-disable-line
-      let diets = [];
       let mealType = [];
       let user_rating = null; // eslint-disable-line
-      let user_favorite = null; // eslint-disable-line
 
       try {
         ingredients = await Recipe.getRecipeIngredients(data.id);
-        dish_types = await Recipe.getRecipeDishTypes(data.id);// eslint-disable-line
-        category = await Recipe.getRecipeCategory(data.id);
+        category = await Recipe.getRecipeCategorie(data.recipe_category_id);
         author = await Recipe.getRecipeAuthor(data.user_id);
         mealType = await Recipe.getMealTypeCategorie(data.id);
-        diets = await Recipe.getDiets(data.id);
       } catch (err) {
         console.error(err);
       }
 
       if (req.currentUser) {
         user_rating = await Rating.find(data.id, req.currentUser.id); // eslint-disable-line
-        user_favorite = await Favorite.find(data.id, req.currentUser.id); // eslint-disable-line
       }
 
       res.send({
-        data: { ...data, ingredients, user_rating, diets, category, dish_types, author, mealType, image: fullUrl + data.image }
+        data: { ...data, ingredients, user_rating, category, author, mealType, image: fullUrl + data.image }
       });
     } catch (err) {
+      console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Recipe with id ${req.params.id} not found.`
@@ -198,7 +136,7 @@ class RecipesController {
     }
   }
 
-  static async update (req, res) {
+  static async update(req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -207,7 +145,6 @@ class RecipesController {
       const fullUrl = req.protocol + '://' + req.get('host');
       const imageRelativeUrl = req.body.image.replace(fullUrl, '');
       recipe.image = imageRelativeUrl;
-
       const data = await Recipe.updateById(req.params.id, recipe);
       if (req.body.ingredients && req.body.ingredients.length > 0) {
         await Recipe.deleteAllIngredient(data.id);
@@ -216,31 +153,10 @@ class RecipesController {
           await Recipe.addIngredient(ingredient.value, data.id);
         }
       }
-      if (req.body.dish_types && req.body.dish_types.length > 0) {
-        await Recipe.deleteAllDish(data.id);
-        for (let i = 0; i < req.body.dish_types.length; i++) {
-          const dish_type = req.body.dish_types[i];// eslint-disable-line
-          await Recipe.addDish(dish_type.value, data.id);
-        }
-      }
-      if (req.body.meal_types && req.body.meal_types.length > 0) {
-        await Recipe.deleteAllMeal(data.id);
-        for (let i = 0; i < req.body.meal_types.length; i++) {
-          const meal_type = req.body.meal_types[i];// eslint-disable-line
-          await Recipe.addMeal(meal_type.value, data.id);
-        }
-      } if (req.body.diets && req.body.diets.length > 0) {
-        await Recipe.deleteAllDiet(data.id);
-        for (let i = 0; i < req.body.diets.length; i++) {
-          const diet = req.body.diets[i];
-          await Recipe.addDiet(diet.value, data.id);
-        }
-      } if (req.body.recipe_category) {
-        await Recipe.setCategory(data.id, req.body.recipe_category.value);
-      }
-
       res.send({ data });
     } catch (err) {
+
+
       console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
@@ -254,11 +170,12 @@ class RecipesController {
     }
   }
 
-  static async delete (req, res) {
+  static async delete(req, res) {
     try {
       await Recipe.remove(req.params.id);
       res.send({ message: 'Recipe was deleted successfully!' });
     } catch (err) {
+      console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Not found Recipe with id ${req.params.id}.`
@@ -271,7 +188,7 @@ class RecipesController {
     }
   }
 
-  static async upload (req, res) {
+  static async upload(req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const picture = req.file ? req.file.path.replace('\\', '/') : null;

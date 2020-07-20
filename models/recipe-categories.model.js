@@ -4,7 +4,6 @@ class RecipeCategory {
   constructor (recipeCategory) {
     this.id = recipeCategory.id;
     this.name = recipeCategory.name;
-    this.image = recipeCategory.image;
   }
 
   static async create (newRecipeCategory) {
@@ -46,15 +45,10 @@ class RecipeCategory {
     return db.query('SELECT * FROM recipe_categories');
   }
 
-  static async getAllRecipes (id) {
-    return db.query('SELECT * FROM recipes WHERE recipe_category_id = ?', [id]);
-  }
-
   static async updateById (id, recipeCategory) {
     return db
-      .query('UPDATE recipe_categories SET name = ? , image = ? WHERE id = ?', [
+      .query('UPDATE recipe_categories SET name = ? WHERE id = ?', [
         recipeCategory.name,
-        recipeCategory.image,
         id
       ])
       .then(() => this.findById(id));
