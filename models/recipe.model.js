@@ -164,11 +164,11 @@ class Recipe {
   // }
 
   static async getSome (limit, offset, query) {
-    const mealTypesID = query.meal_types ? query.meal_types.map(mealtype => parseInt(mealtype)) : null;
-    const keyword = query.search ? `%${query.search}%` : null;
-    const ingredientsID = query.ingredients ? query.ingredients.map(ingredient => parseInt(ingredient)) : null;
-    const dietsID = query.diets ? query.diets.map(diet => parseInt(diet)) : null;
-    const calories = query.calories > 0 ? query.calories : null;
+    const mealTypesID = (query && query.meal_types) ? query.meal_types.map(mealtype => parseInt(mealtype)) : null;
+    const keyword = (query && query.search) ? `%${query.search}%` : null;
+    const ingredientsID = (query && query.ingredients) ? query.ingredients.map(ingredient => parseInt(ingredient)) : null;
+    const dietsID = (query && query.diets) ? query.diets.map(diet => parseInt(diet)) : null;
+    const calories = (query && query.calories > 0) ? query.calories : null;
     const sqltotal = 'select count(id) as count from recipes';
     let total = 0;
     let sql = 'select * from recipes';
