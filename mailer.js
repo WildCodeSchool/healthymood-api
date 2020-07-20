@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 
 // mail send
 class mailer {
-  static async sendMail (sendRecipePayload) {
+  static async sendMail(sendRecipePayload) {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
