@@ -2,7 +2,7 @@ const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
 
 class RecipesController {
-  static async create(req, res) {
+  static async create (req, res) {
     if (!req.body) {
       return res
         .status(400)
@@ -44,7 +44,7 @@ class RecipesController {
     }
   }
 
-  static async findAll(req, res) {
+  static async findAll (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
     if (req.query.search) {
       try {
@@ -89,7 +89,7 @@ class RecipesController {
     }
   }
 
-  static async findOne(req, res) {
+  static async findOne (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const slugOrId = req.params.id;
@@ -136,7 +136,7 @@ class RecipesController {
     }
   }
 
-  static async update(req, res) {
+  static async update (req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
     }
@@ -155,8 +155,6 @@ class RecipesController {
       }
       res.send({ data });
     } catch (err) {
-
-
       console.log(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
@@ -170,7 +168,7 @@ class RecipesController {
     }
   }
 
-  static async delete(req, res) {
+  static async delete (req, res) {
     try {
       await Recipe.remove(req.params.id);
       res.send({ message: 'Recipe was deleted successfully!' });
@@ -188,7 +186,7 @@ class RecipesController {
     }
   }
 
-  static async upload(req, res) {
+  static async upload (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
     try {
       const picture = req.file ? req.file.path.replace('\\', '/') : null;

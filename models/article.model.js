@@ -9,8 +9,8 @@ class Article {
     this.image = article.image;
     this.created_at = article.created_at;
     this.updated_at = article.updated_at;
-    this.article_category_id = article.article_category_id;
     this.user_id = article.user_id;
+    this.intro = article.intro;
   }
 
   static async create (newArticle) {
@@ -19,6 +19,18 @@ class Article {
       .then((res) => {
         newArticle.id = res.insertId;
         return newArticle;
+      });
+  }
+
+  static async slugAlreadyExists (slug) {
+    return db
+      .query('SELECT * FROM articles WHERE slug = ?', [slug])
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(true);
+        } else {
+          return Promise.resolve(false);
+        }
       });
   }
 
@@ -36,17 +48,68 @@ class Article {
       });
   }
 
-  static async findByKeyWord (keyword) {
+  static async getArticleCategory(article_id) {// eslint-disable-line
+    return db
+      .query(
+        'SELECT ac.name,ac.id FROM article_categories as ac  LEFT JOIN articles ON ac.id = articles.article_category_id WHERE articles.id = ?',
+        [article_id] // eslint-disable-line
+      )
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(rows[0]);
+        } else {
+          return Promise.resolve(null);
+        }
+      });
+  }
+
+  static async setCategoryArticle(article_id, category_id) {// eslint-disable-line
+    return db
+      .query(
+        'UPDATE articles SET article_category_id = ? WHERE id = ? ', [category_id, article_id])// eslint-disable-line
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(rows[0]);
+        } else {
+          return Promise.resolve(null);
+        }
+      });
+  }
+
+  static async getArticleAuthor(user_id) { // eslint-disable-line
+    return db
+      .query(
+        'SELECT users.username FROM articles LEFT JOIN users ON users.id = articles.user_id WHERE user_id = ?', // eslint-disable-next-line
+        [user_id]
+      )
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(rows[0]);
+        } else {
+          return Promise.resolve(null);
+        }
+      });
+  }
+
+  /*   static async findByKeyWord (keyword) {
     const sqlValues = `%${keyword}%`;
     return db.query(
       'SELECT * FROM articles WHERE title LIKE ? OR content LIKE ?',
       [sqlValues, sqlValues]
     );
   }
-
-  static async getSome (limit, offset, sortOrder = 'asc', orderBy) {
-    const total = await db.query('select count(id) as count from articles').then(rows => rows[0].count);
+ */
+  static async getSome (limit, offset, sortOrder = 'asc', orderBy, keyword) {
+    const sqlValues = `%${keyword}%`;
+    const sqltotal = 'select count(id) as count from articles';
+    let total = 0;
     let sql = 'select * from articles';
+    if (keyword) {
+      total = await db.query('select count(id) as count from articles  WHERE title LIKE ? OR content LIKE ?', [sqlValues, sqlValues]).then(rows => rows[0].count);
+      sql += ' WHERE title LIKE ? OR content LIKE ?';
+    } else {
+      total = await db.query(sqltotal).then(rows => rows[0].count);
+    }
     if (orderBy) {
       sortOrder = (typeof sortOrder === 'string' && sortOrder.toLowerCase()) === 'desc' ? 'DESC' : 'ASC';
       sql += ` ORDER BY ${db.escapeId(orderBy)} ${sortOrder}`;
@@ -54,7 +117,7 @@ class Article {
     if (limit !== undefined && offset !== undefined) {
       sql += ` limit ${limit} offset ${offset}`;
     }
-    return db.query(sql).then(rows => ({
+    return db.query(sql, keyword ? [sqlValues, sqlValues] : []).then(rows => ({
       results: rows.map(a => new Article(a)),
       total
     }));
@@ -62,11 +125,13 @@ class Article {
 
   static async updateById (id, article) {
     return db
-      .query('UPDATE articles SET title = ?, slug = ?, content = ?, user_id = ? WHERE id = ?', [
+      .query('UPDATE articles SET title = ?, slug = ?, content = ?, image = ?, user_id = ?, intro = ? WHERE id = ?', [
         article.title,
         article.slug,
         article.content,
+        article.image,
         article.user_id,
+        article.intro,
         id
       ])
       .then(() => this.findById(id));
