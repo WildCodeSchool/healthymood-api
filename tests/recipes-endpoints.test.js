@@ -252,7 +252,7 @@ describe('Recipes endpoints', () => {
     describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/dish_types').send({
+        res = await request(app).post('/recipes').send({
           name: 'salade de pommes de terre',
           image: '/ma-super-image-de-patates',
           content: 'awesome patates',

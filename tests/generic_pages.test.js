@@ -5,7 +5,7 @@ const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('genericPage endpoints', () => {
   describe('GET /generic_pages', () => {
-    describe('when there are two genericPage in DB', () => {
+    describe('when there are two generic pages in DB', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([

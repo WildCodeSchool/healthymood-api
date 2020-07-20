@@ -58,9 +58,9 @@ describe('ingredients endpoints', () => {
         expect(res.status).toBe(200);
       });
 
-      it('the returned data is an array containing ten elements', async () => {
+      it('the returned data is an array containing 8 elements', async () => {
         expect(Array.isArray(res.body.data));
-        expect(res.body.data.length).toBe(10);
+        expect(res.body.data.length).toBe(8);
         expect(res.body.data[0].name).toBe('ail');
         expect(res.body.data[1].name).toBe('aubergine');
       });
