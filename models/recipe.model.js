@@ -1,7 +1,7 @@
 const db = require('../db.js');
 
 class Recipe {
-  constructor(recipe) {
+  constructor (recipe) {
     this.id = recipe.id;
     this.name = recipe.name;
     this.image = recipe.image;
@@ -17,14 +17,14 @@ class Recipe {
     this.intro = recipe.intro;
   }
 
-  static async create(newRecipe) {
+  static async create (newRecipe) {
     return db.query('INSERT INTO recipes SET ?', newRecipe).then((res) => {
       newRecipe.id = res.insertId;
       return newRecipe;
     });
   }
 
-  static async slugAlreadyExists(slug) {
+  static async slugAlreadyExists (slug) {
     return db
       .query('SELECT * FROM recipes WHERE slug = ?', [slug])
       .then((rows) => {
@@ -38,7 +38,7 @@ class Recipe {
 
   static async findRecipeByUser_ID(user_id) { // eslint-disable-line
     return db
-      .query('SELECT recipes.name, recipes.content, recipes.slug, recipes.id, recipes.image FROM recipes LEFT JOIN user_favorites uf ON uf.recipe_id = recipes.id JOIN users ON users.id = uf.user_id WHERE users.id = ?', [user_id]) // eslint-disable-line
+      .query('SELECT recipes.name, recipes.content, recipes.slug, recipes.id, recipes.image, recipes.intro FROM recipes LEFT JOIN user_favorites uf ON uf.recipe_id = recipes.id JOIN users ON users.id = uf.user_id WHERE users.id = ?', [user_id]) // eslint-disable-line
       .then((rows) => {
         if (rows.length) {
           return Promise.resolve(rows);
@@ -50,7 +50,7 @@ class Recipe {
       });
   }
 
-  static async findById(id) {
+  static async findById (id) {
     return db.query('SELECT * FROM recipes WHERE id = ?', [id])
       .then((rows) => {
         if (rows.length) {
@@ -63,7 +63,7 @@ class Recipe {
       });
   }
 
-  static async findBySlug(slug) {
+  static async findBySlug (slug) {
     return db
       .query('SELECT * FROM recipes WHERE slug = ?', [slug])
       .then((rows) => {
@@ -143,7 +143,7 @@ class Recipe {
       });
   }
 
-  static async search(query) {
+  static async search (query) {
     console.log(query);
     const mealTypesID = query.meal_types ? query.meal_types.map(mealtype => parseInt(mealtype)) : null;
     const keyword = query.search ? `%${query.search}%` : null;
@@ -165,7 +165,7 @@ class Recipe {
     return db.query('SELECT * FROM recipes');
   }
 
-  static async updateById(id, recipe) {
+  static async updateById (id, recipe) {
     return db
       .query(
         'UPDATE recipes SET name = ?, content = ?, image = ?, updated_at = ?, preparation_duration_seconds = ?, budget = ?, slug = ?, published = ?, user_id = ?, intro = ? WHERE id = ?',
@@ -186,7 +186,7 @@ class Recipe {
       .then(() => this.findById(id));
   }
 
-  static async remove(id) {
+  static async remove (id) {
     return db.query('DELETE FROM recipes WHERE id = ?', id).then((res) => {
       if (res.affectedRows !== 0) {
         return Promise.resolve();
