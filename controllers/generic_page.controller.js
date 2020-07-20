@@ -31,7 +31,7 @@ class GenericPagesController {
     }
   }
 
-  static async findAll (req, res) {    
+  static async findAll (req, res) {
     try {
       const page = tryParseInt(req.query.page, 1);
       const perPage = tryParseInt(req.query.per_page, 8);

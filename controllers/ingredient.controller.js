@@ -31,9 +31,10 @@ class IngredientsController {
     }
   }
 
-  static async findAll (req, res) {
+  static async findSome (req, res) {
+    const shouldPaginate = req.query.page && req.query.per_page;
     const page = tryParseInt(req.query.page, 1);
-    const perPage = tryParseInt(req.query.per_page, 8);
+    const perPage = tryParseInt(req.query.per_page, 10);
     const filterIngredientByAllergen = req.query.is_allergen;
     const orderBy = req.query.sort_by;
     const sortOrder = req.query.sort_order;
@@ -41,9 +42,14 @@ class IngredientsController {
     const offset = (page - 1) * limit;
     const rangeEnd = page * perPage;
     const rangeBegin = rangeEnd - perPage + 1;
-    const { results, total } = await Ingredient.getSome(limit, offset, sortOrder, orderBy, filterIngredientByAllergen);
+    const { results, total } = await Ingredient.getSome(shouldPaginate ? limit : undefined, shouldPaginate ? offset : undefined, sortOrder, orderBy, filterIngredientByAllergen);
     res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
     res.send({ data: results, total: total });
+  }
+
+  static async findAll (req, res) {
+    const data = await Ingredient.getAll();
+    res.send({ data });
   }
 
   static async findOne (req, res) {

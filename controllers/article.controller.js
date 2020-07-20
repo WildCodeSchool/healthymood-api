@@ -43,7 +43,6 @@ class ArticlesController {
 
   static async findAll (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
-
     try {
       const page = tryParseInt(req.query.page, 1);
       const perPage = tryParseInt(req.query.per_page, 8);

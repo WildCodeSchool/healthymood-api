@@ -173,7 +173,7 @@ class Recipe {
     let total = 0;
     let sql = 'select * from recipes';
     if (query) {
-      total = await db.query('SELECT DISTINCT recipes.name, recipes.image, recipes.intro, recipes.content, recipes.created_at, recipes.updated_at, recipes.preparation_duration_seconds, recipes.slug, recipes.published, recipes.user_id, recipes.calories, recipes.budget COUNT(recipes.id) AS count FROM recipes LEFT JOIN meal_type_recipes ON meal_type_recipes.recipe_id = recipes.id LEFT JOIN recipe_ingredient_quantities ON recipe_ingredient_quantities.recipe_id = recipes.id LEFT JOIN diet_recipes ON diet_recipes.recipe_id = recipes.id WHERE (? is NULL OR meal_type_recipes.meal_type_id IN (?))  AND (? is NULL OR recipe_ingredient_quantities.ingredient_id IN (?)) AND (? is NULL OR diet_recipes.diet_id IN (?)) AND (? is NULL OR recipes.name LIKE ? OR recipes.content LIKE ?) AND (? is NULL or recipes.calories <= ?)',
+      total = await db.query('SELECT DISTINCT recipes.name, recipes.image, recipes.intro, recipes.content, recipes.created_at, recipes.updated_at, recipes.preparation_duration_seconds, recipes.slug, recipes.published, recipes.user_id, recipes.calories, recipes.budget, COUNT(recipes.id) AS count FROM recipes LEFT JOIN meal_type_recipes ON meal_type_recipes.recipe_id = recipes.id LEFT JOIN recipe_ingredient_quantities ON recipe_ingredient_quantities.recipe_id = recipes.id LEFT JOIN diet_recipes ON diet_recipes.recipe_id = recipes.id WHERE (? is NULL OR meal_type_recipes.meal_type_id IN (?))  AND (? is NULL OR recipe_ingredient_quantities.ingredient_id IN (?)) AND (? is NULL OR diet_recipes.diet_id IN (?)) AND (? is NULL OR recipes.name LIKE ? OR recipes.content LIKE ?) AND (? is NULL or recipes.calories <= ?)',
         [mealTypesID ? mealTypesID[0] : null, mealTypesID, ingredientsID ? ingredientsID[0] : null, ingredientsID, dietsID ? dietsID[0] : null, dietsID, keyword, keyword, keyword, calories, calories]).then(rows => rows[0].count);
       sql += ' WHERE (? is NULL OR meal_type_recipes.meal_type_id IN (?))  AND (? is NULL OR recipe_ingredient_quantities.ingredient_id IN (?)) AND (? is NULL OR diet_recipes.diet_id IN (?)) AND (? is NULL OR recipes.name LIKE ? OR recipes.content LIKE ?) AND (? is NULL or recipes.calories <= ?)';
     } else {
@@ -182,7 +182,7 @@ class Recipe {
     if (limit !== undefined && offset !== undefined) {
       sql += ` limit ${limit} offset ${offset}`;
     }
-    return db.query(sql).then(rows => ({
+    return db.query(sql, keyword ? [mealTypesID ? mealTypesID[0] : null, mealTypesID, ingredientsID ? ingredientsID[0] : null, ingredientsID, dietsID ? dietsID[0] : null, dietsID, keyword, keyword, keyword, calories, calories] : []).then(rows => ({
       results: rows.map(r => new Recipe(r)),
       total
     }));
