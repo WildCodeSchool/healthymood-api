@@ -68,10 +68,18 @@ class ArticlesController {
 
   static async findOne (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
-    console.log(fullUrl);
     try {
       const data = await Article.findById(req.params.id);
-      res.send({ data: { ...data, image: fullUrl + data.image } });
+
+      let author = null;
+
+      try {
+        author = await Article.getArticleAuthor(data.user_id);
+      } catch (err) {
+        console.error(err);
+      }
+
+      res.send({ data: { ...data, author, image: fullUrl + data.image } });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
@@ -98,7 +106,8 @@ class ArticlesController {
           updated_at: a.updated_at,
           slug: a.slug,
           article_category_id: a.article_category_id,
-          user_id: a.user_id
+          user_id: a.user_id,
+          intro: a.intro
         }));
       res.send({ data });
     } catch (err) {

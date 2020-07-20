@@ -59,7 +59,7 @@ class ArticleCategory {
 
   static async updateById (id, articleCategory) {
     return db
-      .query('UPDATE article_categories SET name = ?, WHERE id = ?', [
+      .query('UPDATE article_categories SET name = ? WHERE id = ?', [
         articleCategory.name,
         id
       ])

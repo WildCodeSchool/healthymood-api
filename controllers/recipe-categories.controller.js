@@ -61,19 +61,16 @@ class RecipesCategoryController {
   }
 
   static async findAllRecipes (req, res) {
+    const fullUrl = req.protocol + '://' + req.get('host');
+
     try {
       const data = await RecipeCategory.getAllRecipes(req.params.id);
-      res.send({ data });
+      res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
     } catch (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          errorMessage: `Recipes with category id ${req.params.id} not found.`
-        });
-      } else {
-        res.status(500).send({
-          errorMessage: 'Error retrieving Recipes with category id ' + req.params.id
-        });
-      }
+      console.error(err);
+      res.status(500).send({
+        errorMessage: 'Error retrieving Recipes with category id ' + req.params.id
+      });
     }
   }
 

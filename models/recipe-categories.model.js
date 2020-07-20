@@ -60,7 +60,7 @@ class RecipeCategory {
 
   static async updateById (id, recipeCategory) {
     return db
-      .query('UPDATE recipe_categories SET name = ? WHERE id = ?', [
+      .query('UPDATE recipe_categories SET name = ?, image = ? WHERE id = ?', [
         recipeCategory.name,
         recipeCategory.image,
         id

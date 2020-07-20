@@ -12,7 +12,6 @@ class GenericPagesController {
     if (!req.body.slug) {
       return res.status(400).send({ errorMessage: 'slug can not be empty!' });
     }
-
     const user_id = req.currentUser.id; // eslint-disable-line
     try {
       const genericPage = new GenericPage({ ...req.body, user_id: user_id });
@@ -42,12 +41,45 @@ class GenericPagesController {
     const { results, total } = await GenericPage.getSome(limit, offset);
     res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
     res.send({ data: results, total: total });
+    try {
+      const data = (await GenericPage.getAll())
+        .map((i) => new GenericPage(i))
+        .map((i) => ({
+          id: i.id,
+          title: i.title,
+          slug: i.slug,
+          published: i.published,
+          content: i.content,
+          user_id: i.user_id,
+          display_in_footer: i.display_in_footer
+        }));
+      res.send({ data });
+    } catch (err) {
+      res.status(500).send({
+        errorMessage:
+          err.message || 'Some error occurred while retrieving genericPage.'
+      });
+    }
   }
 
   static async findOne (req, res) {
     try {
-      const data = await GenericPage.findById(req.params.id);
-      res.send({ data });
+      let data;
+      const notPublished = {
+        title: "Il n'y a rien ici :-(",
+        content:
+          '<h3 style="width: 100%; text-align: center;">Cette page est sûrement en cours de construction ...</h3>'
+      };
+      if (isNaN(parseInt(req.params.id))) {
+        // non connecté
+        data = await GenericPage.findBySlug(req.params.id);
+        (!data.published && !req.currentUser && (data = notPublished)) ||
+        (!data.published && !req.currentUser.is_admin && (data = notPublished));
+        res.send({ data });
+      } else {
+        data = await GenericPage.findById(req.params.id);
+        res.send({ data });
+      }
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({

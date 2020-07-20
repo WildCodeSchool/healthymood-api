@@ -5,10 +5,8 @@ const cors = require('cors');
 const extractToken = require('./middlewares/extractToken');
 const requireAuth = require('./middlewares/requireAuth');
 const YAML = require('yamljs');
-require('dotenv').config();
 
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
-
 const app = express();
 const PORT =
   process.env.PORT || (process.env.NODE_ENV === 'test' ? 4001 : 4000);
@@ -50,12 +48,11 @@ app.use('/recipe_categories', require('./routes/recipe-categories.routes.js'));
 app.use('/users', require('./routes/user.routes.js'));
 app.use('/auth', require('./routes/auth.routes.js'));
 app.use('/articles', require('./routes/article.routes.js'));
-app.use('/article_categories', require('./routes/article-categories.routes.js')
-);
-
-app.use('/secret', requireAuth, require('./routes/secret.routes.js'));
+app.use('/article_categories', require('./routes/article-categories.routes.js'));
 app.use('/ratings', require('./routes/rating.routes.js'));
+app.use('/post_recipe', require('./routes/sendMyRecipe.routes.js'));
 app.use('/favorites', require('./routes/favorite.routes.js'));
+
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
     app.use('/favorites', requireAuth, require('./routes/favorite.routes.js'));
