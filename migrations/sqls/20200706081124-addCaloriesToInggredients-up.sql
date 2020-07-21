@@ -1,2 +1,3 @@
 ALTER TABLE `ingredients` 
-      ADD COLUMN `calories` INT NULL DEFAULT NULL;
+      ADD COLUMN `calories` IF NOT EXISTS 
+INT NULL DEFAULT NULL;

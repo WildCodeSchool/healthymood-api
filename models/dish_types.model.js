@@ -45,6 +45,18 @@ class DishTypes {
     return db.query('SELECT * FROM dish_types');
   }
 
+  static async getSome (limit, offset) {
+    const total = await db.query('select count(id) as count from dish_types').then(rows => rows[0].count);
+    let sql = 'select * from dish_types';
+    if (limit !== undefined && offset !== undefined) {
+      sql += ` limit ${limit} offset ${offset}`;
+    }
+    return db.query(sql).then(rows => ({
+      results: rows.map(dt => new DishTypes(dt)),
+      total
+    }));
+  }
+
   static async updateById (id, dishTypes) {
     return db
       .query('UPDATE dish_types SET name = ? WHERE id = ?', [

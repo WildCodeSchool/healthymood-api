@@ -4,7 +4,8 @@ const requireAuth = require('../middlewares/requireAuth.js');
 const requireAdmin = require('../middlewares/requireAdmin.js');
 
 router.post('/', requireAuth, requireAdmin, diettypesController.create);
-router.get('/', diettypesController.findAll);
+router.get('/all', diettypesController.findAll);
+router.get('/', diettypesController.findSome);
 router.get('/:id', diettypesController.findOne);
 router.patch('/:id', requireAuth, requireAdmin, diettypesController.update);
 router.delete('/:id', requireAuth, requireAdmin, diettypesController.delete);

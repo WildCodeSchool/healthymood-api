@@ -46,8 +46,16 @@ class RecipeCategory {
     return db.query('SELECT * FROM recipe_categories');
   }
 
-  static async getAllRecipes (id) {
-    return db.query('SELECT * FROM recipes WHERE recipe_category_id = ?', [id]);
+  static async getSome (limit, offset) {
+    const total = await db.query('select count(id) as count from recipe_categories').then(rows => rows[0].count);
+    let sql = 'select * from recipe_categories';
+    if (limit !== undefined && offset !== undefined) {
+      sql += ` limit ${limit} offset ${offset}`;
+    }
+    return db.query(sql).then(rows => ({
+      results: rows.map(rc => new RecipeCategory(rc)),
+      total
+    }));
   }
 
   static async updateById (id, recipeCategory) {
