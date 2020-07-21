@@ -11,14 +11,14 @@ class RecipesController {
         .send({ errorMessage: 'Content can not be empty!' });
     }
 
-    if (!req.body.name) {
+    if (!req.body.slug) {
       return res.status(400).send({ errorMessage: 'Name can not be empty!' });
     } else if (!req.body.content) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
-
+    const user_id = req.currentUser.id;// eslint-disable-line
     try {
       if (await Recipe.slugAlreadyExists(req.body.slug)) {
         res.status(400).send({

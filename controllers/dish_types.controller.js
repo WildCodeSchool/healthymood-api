@@ -30,7 +30,7 @@ class DishTypesController {
   }
 
   static async findAll (req, res) {
-    const data = await Ingredient.getAll();
+    const data = await DishTypes.getAll();
     res.send({ data });
   }
 
