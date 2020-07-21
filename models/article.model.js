@@ -9,7 +9,6 @@ class Article {
     this.image = article.image;
     this.created_at = article.created_at;
     this.updated_at = article.updated_at;
-    this.article_category_id = article.article_category_id;
     this.user_id = article.user_id;
     this.intro = article.intro;
   }
@@ -23,7 +22,7 @@ class Article {
       });
   }
 
-  static async nameAlreadyExists (slug) {
+  static async slugAlreadyExists (slug) {
     return db
       .query('SELECT * FROM articles WHERE slug = ?', [slug])
       .then((rows) => {
@@ -49,7 +48,35 @@ class Article {
       });
   }
 
-  static async getArticleAuthor (user_id) { // eslint-disable-line
+  static async getArticleCategory(article_id) {// eslint-disable-line
+    return db
+      .query(
+        'SELECT ac.name,ac.id FROM article_categories as ac  LEFT JOIN articles ON ac.id = articles.article_category_id WHERE articles.id = ?',
+        [article_id] // eslint-disable-line
+      )
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(rows[0]);
+        } else {
+          return Promise.resolve(null);
+        }
+      });
+  }
+
+  static async setCategoryArticle(article_id, category_id) {// eslint-disable-line
+    return db
+      .query(
+        'UPDATE articles SET article_category_id = ? WHERE id = ? ', [category_id, article_id])// eslint-disable-line
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(rows[0]);
+        } else {
+          return Promise.resolve(null);
+        }
+      });
+  }
+
+  static async getArticleAuthor(user_id) { // eslint-disable-line
     return db
       .query(
         'SELECT users.username FROM articles LEFT JOIN users ON users.id = articles.user_id WHERE user_id = ?', // eslint-disable-next-line
@@ -59,21 +86,11 @@ class Article {
         if (rows.length) {
           return Promise.resolve(rows[0]);
         } else {
-          const err = new Error();
-          err.kind = 'not_found';
-          return Promise.reject(err);
+          return Promise.resolve(null);
         }
       });
   }
 
-  /*   static async findByKeyWord (keyword) {
-    const sqlValues = `%${keyword}%`;
-    return db.query(
-      'SELECT * FROM articles WHERE title LIKE ? OR content LIKE ?',
-      [sqlValues, sqlValues]
-    );
-  }
- */
   static async getSome (limit, offset, sortOrder = 'asc', orderBy, keyword) {
     const sqlValues = `%${keyword}%`;
     const sqltotal = 'select count(id) as count from articles';
