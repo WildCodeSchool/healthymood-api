@@ -1,6 +1,7 @@
 const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
 const Favorite = require('../models/favorite.model.js');
+const { tryParseInt } = require('../helpers/number');
 
 class RecipesController {
   static async create(req, res) {
@@ -11,7 +12,7 @@ class RecipesController {
     }
 
     if (!req.body.slug) {
-      return res.status(400).send({ errorMessage: 'slug can not be empty!' });
+      return res.status(400).send({ errorMessage: 'Name can not be empty!' });
     } else if (!req.body.content) {
       return res
         .status(400)
@@ -70,11 +71,16 @@ class RecipesController {
   static async findAll(req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
     if (Object.keys(req.query).length !== 0) {
-      console.log(req.query);
       try {
-        console.log('rentre dans search');
-        const data = await Recipe.search(req.query);
-        res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
+        const page = tryParseInt(req.query.page, 1);
+        const perPage = tryParseInt(req.query.per_page, 8);
+        const limit = perPage;
+        const offset = (page - 1) * limit;
+        const rangeEnd = page * perPage;
+        const rangeBegin = rangeEnd - perPage + 1;
+        const { results, total } = await Recipe.getSome(limit, offset, req.query.search);
+        res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+        res.send({ data: results.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })), total: total });
       } catch (err) {
         console.error(err);
         res.status(500).send({
@@ -97,9 +103,7 @@ class RecipesController {
             slug: r.slug,
             published: r.published,
             user_id: r.user_id,
-            image: r.image,
-            calories: r.calories,
-            intro: r.intro
+            image: r
           }));
         res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
       } catch (err) {

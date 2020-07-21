@@ -45,6 +45,18 @@ class ArticleCategory {
     return db.query('SELECT * FROM article_categories');
   }
 
+  static async getSome (limit, offset) {
+    const total = await db.query('select count(id) as count from article_categories').then(rows => rows[0].count);
+    let sql = 'select * from article_categories';
+    if (limit !== undefined && offset !== undefined) {
+      sql += ` limit ${limit} offset ${offset}`;
+    }
+    return db.query(sql).then(rows => ({
+      results: rows.map(ac => new ArticleCategory(ac)),
+      total
+    }));
+  }
+
   static async updateById (id, articleCategory) {
     return db
       .query('UPDATE article_categories SET name = ? WHERE id = ?', [

@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../server.js');
-const Dishtypes = require('../models/dish_types.model.js');
+const DishTypes = require('../models/dish_types.model.js');
 const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('dishtypes endpoints', () => {
@@ -9,8 +9,8 @@ describe('dishtypes endpoints', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
-          Dishtypes.create({ name: 'entrée' }),
-          Dishtypes.create({ name: 'dessert' })
+          DishTypes.create({ name: 'entrée' }),
+          DishTypes.create({ name: 'dessert' })
         ]);
         res = await request(app).get('/dish_types');
       });
@@ -20,6 +20,34 @@ describe('dishtypes endpoints', () => {
       it('the returned data is an array containing two elements', async () => {
         expect(Array.isArray(res.body.data));
         expect(res.body.data.length).toBe(2);
+      });
+    });
+    describe('Paginated dish types', () => {
+      let res;
+      beforeEach(async () => {
+        await Promise.all([
+          DishTypes.create({ name: 'tarte' }),
+          DishTypes.create({ name: 'pizza' }),
+          DishTypes.create({ name: 'cake' }),
+          DishTypes.create({ name: 'cocktail' }),
+          DishTypes.create({ name: 'flan' }),
+          DishTypes.create({ name: 'salade' }),
+          DishTypes.create({ name: 'glace' }),
+          DishTypes.create({ name: 'condiment' }),
+          DishTypes.create({ name: 'vinaigrette' }),
+          DishTypes.create({ name: 'gratin' }),
+          DishTypes.create({ name: 'fondue' }),
+          DishTypes.create({ name: 'tartelettes' }),
+          DishTypes.create({ name: 'muffins' }),
+          DishTypes.create({ name: 'pâtes' }),
+          DishTypes.create({ name: 'poêlée' })
+        ]);
+        res = await request(app).get('/dish_types?per_page=8&page=1');
+      });
+
+      it('has 8 ressources per page', async () => {
+        expect(res.body.data.length).toBe(8);
+        expect(res.header['content-range']).toBe('1-8/15');
       });
     });
   });
@@ -67,7 +95,7 @@ describe('dishtypes endpoints', () => {
           blocked: false,
           isAdmin: true
         });
-        await Dishtypes.create({
+        await DishTypes.create({
           name: 'plat chaud'
         });
         res = await request(app)

@@ -45,27 +45,21 @@ class ArticlesController {
 
   static async findAll (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
-
     try {
       const page = tryParseInt(req.query.page, 1);
-      const perPage = tryParseInt(req.query.per_page, 10);
+      const perPage = tryParseInt(req.query.per_page, 8);
       const orderBy = req.query.sort_by;
       const sortOrder = req.query.sort_order;
       const limit = perPage;
       const offset = (page - 1) * limit;
-      const { results, total } = await Article.getSome(
-        limit,
-        offset,
-        sortOrder,
-        orderBy,
-        req.query.search
+      const { results, total } = await Article.getSome(limit, offset, sortOrder, orderBy, req.query.search
       );
       const rangeEnd = page * perPage;
       const rangeBegin = rangeEnd - perPage + 1;
       res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
-      res.send({
-        data: results.map((a) => ({ ...a, image: a.image ? fullUrl + a.image : null }))
-      });
+
+      res.send({ data: results.map((a) => ({ ...a, image: a.image ? fullUrl + a.image : null })), total: total });
+
     } catch (err) {
       console.error(err);
       res.status(500).send({

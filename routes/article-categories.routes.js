@@ -4,7 +4,8 @@ const requireAuth = require('../middlewares/requireAuth');
 const requireAdmin = require('../middlewares/requireAdmin');
 
 router.post('/', requireAuth, requireAdmin, articlesCategoryController.create);
-router.get('/', articlesCategoryController.findAll);
+router.get('/all', articlesCategoryController.findAll);
+router.get('/', articlesCategoryController.findSome);
 router.get('/:id', articlesCategoryController.findOne);
 router.patch('/:id', requireAuth, requireAdmin, articlesCategoryController.update);
 router.delete('/:id', requireAuth, requireAdmin, articlesCategoryController.delete);
