@@ -64,11 +64,9 @@ class Recipe {
   }
 
   static async findBySlug (slug) {
-    console.log(slug);
     return db
       .query('SELECT * FROM recipes WHERE slug = ?', [slug])
       .then((rows) => {
-        console.log(rows);
         if (rows.length) {
           return Promise.resolve(rows[0]);
         } else {
