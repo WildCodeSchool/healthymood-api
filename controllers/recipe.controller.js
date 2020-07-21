@@ -88,6 +88,30 @@ class RecipesController {
             'Error retrieving Recipe with keyword ' + req.query.search
         });
       }
+    } else {
+      try {
+        const data = (await Recipe.getAll())
+          .map((r) => new Recipe(r))
+          .map((r) => ({
+            id: r.id,
+            name: r.name,
+            content: r.content,
+            created_at: r.created_at,
+            updated_at: r.updated_at,
+            preparation_duration_seconds: r.preparation_duration_seconds,
+            budget: r.budget,
+            slug: r.slug,
+            published: r.published,
+            user_id: r.user_id,
+            image: r
+          }));
+        res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
+      } catch (err) {
+        res.status(500).send({
+          errorMessage:
+            err.message || 'Some error occurred while retrieving recipes.'
+        });
+      }
     }
   }
 
