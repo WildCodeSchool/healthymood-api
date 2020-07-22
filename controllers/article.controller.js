@@ -59,7 +59,6 @@ class ArticlesController {
       res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
 
       res.send({ data: results.map((a) => ({ ...a, image: a.image ? fullUrl + a.image : null })), total: total });
-
     } catch (err) {
       console.error(err);
       res.status(500).send({

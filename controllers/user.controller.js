@@ -40,15 +40,22 @@ class UsersController {
   }
 
   static async findAll (req, res) {
-    const page = tryParseInt(req.query.page, 1);
-    const perPage = tryParseInt(req.query.per_page, 8);
-    const limit = perPage;
-    const offset = (page - 1) * limit;
-    const rangeEnd = page * perPage;
-    const rangeBegin = rangeEnd - perPage + 1;
-    const { results, total } = await User.getSome(limit, offset);
-    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
-    res.send({ data: results, total: total });
+    try {
+      const page = tryParseInt(req.query.page, 1);
+      const perPage = tryParseInt(req.query.per_page, 8);
+      const limit = perPage;
+      const offset = (page - 1) * limit;
+      const rangeEnd = page * perPage;
+      const rangeBegin = rangeEnd - perPage + 1;
+      const { results, total } = await User.getSome(limit, offset);
+      res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+      res.send({ data: results, total: total });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({
+        errorMessage: err.message
+      });
+    }
   }
 
   static async findOne (req, res) {

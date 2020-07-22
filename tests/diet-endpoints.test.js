@@ -46,7 +46,7 @@ describe('diettypes endpoints', () => {
         res = await request(app).get('/diet?per_page=8&page=1');
       });
 
-      it('has 10 ressources per page', async () => {
+      it('has 8 ressources per page', async () => {
         expect(res.body.data.length).toBe(8);
         expect(res.header['content-range']).toBe('1-8/15');
       });
@@ -56,7 +56,7 @@ describe('diettypes endpoints', () => {
     describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/article-categories').send({
+        res = await request(app).post('/diet').send({
           name: 'Flexitarian'
         });
       });
