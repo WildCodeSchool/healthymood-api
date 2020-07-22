@@ -11,5 +11,6 @@ module.exports = expressJWT({
   secret: JWT_PRIVATE_KEY,
   requestProperty: 'token',
   getToken: getTokenFromHeader,
-  credentialsRequired: false
+  credentialsRequired: false,
+  algorithms: ['RS256', 'HS256']
 });

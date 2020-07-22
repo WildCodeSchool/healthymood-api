@@ -22,6 +22,34 @@ describe('mealtypes endpoints', () => {
         expect(res.body.data.length).toBe(2);
       });
     });
+    describe('Paginated meal types', () => {
+      let res;
+      beforeEach(async () => {
+        await Promise.all([
+          Mealtypes.create({ name: 'entrée' }),
+          Mealtypes.create({ name: 'plat' }),
+          Mealtypes.create({ name: 'dessert' }),
+          Mealtypes.create({ name: 'apéro' }),
+          Mealtypes.create({ name: 'brunch' }),
+          Mealtypes.create({ name: 'buffet froid' }),
+          Mealtypes.create({ name: 'buffet chaud' }),
+          Mealtypes.create({ name: 'cocktail' }),
+          Mealtypes.create({ name: 'sur le pouce' }),
+          Mealtypes.create({ name: 'famille nombreuses' }),
+          Mealtypes.create({ name: 'entrée 1' }),
+          Mealtypes.create({ name: 'plat 1' }),
+          Mealtypes.create({ name: 'dessert 1' }),
+          Mealtypes.create({ name: 'apéro 1' }),
+          Mealtypes.create({ name: 'brunch 1' })
+        ]);
+        res = await request(app).get('/meal_types?per_page=8&page=1');
+      });
+
+      it('has 8 ressources per page', async () => {
+        expect(res.body.data.length).toBe(8);
+        expect(res.header['content-range']).toBe('1-8/15');
+      });
+    });
   });
   describe('POST /meal_types', () => {
     describe('when a user is not authenticated on admin', () => {

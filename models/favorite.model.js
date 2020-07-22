@@ -35,7 +35,6 @@ class Favorite {
         recipe_id, // eslint-disable-line
       ])
       .then((rows) => {
-        console.log(rows);
         if (rows.length) {
           return Promise.resolve(rows[0]);
         } else {

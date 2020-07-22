@@ -4,7 +4,7 @@ const RecipesCategory = require('../models/recipe-categories.model.js');
 const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('recipe-categories endpoints', () => {
-  describe('GET /recipe-categories', () => {
+  describe('GET /recipe_categories', () => {
     describe('when there are two recipe categories in DB', () => {
       let res;
       beforeEach(async () => {
@@ -24,13 +24,41 @@ describe('recipe-categories endpoints', () => {
         expect(res.body.data.length).toBe(2);
       });
     });
+    describe('Paginated recipe categories', () => {
+      let res;
+      beforeEach(async () => {
+        await Promise.all([
+          RecipesCategory.create({ name: 'catégorie 1' }),
+          RecipesCategory.create({ name: 'catégorie 2' }),
+          RecipesCategory.create({ name: 'catégorie 3' }),
+          RecipesCategory.create({ name: 'catégorie 4' }),
+          RecipesCategory.create({ name: 'catégorie 5' }),
+          RecipesCategory.create({ name: 'catégorie 6' }),
+          RecipesCategory.create({ name: 'catégorie 7' }),
+          RecipesCategory.create({ name: 'catégorie 8' }),
+          RecipesCategory.create({ name: 'catégorie 9' }),
+          RecipesCategory.create({ name: 'catégorie 10' }),
+          RecipesCategory.create({ name: 'catégorie 11' }),
+          RecipesCategory.create({ name: 'catégorie 12' }),
+          RecipesCategory.create({ name: 'catégorie 13' }),
+          RecipesCategory.create({ name: 'catégorie 14' }),
+          RecipesCategory.create({ name: 'catégorie 15' })
+        ]);
+        res = await request(app).get('/recipe_categories?per_page=8&page=1');
+      });
+
+      it('has 8 ressources per page', async () => {
+        expect(res.body.data.length).toBe(8);
+        expect(res.header['content-range']).toBe('1-8/15');
+      });
+    });
   });
 
-  describe('POST /recipe-categories', () => {
+  describe('POST /recipe_categories', () => {
     describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/dish_types').send({
+        res = await request(app).post('/recipe_categories').send({
           name: 'dessert'
         });
       });

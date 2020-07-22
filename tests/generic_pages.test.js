@@ -5,7 +5,7 @@ const { authenticateHelper } = require('../helpers/authenticateHelper');
 
 describe('genericPage endpoints', () => {
   describe('GET /generic_pages', () => {
-    describe('when there are two genericPage in DB', () => {
+    describe('when there are two generic pages in DB', () => {
       let res;
       beforeEach(async () => {
         await Promise.all([
@@ -36,6 +36,124 @@ describe('genericPage endpoints', () => {
       it('the returned data is an array containing two elements', async () => {
         expect(Array.isArray(res.body.data));
         expect(res.body.data.length).toBe(2);
+      });
+    });
+    describe('Paginated generic pages', () => {
+      let res;
+      beforeEach(async () => {
+        await Promise.all([
+          GenericPage.create({
+            title: 'Generic page 1',
+            slug: 'generic-page-1',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 2',
+            slug: 'generic-page-2',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 3',
+            slug: 'generic-page-3',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 4',
+            slug: 'generic-page-4',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 5',
+            slug: 'generic-page-5',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 6',
+            slug: 'generic-page-6',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 7',
+            slug: 'generic-page-7',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 8',
+            slug: 'generic-page-8',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 9',
+            slug: 'generic-page-9',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 10',
+            slug: 'generic-page-10',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 11',
+            slug: 'generic-page-11',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 12',
+            slug: 'generic-page-12',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 13',
+            slug: 'generic-page-13',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 14',
+            slug: 'generic-page-14',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          }),
+          GenericPage.create({
+            title: 'Generic page 15',
+            slug: 'generic-page-15',
+            published: true,
+            content: 'azpjerâzj',
+            user_id: 1
+          })
+        ]);
+        res = await request(app).get('/generic_pages?per_page=8&page=1');
+      });
+
+      it('has 8 ressources per page', async () => {
+        expect(res.body.data.length).toBe(8);
+        expect(res.header['content-range']).toBe('1-8/15');
       });
     });
   });
