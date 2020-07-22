@@ -15,7 +15,7 @@ describe('users endpoints', () => {
     });
   });
   describe('GET /users', () => {
-    describe('when there are two users in DB', () => {
+    describe('when there are three users in DB', () => {
       let res;
       let token;
       beforeEach(async () => {
@@ -48,14 +48,19 @@ describe('users endpoints', () => {
         expect(res.status).toBe(200);
       });
 
-      it('the returned data is an array containing two elements', async () => {
+      it('the returned data is an array containing three elements', async () => {
         expect(Array.isArray(res.body.data));
-        expect(res.body.data.length).toBe(2);
+        expect(res.body.data.length).toBe(3);
       });
     });
     describe('Paginated users', () => {
       let res;
+      let token;
       beforeEach(async () => {
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
         await Promise.all([
           User.create({
             username: 'ana1',
@@ -163,12 +168,14 @@ describe('users endpoints', () => {
             blocked: false
           })
         ]);
-        res = await request(app).get('/users?per_page=8&page=1');
+        res = await request(app)
+          .get('/users?per_page=8&page=1')
+          .set('Authorization', `Bearer ${token}`);
       });
 
       it('has 8 ressources per page', async () => {
         expect(res.body.data.length).toBe(8);
-        expect(res.header['content-range']).toBe('1-8/15');
+        expect(res.header['content-range']).toBe('1-8/16');
       });
     });
   });
@@ -176,18 +183,25 @@ describe('users endpoints', () => {
   describe('POST /users', () => {
     describe('when a valid payload is sent', () => {
       let res;
+      let token;
       beforeAll(async () => {
-        res = await request(app).post('/users').send({
-          username: 'bbbb',
-          email: 'bbbb@gmail.co',
-          password: 'superpassword',
-          firstname: 'bb',
-          lastname: 'bababa',
-          is_admin: false,
+        token = await authenticateHelper({
           blocked: false,
-          fb_uid: 'myfbuid',
-          avatar: 'cheese :-)'
+          isAdmin: true
         });
+        res = await request(app).post('/users')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            username: 'bbbb',
+            email: 'bbbb@gmail.co',
+            password: 'superpassword',
+            firstname: 'bb',
+            lastname: 'bababa',
+            is_admin: false,
+            blocked: false,
+            fb_uid: 'myfbuid',
+            avatar: 'cheese :-)'
+          });
       });
 
       it('returns 201 status', async () => {
@@ -201,7 +215,12 @@ describe('users endpoints', () => {
 
     describe('when a user with the same username or email already exists in DB', () => {
       let res;
+      let token;
       beforeAll(async () => {
+        token = await authenticateHelper({
+          blocked: false,
+          isAdmin: true
+        });
         await User.create({
           username: 'ana',
           email: 'ana3@gmail.co',
@@ -209,13 +228,15 @@ describe('users endpoints', () => {
           is_admin: true,
           blocked: false
         });
-        res = await request(app).post('/users').send({
-          username: 'ana',
-          email: 'ana3@gmail.co',
-          password: 'ffffffffffff',
-          is_admin: true,
-          blocked: false
-        });
+        res = await request(app).post('/users')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            username: 'ana',
+            email: 'ana3@gmail.co',
+            password: 'ffffffffffff',
+            is_admin: true,
+            blocked: false
+          });
       });
 
       it('returns a 400 status', async () => {
