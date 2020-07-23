@@ -103,7 +103,7 @@ class RecipesController {
             slug: r.slug,
             published: r.published,
             user_id: r.user_id,
-            image: r
+            image: r.image
           }));
         res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
       } catch (err) {
