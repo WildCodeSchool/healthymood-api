@@ -167,9 +167,9 @@ class Recipe {
     const ingredientsID = (query && query.ingredients) ? query.ingredients.map(ingredient => parseInt(ingredient)) : null;
     const dietsID = (query && query.diets) ? query.diets.map(diet => parseInt(diet)) : null;
     const calories = (query && query.calories > 0) ? query.calories : null;
-    const sqltotal = 'select count(id) as count from recipes';
+    const sqltotal = 'select distinct count(id) as count from recipes';
     let total = 0;
-    let sql = 'select * from recipes';
+    let sql = 'select distinct recipes.* from recipes';
 
     if (query) {
       const searchSQL = `
@@ -182,7 +182,7 @@ class Recipe {
         AND (? is NULL OR recipes.name LIKE ? OR recipes.content LIKE ?) 
         AND (? is NULL or recipes.calories <= ?)
       `;
-      total = await db.query(`SELECT COUNT(recipes.id) AS count FROM recipes ${searchSQL}`,
+      total = await db.query(`SELECT COUNT(distinct recipes.id) AS count FROM recipes ${searchSQL}`,
         [
           mealTypesID ? mealTypesID[0] : null,
           mealTypesID,
