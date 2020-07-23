@@ -46,6 +46,10 @@ class RecipeCategory {
     return db.query('SELECT * FROM recipe_categories');
   }
 
+  static async getAllRecipes (recipe_id) { // eslint-disable-line
+    return db.query('SELECT * FROM recipes WHERE recipe_category_id = ?', [recipe_id]); // eslint-disable-line
+  }
+
   static async getSome (limit, offset) {
     const total = await db.query('select count(id) as count from recipe_categories').then(rows => rows[0].count);
     let sql = 'select * from recipe_categories';
