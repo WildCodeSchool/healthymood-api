@@ -45,6 +45,18 @@ class DietTypes {
     return db.query('SELECT * FROM diets');
   }
 
+  static async getSome (limit, offset) {
+    const total = await db.query('select count(id) as count from diets').then(rows => rows[0].count);
+    let sql = 'select * from diets';
+    if (limit !== undefined && offset !== undefined) {
+      sql += ` limit ${limit} offset ${offset}`;
+    }
+    return db.query(sql).then(rows => ({
+      results: rows.map(d => new DietTypes(d)),
+      total
+    }));
+  }
+
   static async updateById (id, dietTypes) {
     return db
       .query('UPDATE diets SET name = ? WHERE id = ?', [

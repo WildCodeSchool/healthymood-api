@@ -22,12 +22,41 @@ describe('diettypes endpoints', () => {
         expect(res.body.data.length).toBe(2);
       });
     });
+
+    describe('Paginated diet types', () => {
+      let res;
+      beforeEach(async () => {
+        await Promise.all([
+          Diettypes.create({ name: 'sans gluten' }),
+          Diettypes.create({ name: 'sans lactose' }),
+          Diettypes.create({ name: 'sans beurre' }),
+          Diettypes.create({ name: 'sans sucre' }),
+          Diettypes.create({ name: 'sans lait' }),
+          Diettypes.create({ name: 'sans oeufs' }),
+          Diettypes.create({ name: 'sans poissons' }),
+          Diettypes.create({ name: 'sans viande' }),
+          Diettypes.create({ name: 'hyper protéïné' }),
+          Diettypes.create({ name: 'cure de citron' }),
+          Diettypes.create({ name: 'sans allergènes' }),
+          Diettypes.create({ name: 'sans farine' }),
+          Diettypes.create({ name: 'pleins de vitamines' }),
+          Diettypes.create({ name: 'que des crudités' }),
+          Diettypes.create({ name: 'sans huile' })
+        ]);
+        res = await request(app).get('/diet?per_page=8&page=1');
+      });
+
+      it('has 8 ressources per page', async () => {
+        expect(res.body.data.length).toBe(8);
+        expect(res.header['content-range']).toBe('1-8/15');
+      });
+    });
   });
   describe('POST /diet', () => {
     describe('when a user is not authenticated on admin', () => {
       let res;
       beforeAll(async () => {
-        res = await request(app).post('/article-categories').send({
+        res = await request(app).post('/diet').send({
           name: 'Flexitarian'
         });
       });

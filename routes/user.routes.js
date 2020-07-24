@@ -3,7 +3,7 @@ const router = require('express').Router();
 const requireAuth = require('../middlewares/requireAuth.js');
 const requireAdmin = require('../middlewares/requireAdmin.js');
 
-router.post('/', usersController.create);
+router.post('/', requireAuth, requireAdmin, usersController.create);
 router.get('/', requireAuth, requireAdmin, usersController.findAll);
 router.get('/:id', requireAuth, requireAdmin, usersController.findOne);
 router.patch('/:id', requireAuth, usersController.update);

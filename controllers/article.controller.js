@@ -11,18 +11,17 @@ class ArticlesController {
 
     if (!req.body.slug) {
       return res.status(400).send({ errorMessage: 'Slug can not be empty!' });
-    } else if (!req.body.content) {
+    }
+    if (!req.body.content) {
       return res
         .status(400)
         .send({ errorMessage: 'Content can not be empty!' });
     }
-
     const user_id = req.currentUser.id; // eslint-disable-line
-
     try {
       const article = new Article({ ...req.body, user_id: user_id });
 
-      if (await Article.nameAlreadyExists(article.slug)) {
+      if (await Article.slugAlreadyExists(article.slug)) {
         res.status(400).send({
           errorMessage: 'An article with this slug already exists !'
         });
@@ -31,6 +30,9 @@ class ArticlesController {
         const imageRelativeUrl = req.body.image.replace(fullUrl, '');
         article.image = imageRelativeUrl;
         const data = await Article.create(article);
+        if (req.body.article_category) {
+          await Article.setCategoryArticle(data.id, req.body.article_category.value);
+        }
         res.status(201).send({ data });
       }
     } catch (err) {
@@ -43,30 +45,20 @@ class ArticlesController {
 
   static async findAll (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
-
     try {
       const page = tryParseInt(req.query.page, 1);
-      const perPage = tryParseInt(req.query.per_page, 10);
+      const perPage = tryParseInt(req.query.per_page, 8);
       const orderBy = req.query.sort_by;
       const sortOrder = req.query.sort_order;
       const limit = perPage;
       const offset = (page - 1) * limit;
-      const { results, total } = await Article.getSome(
-        limit,
-        offset,
-        sortOrder,
-        orderBy,
-        req.query.search
+      const { results, total } = await Article.getSome(limit, offset, sortOrder, orderBy, req.query.search
       );
       const rangeEnd = page * perPage;
       const rangeBegin = rangeEnd - perPage + 1;
       res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
-      res.send({
-        data: results.map((a) => ({
-          ...a,
-          image: a.image ? fullUrl + a.image : null
-        }))
-      });
+
+      res.send({ data: results.map((a) => ({ ...a, image: a.image ? fullUrl + a.image : null })), total: total });
     } catch (err) {
       console.error(err);
       res.status(500).send({
@@ -88,14 +80,18 @@ class ArticlesController {
       }
 
       let author = null;
+      let categoryArticle = null;
 
       try {
         author = await Article.getArticleAuthor(data.user_id);
+        categoryArticle = await Article.getArticleCategory(data.id);
       } catch (err) {
         console.error(err);
       }
 
-      res.send({ data: { ...data, author, image: fullUrl + data.image } });
+      res.send({
+        data: { ...data, author, categoryArticle, image: fullUrl + data.image }
+      });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
@@ -145,6 +141,9 @@ class ArticlesController {
       const imageRelativeUrl = req.body.image.replace(fullUrl, '');
       article.image = imageRelativeUrl;
       const data = await Article.updateById(req.params.id, article);
+      if (req.body.article_category) {
+        await Article.setCategoryArticle(data.id, req.body.article_category.value);
+      }
       res.send({ data });
     } catch (err) {
       if (err.kind === 'not_found') {
@@ -182,7 +181,6 @@ class ArticlesController {
       const picture = req.file ? req.file.path.replace('\\', '/') : null;
       res.status(200).send(fullUrl + '/' + picture);
     } catch (err) {
-      console.log(err);
       console.error(err);
       res.status(500).send(err);
     }
