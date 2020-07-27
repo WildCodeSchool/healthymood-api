@@ -50,7 +50,16 @@ class Article {
 
   static async findBySlug (slug) {
     return db
-      .query('SELECT * FROM articles WHERE slug = ?', [slug]);
+      .query('SELECT * FROM articles WHERE slug = ?', [slug])
+      .then((rows) => {
+        if (rows.length) {
+          return Promise.resolve(rows[0]);
+        } else {
+          const err = new Error();
+          err.kind = 'not_found';
+          return Promise.reject(err);
+        }
+      });
   }
 
   static async getArticleCategory(article_id) {// eslint-disable-line

@@ -90,7 +90,7 @@ class ArticlesController {
       }
 
       res.send({
-        data: { ...data, author, categoryArticle, image: fullUrl + data.image }
+        data: { ...data, author, categoryArticle, image: data.image ? (fullUrl + data.image) : null }
       });
     } catch (err) {
       if (err.kind === 'not_found') {
