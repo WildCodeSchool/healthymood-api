@@ -64,6 +64,18 @@ class GenericPage {
     return db.query('SELECT * FROM generic_pages');
   }
 
+  static async getSome (limit, offset) {
+    const total = await db.query('select count(id) as count from generic_pages').then(rows => rows[0].count);
+    let sql = 'select * from generic_pages';
+    if (limit !== undefined && offset !== undefined) {
+      sql += ` limit ${limit} offset ${offset}`;
+    }
+    return db.query(sql).then(rows => ({
+      results: rows.map(gp => new GenericPage(gp)),
+      total
+    }));
+  }
+
   static async updateById (id, genericPages) {
     return db
       .query(

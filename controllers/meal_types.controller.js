@@ -1,4 +1,5 @@
 const MealTypes = require('../models/meal_types.model.js');
+const { tryParseInt } = require('../helpers/number');
 
 class MealTypesController {
   static async create (req, res) {
@@ -29,20 +30,21 @@ class MealTypesController {
   }
 
   static async findAll (req, res) {
-    try {
-      const data = (await MealTypes.getAll())
-        .map((m) => new MealTypes(m))
-        .map((m) => ({
-          id: m.id,
-          name: m.name
-        }));
-      res.send({ data });
-    } catch (err) {
-      res.status(500).send({
-        errorMessage:
-          err.message || 'Some error occurred while retrieving A mealtype.'
-      });
-    }
+    const data = await MealTypes.getAll();
+    res.send({ data });
+  }
+
+  static async findSome (req, res) {
+    const shouldPaginate = req.query.page && req.query.per_page;
+    const page = tryParseInt(req.query.page, 1);
+    const perPage = tryParseInt(req.query.per_page, 8);
+    const limit = perPage;
+    const offset = (page - 1) * limit;
+    const rangeEnd = page * perPage;
+    const rangeBegin = rangeEnd - perPage + 1;
+    const { results, total } = await MealTypes.getSome(shouldPaginate ? limit : undefined, shouldPaginate ? offset : undefined);
+    res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
+    res.send({ data: results, total: total });
   }
 
   static async findOne (req, res) {
