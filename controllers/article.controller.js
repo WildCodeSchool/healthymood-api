@@ -71,8 +71,14 @@ class ArticlesController {
   static async findOne (req, res) {
     const fullUrl = req.protocol + '://' + req.get('host');
     try {
+      const slugOrId = req.params.id;
       let data = null;
-      data = await Article.findById(req.params.id);
+      if (isNaN(parseInt(slugOrId))) {
+        data = await Article.findBySlug(slugOrId);
+      } else {
+        data = await Article.findById(slugOrId);
+      }
+
       let author = null;
       let categoryArticle = null;
 
@@ -84,7 +90,7 @@ class ArticlesController {
       }
 
       res.send({
-        data: { ...data, author, categoryArticle, image: fullUrl + data.image }
+        data: { ...data, author, categoryArticle, image: data.image ? (fullUrl + data.image) : null }
       });
     } catch (err) {
       if (err.kind === 'not_found') {
