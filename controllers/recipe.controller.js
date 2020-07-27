@@ -2,6 +2,7 @@ const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
 const Favorite = require('../models/favorite.model.js');
 const { tryParseInt } = require('../helpers/number');
+const { getServerBaseURL } = require('../helpers/url')
 
 class RecipesController {
   static async create (req, res) {
@@ -136,7 +137,7 @@ class RecipesController {
   }
 
   static async findOne (req, res) {
-    const fullUrl = req.protocol + '://' + req.get('host');
+    const fullUrl = getServerBaseURL(req)
     try {
       const slugOrId = req.params.id;
       let data = null;
