@@ -1,2 +1,2 @@
-/*ALTER TABLE `ingredients` 
-ADD COLUMN `calories` INT NULL*/
+ALTER TABLE `ingredients` 
+ADD COLUMN `calories` INT NULL
