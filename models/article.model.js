@@ -48,6 +48,11 @@ class Article {
       });
   }
 
+  static async findBySlug (slug) {
+    return db
+      .query('SELECT * FROM articles WHERE slug = ?', [slug]);
+  }
+
   static async getArticleCategory(article_id) {// eslint-disable-line
     return db
       .query(
