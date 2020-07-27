@@ -31,7 +31,10 @@ class ArticlesController {
         article.image = imageRelativeUrl;
         const data = await Article.create(article);
         if (req.body.article_category) {
-          await Article.setCategoryArticle(data.id, req.body.article_category.value);
+          await Article.setCategoryArticle(
+            data.id,
+            req.body.article_category.value
+          );
         }
         res.status(201).send({ data });
       }
@@ -52,13 +55,24 @@ class ArticlesController {
       const sortOrder = req.query.sort_order;
       const limit = perPage;
       const offset = (page - 1) * limit;
-      const { results, total } = await Article.getSome(limit, offset, sortOrder, orderBy, req.query.search
+      const { results, total } = await Article.getSome(
+        limit,
+        offset,
+        sortOrder,
+        orderBy,
+        req.query.search
       );
       const rangeEnd = page * perPage;
       const rangeBegin = rangeEnd - perPage + 1;
       res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
 
-      res.send({ data: results.map((a) => ({ ...a, image: a.image ? fullUrl + a.image : null })), total: total });
+      res.send({
+        data: results.map((a) => ({
+          ...a,
+          image: a.image ? fullUrl + a.image : null
+        })),
+        total: total
+      });
     } catch (err) {
       console.error(err);
       res.status(500).send({
@@ -142,7 +156,10 @@ class ArticlesController {
       article.image = imageRelativeUrl;
       const data = await Article.updateById(req.params.id, article);
       if (req.body.article_category) {
-        await Article.setCategoryArticle(data.id, req.body.article_category.value);
+        await Article.setCategoryArticle(
+          data.id,
+          req.body.article_category.value
+        );
       }
       res.send({ data });
     } catch (err) {
