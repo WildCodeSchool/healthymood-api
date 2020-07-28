@@ -229,7 +229,7 @@ class Recipe {
   static async updateById (id, recipe) {
     return db
       .query(
-        'UPDATE recipes SET name = ?, content = ?, image = ?, updated_at = ?, preparation_duration_seconds = ?, budget = ?, slug = ?, published = ?, user_id = ?, intro = ? WHERE id = ?',
+        'UPDATE recipes SET name = ?, content = ?, image = ?, updated_at = ?, preparation_duration_seconds = ?, calories = ?, budget = ?, slug = ?, published = ?, user_id = ?, intro = ? WHERE id = ?',
         [
           recipe.name,
           recipe.content,
@@ -237,6 +237,7 @@ class Recipe {
           // recipe.created_at,
           recipe.updated_at,
           recipe.preparation_duration_seconds,
+          recipe.calories,
           recipe.budget,
           recipe.slug,
           recipe.published,
