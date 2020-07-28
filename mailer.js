@@ -21,7 +21,7 @@ class mailer {
 
     transporter.sendMail(mailOptions, (err, data) => {
       if (err) {
-        return console.log('Error');
+        return console.error('Error');
       }
       return Promise.resolve(data);
     });

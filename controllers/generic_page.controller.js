@@ -59,7 +59,6 @@ class GenericPagesController {
           '<h3 style="width: 100%; text-align: center;">Cette page est sûrement en cours de construction ...</h3>'
       };
       if (isNaN(parseInt(req.params.id))) {
-        // non connecté
         data = await GenericPage.findBySlug(req.params.id);
         (!data.published && !req.currentUser && (data = notPublished)) ||
         (!data.published && !req.currentUser.is_admin && (data = notPublished));

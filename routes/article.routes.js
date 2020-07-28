@@ -7,7 +7,6 @@ const handleImageUpload = require('../middlewares/handleImageUpload.js');
 router.post('/uploads', requireAuth, requireAdmin, handleImageUpload, articlesController.upload);
 router.post('/', requireAuth, requireAdmin, articlesController.create);
 router.get('/', articlesController.findAll);
-// router.get('/', articlesController.findLast);
 router.get('/:id', articlesController.findOne);
 router.patch('/:id', requireAuth, requireAdmin, articlesController.update);
 router.delete('/:id', requireAuth, requireAdmin, articlesController.delete);
