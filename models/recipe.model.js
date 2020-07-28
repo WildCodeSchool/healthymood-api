@@ -218,10 +218,14 @@ class Recipe {
     return db.query('UPDATE recipes SET recipe_category_id = ? WHERE id = ? ', [category_id, recipe_id]);// eslint-disable-line
   }
 
+  static async getLastRecipes (result) {
+    return db.query('SELECT * FROM recipes ORDER BY recipes.created_at DESC LIMIT 3');
+  }
+
   static async updateById (id, recipe) {
     return db
       .query(
-        'UPDATE recipes SET name = ?, content = ?, image = ?, updated_at = ?, preparation_duration_seconds = ?, budget = ?, slug = ?, published = ?, user_id = ?, intro = ? WHERE id = ?',
+        'UPDATE recipes SET name = ?, content = ?, image = ?, updated_at = ?, preparation_duration_seconds = ?, calories = ?, budget = ?, slug = ?, published = ?, user_id = ?, intro = ? WHERE id = ?',
         [
           recipe.name,
           recipe.content,
@@ -229,6 +233,7 @@ class Recipe {
           // recipe.created_at,
           recipe.updated_at,
           recipe.preparation_duration_seconds,
+          recipe.calories,
           recipe.budget,
           recipe.slug,
           recipe.published,
