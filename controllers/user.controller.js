@@ -18,7 +18,8 @@ class UsersController {
       return res.status(422).send({ errorMessage: 'Missing attribute !' });
     }
     try {
-      const user = new User(clientPayload);
+      const { username, email, password } = clientPayload;
+      const user = new User({ username, email, password });
       if (
         (await User.usernameAlreadyExists(user.username)) ||
         (await User.emailAlreadyExists(user.email))
