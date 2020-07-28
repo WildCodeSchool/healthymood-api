@@ -24,6 +24,10 @@ class Recipe {
     });
   }
 
+  static async getAll(result) {// eslint-disable-line
+    return db.query('SELECT * FROM recipes');
+  }
+
   static async slugAlreadyExists (slug) {
     return db
       .query('SELECT * FROM recipes WHERE slug = ?', [slug])
@@ -83,10 +87,6 @@ class Recipe {
       'SELECT i.id,i.name FROM recipes LEFT JOIN recipe_ingredient_quantities riq ON recipes.id = riq.recipe_id JOIN ingredients  AS i ON i.id = riq.ingredient_id WHERE recipe_id = ?',
       [recipe_id] // eslint-disable-line
     );
-  }
-
-  static async getAll (result) {
-    return db.query('SELECT * FROM recipes');
   }
 
   // eslint-disable-next-line
@@ -183,7 +183,7 @@ class Recipe {
     } else {
       total = await db.query(sqltotal).then(rows => rows[0].count);
     }
-
+    sql += 'ORDER BY recipes.id DESC';
     if (limit !== undefined && offset !== undefined) {
       sql += ` limit ${limit} offset ${offset}`;
     }
@@ -203,10 +203,6 @@ class Recipe {
 
   static async setCategory(recipe_id, category_id) {// eslint-disable-line
     return db.query('UPDATE recipes SET recipe_category_id = ? WHERE id = ? ', [category_id, recipe_id]);// eslint-disable-line
-  }
-
-  static async getAll(result) {// eslint-disable-line
-    return db.query('SELECT * FROM recipes');
   }
 
   static async getLastRecipes (result) {
