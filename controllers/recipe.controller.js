@@ -187,6 +187,34 @@ class RecipesController {
     }
   }
 
+  static async findLastRecipes (req, res) {
+    const fullUrl = getServerBaseURL(req);
+    try {
+      const data = (await Recipe.getLastRecipes())
+        .map((r) => new Recipe(r))
+        .map((r) => ({
+          id: r.id,
+          name: r.name,
+          content: r.content,
+          created_at: r.created_at,
+          updated_at: r.updated_at,
+          preparation_duration_seconds: r.preparation_duration_seconds,
+          budget: r.budget,
+          slug: r.slug,
+          published: r.published,
+          user_id: r.user_id,
+          image: r.image,
+          intro: r.intro
+        }));
+      res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
+    } catch (err) {
+      res.status(500).send({
+        errorMessage:
+            err.message || 'Some error occurred while retrieving last recipes.'
+      });
+    }
+  }
+
   static async update (req, res) {
     if (!req.body) {
       res.status(400).send({ errorMessage: 'Content can not be empty!' });
