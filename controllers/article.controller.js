@@ -1,5 +1,6 @@
 const Article = require('../models/article.model.js');
 const { tryParseInt } = require('../helpers/number');
+const { getServerBaseURL } = require('../helpers/url');
 
 class ArticlesController {
   static async create (req, res) {
@@ -26,9 +27,7 @@ class ArticlesController {
           errorMessage: 'An article with this slug already exists !'
         });
       } else {
-        const fullUrl = req.protocol + '://' + req.get('host');
-        const imageRelativeUrl = req.body.image.replace(fullUrl, '');
-        article.image = imageRelativeUrl;
+        article.image = article.image ? ('/uploads/' + article.image.split('uploads/')[1]) : null;
         const data = await Article.create(article);
         if (req.body.article_category) {
           await Article.setCategoryArticle(
@@ -47,7 +46,7 @@ class ArticlesController {
   }
 
   static async findAll (req, res) {
-    const fullUrl = req.protocol + '://' + req.get('host');
+    const fullUrl = getServerBaseURL(req);
     try {
       const page = tryParseInt(req.query.page, 1);
       const perPage = tryParseInt(req.query.per_page, 8);
@@ -83,14 +82,15 @@ class ArticlesController {
   }
 
   static async findOne (req, res) {
-    const fullUrl = req.protocol + '://' + req.get('host');
+    const fullUrl = getServerBaseURL(req);
     try {
       const slugOrId = req.params.id;
       let data = null;
+
       if (isNaN(parseInt(slugOrId))) {
         data = await Article.findBySlug(slugOrId);
       } else {
-        data = await Article.findById(slugOrId);
+        data = await Article.findById(req.params.id);
       }
 
       let author = null;
@@ -104,9 +104,10 @@ class ArticlesController {
       }
 
       res.send({
-        data: { ...data, author, categoryArticle, image: fullUrl + data.image }
+        data: { ...data, author, categoryArticle, image: data.image ? (fullUrl + data.image) : null }
       });
     } catch (err) {
+      console.error(err);
       if (err.kind === 'not_found') {
         res.status(404).send({
           errorMessage: `Article with id ${req.params.id} not found.`
@@ -120,6 +121,7 @@ class ArticlesController {
   }
 
   static async findLast (req, res) {
+    const fullUrl = getServerBaseURL(req);
     try {
       const data = (await Article.getLastArticles())
         .map((a) => new Article(a))
@@ -127,13 +129,13 @@ class ArticlesController {
           id: a.id,
           title: a.title,
           content: a.content,
-          image: a.image,
           created_at: a.created_at,
           updated_at: a.updated_at,
           slug: a.slug,
           article_category_id: a.article_category_id,
           user_id: a.user_id,
-          intro: a.intro
+          intro: a.intro,
+          image: a.image ? (fullUrl + a.image) : null
         }));
       res.send({ data });
     } catch (err) {
@@ -151,9 +153,7 @@ class ArticlesController {
 
     try {
       const article = new Article(req.body);
-      const fullUrl = req.protocol + '://' + req.get('host');
-      const imageRelativeUrl = req.body.image.replace(fullUrl, '');
-      article.image = imageRelativeUrl;
+      article.image = article.image ? ('/uploads/' + article.image.split('uploads/')[1]) : null;
       const data = await Article.updateById(req.params.id, article);
       if (req.body.article_category) {
         await Article.setCategoryArticle(
@@ -193,7 +193,7 @@ class ArticlesController {
   }
 
   static async upload (req, res) {
-    const fullUrl = req.protocol + '://' + req.get('host');
+    const fullUrl = getServerBaseURL(req);
     try {
       const picture = req.file ? req.file.path.replace('\\', '/') : null;
       res.status(200).send(fullUrl + '/' + picture);

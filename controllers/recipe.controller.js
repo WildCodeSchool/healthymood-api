@@ -2,6 +2,7 @@ const Recipe = require('../models/recipe.model.js');
 const Rating = require('../models/rating.model.js');
 const Favorite = require('../models/favorite.model.js');
 const { tryParseInt } = require('../helpers/number');
+const { getServerBaseURL } = require('../helpers/url');
 
 class RecipesController {
   static async create (req, res) {
@@ -26,9 +27,7 @@ class RecipesController {
         });
       } else {
         const recipe = new Recipe({ ...req.body, user_id: user_id });
-        const fullUrl = req.protocol + '://' + req.get('host');
-        const imageRelativeUrl = req.body.image.replace(fullUrl, '');
-        recipe.image = imageRelativeUrl;
+        recipe.image = recipe.image ? ('/uploads/' + recipe.image.split('uploads/')[1]) : null;
 
         const data = await Recipe.create(recipe);
         if (req.body.ingredients && req.body.ingredients.length > 0) {
@@ -69,7 +68,7 @@ class RecipesController {
   }
 
   static async findAll (req, res) {
-    const fullUrl = req.protocol + '://' + req.get('host');
+    const fullUrl = getServerBaseURL(req);
     if (Object.keys(req.query).length !== 0) {
       try {
         const page = tryParseInt(req.query.page, 1);
@@ -103,7 +102,8 @@ class RecipesController {
             slug: r.slug,
             published: r.published,
             user_id: r.user_id,
-            image: r.image
+            image: r.image,
+            intro: r.intro
           }));
         res.send({ data: data.map(r => ({ ...r, image: r.image ? (fullUrl + r.image) : null })) });
       } catch (err) {
@@ -116,7 +116,7 @@ class RecipesController {
   }
 
   static async findFavoriteByUser_ID(req, res) { // eslint-disable-line
-    const fullUrl = req.protocol + '://' + req.get('host');
+    const fullUrl = getServerBaseURL(req);
 
     try {
       const data = await Recipe.findRecipeByUser_ID(req.currentUser.id) // eslint-disable-line
@@ -136,7 +136,7 @@ class RecipesController {
   }
 
   static async findOne (req, res) {
-    const fullUrl = req.protocol + '://' + req.get('host');
+    const fullUrl = getServerBaseURL(req);
     try {
       const slugOrId = req.params.id;
       let data = null;
@@ -172,7 +172,7 @@ class RecipesController {
       }
 
       res.send({
-        data: { ...data, ingredients, user_rating, diets, category, dish_types, author, mealType, image: fullUrl + data.image }
+        data: { ...data, ingredients, user_rating, diets, category, dish_types, author, mealType, image: data.image ? (fullUrl + data.image) : null }
       });
     } catch (err) {
       if (err.kind === 'not_found') {
@@ -193,9 +193,7 @@ class RecipesController {
     }
     try {
       const recipe = new Recipe(req.body);
-      const fullUrl = req.protocol + '://' + req.get('host');
-      const imageRelativeUrl = req.body.image.replace(fullUrl, '');
-      recipe.image = imageRelativeUrl;
+      recipe.image = recipe.image ? ('/uploads/' + recipe.image.split('uploads/')[1]) : null;
 
       const data = await Recipe.updateById(req.params.id, recipe);
       if (req.body.ingredients && req.body.ingredients.length > 0) {
@@ -260,7 +258,7 @@ class RecipesController {
   }
 
   static async upload (req, res) {
-    const fullUrl = req.protocol + '://' + req.get('host');
+    const fullUrl = getServerBaseURL(req);
     try {
       const picture = req.file ? req.file.path.replace('\\', '/') : null;
       res.status(200).send(fullUrl + '/' + picture);

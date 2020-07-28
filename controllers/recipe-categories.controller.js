@@ -1,5 +1,6 @@
 const RecipeCategory = require('../models/recipe-categories.model.js');
 const { tryParseInt } = require('../helpers/number');
+const { getServerBaseURL } = require('../helpers/url');
 
 class RecipesCategoryController {
   static async create (req, res) {
@@ -20,6 +21,7 @@ class RecipesCategoryController {
           errorMessage: 'A RecipeCategory with this name already exists !'
         });
       } else {
+        recipeCategory.image = recipeCategory.image ? ('/uploads/' + recipeCategory.image.split('uploads/')[1]) : null;
         const data = await RecipeCategory.create(recipeCategory);
         res.status(201).send({ data });
       }
@@ -32,11 +34,14 @@ class RecipesCategoryController {
   }
 
   static async findAll (req, res) {
+    const fullUrl = getServerBaseURL(req);
     const data = await RecipeCategory.getAll();
-    res.send({ data });
+    res.send({ data: data.map(data => ({ ...data, image: data.image ? fullUrl + data.image : null })) });
   }
 
   static async findSome (req, res) {
+    const fullUrl = getServerBaseURL(req);
+
     const shouldPaginate = req.query.page && req.query.per_page;
     const page = tryParseInt(req.query.page, 1);
     const perPage = tryParseInt(req.query.per_page, 8);
@@ -46,13 +51,15 @@ class RecipesCategoryController {
     const rangeBegin = rangeEnd - perPage + 1;
     const { results, total } = await RecipeCategory.getSome(shouldPaginate ? limit : undefined, shouldPaginate ? offset : undefined);
     res.header('content-range', `${rangeBegin}-${rangeEnd}/${total}`);
-    res.send({ data: results, total: total });
+    res.send({ data: results.map(data => ({ ...data, image: data.image ? fullUrl + data.image : null })), total: total });
   }
 
   static async findOne (req, res) {
+    const fullUrl = getServerBaseURL(req);
+
     try {
       const data = await RecipeCategory.findById(req.params.id);
-      res.send({ data });
+      res.send({ data, image: data.image ? fullUrl + data.image : null });
     } catch (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
@@ -67,7 +74,7 @@ class RecipesCategoryController {
   }
 
   static async findAllRecipes (req, res) {
-    const fullUrl = req.protocol + '://' + req.get('host');
+    const fullUrl = getServerBaseURL(req);
 
     try {
       const data = await RecipeCategory.getAllRecipes(req.params.id);
@@ -86,9 +93,12 @@ class RecipesCategoryController {
     }
 
     try {
+      const recipeCategory = new RecipeCategory(req.body);
+      recipeCategory.image = recipeCategory.image ? ('/uploads/' + recipeCategory.image.split('uploads/')[1]) : null;
+
       const data = await RecipeCategory.updateById(
         req.params.id,
-        new RecipeCategory(req.body)
+        recipeCategory
       );
       res.send({ data });
     } catch (err) {
