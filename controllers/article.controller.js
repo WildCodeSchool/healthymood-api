@@ -131,6 +131,7 @@ class ArticlesController {
       });
     }
   }
+  
 
   static async update (req, res) {
     if (!req.body) {
