@@ -222,6 +222,10 @@ class Recipe {
     return db.query('SELECT * FROM recipes');
   }
 
+  static async getLastRecipes (result) {
+    return db.query('SELECT * FROM recipes ORDER BY recipes.created_at DESC LIMIT 3');
+  }
+
   static async updateById (id, recipe) {
     return db
       .query(
