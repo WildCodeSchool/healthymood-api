@@ -35,7 +35,7 @@ describe('ratings endpoints', () => {
 
       it('the returned data is an array containing three elements', async () => {
         expect(Array.isArray(res.body.data));
-        expect(res.body.data.length).toBe(3); // <-- Ahahaha des barres
+        expect(res.body.data.length).toBe(3);
       });
     });
   });

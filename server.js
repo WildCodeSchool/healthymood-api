@@ -16,7 +16,7 @@ process.on('unhandledRejection', (error) => {
   process.exit(1);
 });
 process.on('uncaughtException', (error) => {
-  console.log('uncaughtException', JSON.stringify(error), error.stack);
+  console.error('uncaughtException', JSON.stringify(error), error.stack);
   process.exit(1);
 });
 process.on('beforeExit', () => {
